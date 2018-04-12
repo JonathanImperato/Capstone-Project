@@ -1,5 +1,6 @@
 package com.ji.bookinhand.adapters;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -14,8 +15,29 @@ import com.ji.bookinhand.R;
 import com.ji.bookinhand.api.models.BooksList;
 import com.ji.bookinhand.api.models.ImageLinks;
 import com.ji.bookinhand.api.models.Item;
+import com.ji.bookinhand.api.models.VolumeInfo;
 
 import java.util.List;
+
+import static com.ji.bookinhand.database.ItemsContract.BASE_CONTENT_URI;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_AUTHORS;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_AVERAGE_RATING;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_CANONICAL_VOLUME_LINK;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_CATEGORIES;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_DESCRIPTION;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_IMAGE_LINKS;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_INFO_LINK;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_LANGUAGE;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_MATURITY_RATING;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PAGE_COUNT;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PREVIEW_LINK;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PRINT_TYPE;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PUBLISHER;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PUBLISH_DATE;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_RATING_COUNT;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_SUBTITLE;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_TITLE;
+import static com.ji.bookinhand.database.Room.BookContentProvider.URI_Book;
 
 public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.BooksListAdapterViewHolder> {
 
@@ -83,9 +105,46 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
             int position = getAdapterPosition();
             if (mBooksList != null && position > -1) {
                 Item libro = mBooksList.getItems().get(position);
+                VolumeInfo info = libro.getVolumeInfo();
                 switch (view.getId()) {
                     case R.id.book_item:
-                        //TODO: START THE DETAIL ACTIVITY WITH THE "libro" ITEM
+
+                        ContentValues values = new ContentValues();
+                        values.put(COLUMN_TITLE, info.getTitle());
+                        StringBuilder authorsList = new StringBuilder();
+                        for (String author : info.getAuthors()) {
+                            if (authorsList != null)
+                                if (!authorsList.toString().contains(author))
+                                    authorsList.append(author).append(","); //i separate every author using a ,
+                                else
+                                    authorsList = new StringBuilder(author + ","); //i separate every author using a ,
+                        }
+                        values.put(COLUMN_AUTHORS, authorsList.toString());
+                        values.put(COLUMN_PUBLISHER, info.getPublisher());
+                        values.put(COLUMN_PUBLISH_DATE, info.getPublishedDate());
+                        //  values.put(COLUMN_INDUSTRY_IDENTIFIERS, info.getIndustryIdentifiers());
+                        //  values.put(COLUMN_READING_MODES, info.getReadingModes());
+                        values.put(COLUMN_PAGE_COUNT, info.getPageCount());
+                        values.put(COLUMN_PRINT_TYPE, info.getPrintType());
+
+                        String categories = null;
+                        for (String cat : info.getCategories()) {
+                            if (!categories.contains(cat))
+                                authorsList.append(cat).append(","); //i separate every author using a ,
+                        }
+                        values.put(COLUMN_CATEGORIES, categories);
+                        values.put(COLUMN_AVERAGE_RATING, info.getAverageRating());
+                        values.put(COLUMN_RATING_COUNT, info.getRatingsCount());
+                        values.put(COLUMN_MATURITY_RATING, info.getMaturityRating());
+                        values.put(COLUMN_IMAGE_LINKS, info.getImageLinks().getThumbnail());
+                        values.put(COLUMN_LANGUAGE, info.getLanguage());
+                        values.put(COLUMN_PREVIEW_LINK, info.getPreviewLink());
+                        values.put(COLUMN_INFO_LINK, info.getInfoLink());
+                        values.put(COLUMN_CANONICAL_VOLUME_LINK, info.getCanonicalVolumeLink());
+                        values.put(COLUMN_DESCRIPTION, info.getDescription());
+                        values.put(COLUMN_SUBTITLE, info.getSubtitle());
+
+                        mContext.getContentResolver().insert(BASE_CONTENT_URI, values);
                         break;
                 }
             } else

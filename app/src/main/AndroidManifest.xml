@@ -3,7 +3,7 @@
     package="com.ji.bookinhand">
 
     <uses-permission android:name="android.permission.INTERNET" />
-
+    <permission android:name="com.ji.bookinhand.database.provider.READ_WRITE" />
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -22,6 +22,25 @@
             </intent-filter>
         </activity>
         <activity android:name=".ui.BookDetail"></activity>
+        <provider
+            android:name=".database.FoodProvider"
+            android:authorities="com.ji.bakingapp.database.FoodProvider"
+            android:exported="true"  />
+        <!-- SCHEMATIC CONTENT PROVIDER
+       - CANNOT BE USED IN CAPSTONE -
+        <provider
+            android:name=".database.Schematic.BooksProvider"
+            android:authorities="com.ji.bookinhand.database.Schematic.BooksProvider"
+            android:exported="true"
+            android:permission="com.ji.bookinhand.database.Schematic.BooksProvider.READ_WRITE" />
+            -->
+        <!-- ROOM CONTENT PROVIDER
+       - CANNOT BE USED IN CAPSTONE -
+         <provider
+              android:name=".database.Room.BookContentProvider"
+              android:authorities="com.ji.bookinhand.database.provider"
+              android:exported="true"
+              android:permission="com.ji.bookinhand.database.provider.READ_WRITE"/> -->
     </application>
 
 </manifest>

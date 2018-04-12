@@ -1,4 +1,4 @@
-package com.ji.bookinhand.database;
+package com.ji.bookinhand.database.Room;
 
 import android.arch.persistence.room.Room;
 import android.content.ContentProvider;
@@ -10,6 +10,7 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.util.Log;
 
 public class BookContentProvider extends ContentProvider {
 
@@ -102,6 +103,7 @@ public class BookContentProvider extends ContentProvider {
                 final long id = Room.databaseBuilder(getContext(),
                         BookDB.class, DB_NAME).build().bookDAO().insert(book);
                 context.getContentResolver().notifyChange(uri, null);
+                Log.d("BOOK INSERTED", "id is: " + id);
                 return ContentUris.withAppendedId(uri, id);
             case CODE_Book_ITEM:
                 throw new IllegalArgumentException("Invalid URI, cannot insert with ID: " + uri);
