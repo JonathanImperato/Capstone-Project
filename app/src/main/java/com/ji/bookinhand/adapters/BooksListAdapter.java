@@ -126,7 +126,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                         values.put(COLUMN_PAGE_COUNT, info.getPageCount());
                         values.put(COLUMN_PRINT_TYPE, info.getPrintType());
 
-                        String categories = null;
+                        String categories = "";
                         for (String cat : info.getCategories()) {
                             if (!categories.contains(cat))
                                 authorsList.append(cat).append(","); //i separate every author using a ,

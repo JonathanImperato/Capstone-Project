@@ -13,6 +13,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -21,6 +22,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.CommonStatusCodes;
 import com.google.android.gms.tasks.Task;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.adapters.BooksListAdapter;
@@ -37,7 +39,9 @@ public class MainActivity extends AppCompatActivity {
     GoogleSignInClient mGoogleSignInClient;
     private String TAG = this.getClass().getSimpleName();
     private int RC_SIGN_IN = 142;
-
+    private CompoundButton autoFocus;
+    private CompoundButton useFlash;
+    private static final int RC_OCR_CAPTURE = 9003;
     RecyclerView recyclerView;
 
     @Override
@@ -74,6 +78,12 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+
+                Intent intent = new Intent(MainActivity.this, OcrCaptureActivity.class);
+                intent.putExtra(OcrCaptureActivity.AutoFocus, true); //focus
+                intent.putExtra(OcrCaptureActivity.UseFlash, true); //flash
+
+                startActivityForResult(intent, RC_OCR_CAPTURE);
             }
         });
 
@@ -151,6 +161,25 @@ public class MainActivity extends AppCompatActivity {
             // a listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
+        } else if (requestCode == RC_OCR_CAPTURE) {
+            if (resultCode == CommonStatusCodes.SUCCESS) {
+                if (data != null) {
+                    String text = data.getStringExtra(OcrCaptureActivity.TextBlockObject);
+                    // statusMessage.setText(R.string.ocr_success);
+                    // textValue.setText(text);
+                    Toast.makeText(this, "Text is: " + text, Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, "Text read: " + text);
+                } else {
+                    //  statusMessage.setText(R.string.ocr_failure);
+                    Log.d(TAG, "No Text captured, intent data is null");
+                }
+            } else {
+                /* statusMessage.setText(String.format(getString(R.string.ocr_error),
+                        CommonStatusCodes.getStatusCodeString(resultCode)));
+                */
+            }
+        } else {
+            super.onActivityResult(requestCode, resultCode, data);
         }
     }
 
