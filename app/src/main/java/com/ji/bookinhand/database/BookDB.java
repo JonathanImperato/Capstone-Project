@@ -1,4 +1,4 @@
-package com.ji.bookinhand.database.Room;
+package com.ji.bookinhand.database;
 
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;

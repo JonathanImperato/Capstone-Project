@@ -1,4 +1,4 @@
-package com.ji.bookinhand.database.Room;
+package com.ji.bookinhand.database;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
@@ -28,17 +28,20 @@ public interface BookDAO {
      */
 
     @Insert
-    void insertAll(Book... users);
+    long[] insertAll(Book... users);
+
+    @Insert
+    long insert(Book book);
 
     @Delete
-    void delete(Book user);
+    void delete(Book book);
 
     @Query("DELETE FROM books WHERE _ID LIKE :ID")
-    void deleteById(int ID);
+    int deleteById(int ID); //return int if success or not
 
     @Query("DELETE FROM books WHERE title LIKE :title")
-    void deleteByTitle(String title);
+    int deleteByTitle(String title);
 
     @Update
-    void update(Book book);
+    int update(Book book);
 }

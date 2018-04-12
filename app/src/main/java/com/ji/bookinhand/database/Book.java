@@ -1,19 +1,24 @@
-package com.ji.bookinhand.database.Room;
+package com.ji.bookinhand.database;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.content.ContentValues;
+import android.provider.BaseColumns;
 
 
 @Entity(tableName = Book.TABLE_NAME)
 public class Book {
 
     public static final String TABLE_NAME = "books";
+    public static final String COLUMN_TITLE = "title";
+    public static final String COLUMN_ID = BaseColumns._ID;
 
     @PrimaryKey
+    @ColumnInfo(index = true, name = COLUMN_ID)
     int _ID;
 
-    @ColumnInfo(name = "title")
+    @ColumnInfo(name = COLUMN_TITLE)
     String title;
 
 
@@ -87,6 +92,18 @@ public class Book {
 
     @ColumnInfo(name = "subtitle")
     String subtitle;
+
+    public static Book fromContentValues(ContentValues values) {
+        final Book book = new Book();
+        if (values.containsKey(COLUMN_ID)) {
+            book._ID = values.getAsInteger(COLUMN_ID);
+        }
+        if (values.containsKey(COLUMN_TITLE)) {
+            book.title = values.getAsString(COLUMN_TITLE);
+        }
+        return book;
+    }
+
 
     public int get_ID() {
         return _ID;
