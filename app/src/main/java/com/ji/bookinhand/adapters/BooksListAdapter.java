@@ -20,24 +20,23 @@ import com.ji.bookinhand.api.models.VolumeInfo;
 import java.util.List;
 
 import static com.ji.bookinhand.database.ItemsContract.BASE_CONTENT_URI;
-import static com.ji.bookinhand.database.Room.Book.COLUMN_AUTHORS;
-import static com.ji.bookinhand.database.Room.Book.COLUMN_AVERAGE_RATING;
-import static com.ji.bookinhand.database.Room.Book.COLUMN_CANONICAL_VOLUME_LINK;
-import static com.ji.bookinhand.database.Room.Book.COLUMN_CATEGORIES;
-import static com.ji.bookinhand.database.Room.Book.COLUMN_DESCRIPTION;
-import static com.ji.bookinhand.database.Room.Book.COLUMN_IMAGE_LINKS;
-import static com.ji.bookinhand.database.Room.Book.COLUMN_INFO_LINK;
-import static com.ji.bookinhand.database.Room.Book.COLUMN_LANGUAGE;
-import static com.ji.bookinhand.database.Room.Book.COLUMN_MATURITY_RATING;
-import static com.ji.bookinhand.database.Room.Book.COLUMN_PAGE_COUNT;
-import static com.ji.bookinhand.database.Room.Book.COLUMN_PREVIEW_LINK;
-import static com.ji.bookinhand.database.Room.Book.COLUMN_PRINT_TYPE;
-import static com.ji.bookinhand.database.Room.Book.COLUMN_PUBLISHER;
-import static com.ji.bookinhand.database.Room.Book.COLUMN_PUBLISH_DATE;
-import static com.ji.bookinhand.database.Room.Book.COLUMN_RATING_COUNT;
-import static com.ji.bookinhand.database.Room.Book.COLUMN_SUBTITLE;
-import static com.ji.bookinhand.database.Room.Book.COLUMN_TITLE;
-import static com.ji.bookinhand.database.Room.BookContentProvider.URI_Book;
+import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_AUTHORS;
+import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_AVERAGE_RATING;
+import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_CANONICAL_VOLUME_LINK;
+import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_CATEGORIES;
+import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_DESCRIPTION;
+import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_IMAGE_LINKS;
+import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_INFO_LINK;
+import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_LANGUAGE;
+import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_MATURITY_RATING;
+import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PAGE_COUNT;
+import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PREVIEW_LINK;
+import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PRINT_TYPE;
+import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PUBLISHER;
+import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PUBLISH_DATE;
+import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_RATING_COUNT;
+import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_SUBTITLE;
+import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_TITLE;
 
 public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.BooksListAdapterViewHolder> {
 
