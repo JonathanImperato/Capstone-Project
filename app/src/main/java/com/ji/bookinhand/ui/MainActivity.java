@@ -25,7 +25,7 @@ import com.google.android.gms.tasks.Task;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.adapters.BooksListAdapter;
 import com.ji.bookinhand.api.BooksClient;
-import com.ji.bookinhand.models.BooksList;
+import com.ji.bookinhand.api.models.BooksList;
 
 import retrofit2.Call;
 import retrofit2.Callback;

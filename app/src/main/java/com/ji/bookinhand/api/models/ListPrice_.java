@@ -1,24 +1,24 @@
 
-package com.ji.bookinhand.models;
+package com.ji.bookinhand.api.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class RetailPrice {
+public class ListPrice_ {
 
-    @SerializedName("amount")
+    @SerializedName("amountInMicros")
     @Expose
-    private Double amount;
+    private Double amountInMicros;
     @SerializedName("currencyCode")
     @Expose
     private String currencyCode;
 
-    public Double getAmount() {
-        return amount;
+    public Double getAmountInMicros() {
+        return amountInMicros;
     }
 
-    public void setAmount(Double amount) {
-        this.amount = amount;
+    public void setAmountInMicros(Double amountInMicros) {
+        this.amountInMicros = amountInMicros;
     }
 
     public String getCurrencyCode() {

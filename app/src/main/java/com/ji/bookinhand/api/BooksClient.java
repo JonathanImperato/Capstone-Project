@@ -1,8 +1,6 @@
 package com.ji.bookinhand.api;
 
-import com.ji.bookinhand.models.BooksList;
-
-import java.util.List;
+import com.ji.bookinhand.api.models.BooksList;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

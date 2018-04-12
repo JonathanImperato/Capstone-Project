@@ -11,9 +11,9 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.ji.bookinhand.R;
-import com.ji.bookinhand.models.BooksList;
-import com.ji.bookinhand.models.ImageLinks;
-import com.ji.bookinhand.models.Item;
+import com.ji.bookinhand.api.models.BooksList;
+import com.ji.bookinhand.api.models.ImageLinks;
+import com.ji.bookinhand.api.models.Item;
 
 import java.util.List;
 

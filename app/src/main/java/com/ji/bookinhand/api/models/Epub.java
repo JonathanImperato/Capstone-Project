@@ -1,10 +1,10 @@
 
-package com.ji.bookinhand.models;
+package com.ji.bookinhand.api.models;
 
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Pdf {
+public class Epub {
 
     @SerializedName("isAvailable")
     @Expose

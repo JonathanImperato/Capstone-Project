@@ -1,5 +1,5 @@
 
-package com.ji.bookinhand.models;
+package com.ji.bookinhand.api.models;
 
 import java.util.List;
 import com.google.gson.annotations.Expose;
