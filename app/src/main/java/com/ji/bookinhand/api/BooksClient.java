@@ -8,7 +8,7 @@ import retrofit2.http.Query;
 
 public interface BooksClient {
 
-    @GET("volumes")
+    @GET("volumes?maxResults=10")
     Call<BooksList> getBookWithQuery(@Query("q") String query);
 
 }

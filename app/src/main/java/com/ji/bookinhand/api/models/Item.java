@@ -1,10 +1,13 @@
 
 package com.ji.bookinhand.api.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class Item {
+public class Item implements Parcelable{
 
     @SerializedName("kind")
     @Expose
@@ -30,6 +33,28 @@ public class Item {
     @SerializedName("searchInfo")
     @Expose
     private SearchInfo searchInfo;
+
+    protected Item(Parcel in) {
+        kind = in.readString();
+        id = in.readString();
+        etag = in.readString();
+        selfLink = in.readString();
+    }
+
+    public Item() {
+    }
+
+    public static final Creator<Item> CREATOR = new Creator<Item>() {
+        @Override
+        public Item createFromParcel(Parcel in) {
+            return new Item(in);
+        }
+
+        @Override
+        public Item[] newArray(int size) {
+            return new Item[size];
+        }
+    };
 
     public String getKind() {
         return kind;
@@ -95,4 +120,16 @@ public class Item {
         this.searchInfo = searchInfo;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(kind);
+        parcel.writeString(id);
+        parcel.writeString(etag);
+        parcel.writeString(selfLink);
+    }
 }

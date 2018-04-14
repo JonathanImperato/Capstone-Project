@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:id="@+id/topLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:keepScreenOn="true">
+    android:keepScreenOn="true"
+    android:orientation="vertical">
+
 
     <com.ji.bookinhand.ui.camera.CameraSourcePreview
         android:id="@+id/preview"
@@ -15,8 +17,23 @@
         <com.ji.bookinhand.ui.camera.GraphicOverlay
             android:id="@+id/graphicOverlay"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent">
+
+        </com.ji.bookinhand.ui.camera.GraphicOverlay>
 
     </com.ji.bookinhand.ui.camera.CameraSourcePreview>
 
-</LinearLayout>
+    <ImageView
+        android:id="@+id/flashBtn"
+        android:layout_width="40dp"
+        android:longClickable="true"
+        android:layout_height="40dp"
+        android:clickable="true"
+        android:tooltipText="@string/flash"
+        android:foreground="?selectableItemBackground"
+        android:src="@drawable/ic_flash_on_black_24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</android.support.constraint.ConstraintLayout>

@@ -13,4 +13,10 @@
     <string name="ocr_success">Text read successfully</string>
     <string name="ocr_failure">No text captured</string>
     <string name="ocr_error">"Error reading text: %1$s"</string>
+    <string name="skip_login">Skip</string>
+    <string name="welcome_intro_screen">Welcome in Book in Hand.   \n \n Get all the informations you want before getting a book.</string>
+    <string name="flash">Flash</string>
+    <string name="add_to_favourite">Add to favourite</string>
+    <string name="remove_from_favourites">Remove from Favourites</string>
+    <string name="transition_string">shared_book</string>
 </resources>

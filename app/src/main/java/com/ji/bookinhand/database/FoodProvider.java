@@ -95,9 +95,7 @@ public class FoodProvider extends ContentProvider {
 
         numDeleted = db.delete(
                 ItemsContract.BookEntry.TABLE_NAME, selection, selectionArgs);
-        // reset _ID
-        db.execSQL("DELETE FROM SQLITE_SEQUENCE WHERE TITLE = '" +
-                ItemsContract.BookEntry.TABLE_NAME + "'");
+        Log.w("CP", numDeleted + " INFO");
         return numDeleted;
 
     }

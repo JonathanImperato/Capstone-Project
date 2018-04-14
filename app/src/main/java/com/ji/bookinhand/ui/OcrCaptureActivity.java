@@ -21,20 +21,20 @@ import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.ScaleGestureDetector;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GoogleApiAvailability;
 import com.google.android.gms.common.api.CommonStatusCodes;
-
 import com.google.android.gms.vision.text.TextBlock;
+import com.google.android.gms.vision.text.TextRecognizer;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.ui.camera.CameraSource;
 import com.ji.bookinhand.ui.camera.CameraSourcePreview;
 import com.ji.bookinhand.ui.camera.GraphicOverlay;
 import com.ji.bookinhand.ui.camera.OcrDetectorProcessor;
 import com.ji.bookinhand.ui.camera.OcrGraphic;
-import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.IOException;
 
@@ -90,8 +90,27 @@ public class OcrCaptureActivity extends AppCompatActivity {
         Snackbar.make(mGraphicOverlay, "Tap to capture. Pinch/Stretch to zoom",
                 Snackbar.LENGTH_LONG)
                 .show();
+        ImageView flashBtn = findViewById(R.id.flashBtn);
+        flashBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if (mCameraSource != null) {
+                    String mode = mCameraSource.getFlashMode();
+                    if (mode.equals(Camera.Parameters.FLASH_MODE_TORCH))
+                        mCameraSource.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                    else
+                        mCameraSource.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                }
+            }
+        });
+        flashBtn.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                Toast.makeText(v.getContext(), getString(R.string.flash), Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
     }
-
 
 
     /**
@@ -139,7 +158,7 @@ public class OcrCaptureActivity extends AppCompatActivity {
      * Creates and starts the camera.  Note that this uses a higher resolution in comparison
      * to other detection examples to enable the ocr detector to detect small text samples
      * at long distances.
-     *
+     * <p>
      * Suppressing InlinedApi since there is a check that the minimum version is met before using
      * the constant.
      */
@@ -187,6 +206,7 @@ public class OcrCaptureActivity extends AppCompatActivity {
                         .setFocusMode(autoFocus ? Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE : null)
                         .build();
     }
+
 
     /**
      * Restarts the camera.
@@ -249,7 +269,7 @@ public class OcrCaptureActivity extends AppCompatActivity {
         if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "Camera permission granted - initialize the camera source");
             // We have permission, so create the camerasource
-            boolean autoFocus = getIntent().getBooleanExtra(AutoFocus,false);
+            boolean autoFocus = getIntent().getBooleanExtra(AutoFocus, false);
             boolean useFlash = getIntent().getBooleanExtra(UseFlash, false);
             createCameraSource(autoFocus, useFlash);
             return;
@@ -315,13 +335,11 @@ public class OcrCaptureActivity extends AppCompatActivity {
                 data.putExtra(TextBlockObject, text.getValue());
                 setResult(CommonStatusCodes.SUCCESS, data);
                 finish();
-            }
-            else {
+            } else {
                 Log.d(TAG, "text data is null");
             }
-        }
-        else {
-            Log.d(TAG,"no text detected");
+        } else {
+            Log.d(TAG, "no text detected");
         }
         return text != null;
     }

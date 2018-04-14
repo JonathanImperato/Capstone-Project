@@ -1,11 +1,14 @@
 
 package com.ji.bookinhand.api.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.List;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
-public class VolumeInfo {
+public class VolumeInfo implements Parcelable{
 
     @SerializedName("title")
     @Expose
@@ -70,6 +73,55 @@ public class VolumeInfo {
     @SerializedName("subtitle")
     @Expose
     private String subtitle;
+
+    public VolumeInfo() {
+    }
+
+    protected VolumeInfo(Parcel in) {
+        title = in.readString();
+        authors = in.createStringArrayList();
+        publisher = in.readString();
+        publishedDate = in.readString();
+        if (in.readByte() == 0) {
+            pageCount = null;
+        } else {
+            pageCount = in.readInt();
+        }
+        printType = in.readString();
+        categories = in.createStringArrayList();
+        if (in.readByte() == 0) {
+            averageRating = null;
+        } else {
+            averageRating = in.readDouble();
+        }
+        if (in.readByte() == 0) {
+            ratingsCount = null;
+        } else {
+            ratingsCount = in.readInt();
+        }
+        maturityRating = in.readString();
+        byte tmpAllowAnonLogging = in.readByte();
+        allowAnonLogging = tmpAllowAnonLogging == 0 ? null : tmpAllowAnonLogging == 1;
+        contentVersion = in.readString();
+        language = in.readString();
+        previewLink = in.readString();
+        infoLink = in.readString();
+        canonicalVolumeLink = in.readString();
+        description = in.readString();
+        subtitle = in.readString();
+    }
+
+    public static final Creator<VolumeInfo> CREATOR = new Creator<VolumeInfo>() {
+        @Override
+        public VolumeInfo createFromParcel(Parcel in) {
+            return new VolumeInfo(in);
+        }
+
+        @Override
+        public VolumeInfo[] newArray(int size) {
+            return new VolumeInfo[size];
+        }
+    };
 
     public String getTitle() {
         return title;
@@ -239,4 +291,45 @@ public class VolumeInfo {
         this.subtitle = subtitle;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel parcel, int i) {
+        parcel.writeString(title);
+        parcel.writeStringList(authors);
+        parcel.writeString(publisher);
+        parcel.writeString(publishedDate);
+        if (pageCount == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(pageCount);
+        }
+        parcel.writeString(printType);
+        parcel.writeStringList(categories);
+        if (averageRating == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeDouble(averageRating);
+        }
+        if (ratingsCount == null) {
+            parcel.writeByte((byte) 0);
+        } else {
+            parcel.writeByte((byte) 1);
+            parcel.writeInt(ratingsCount);
+        }
+        parcel.writeString(maturityRating);
+        parcel.writeByte((byte) (allowAnonLogging == null ? 0 : allowAnonLogging ? 1 : 2));
+        parcel.writeString(contentVersion);
+        parcel.writeString(language);
+        parcel.writeString(previewLink);
+        parcel.writeString(infoLink);
+        parcel.writeString(canonicalVolumeLink);
+        parcel.writeString(description);
+        parcel.writeString(subtitle);
+    }
 }

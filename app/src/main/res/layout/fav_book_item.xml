@@ -3,12 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/book_item"
-    android:layout_width="match_parent"
+    android:layout_width="130dp"
     android:layout_height="wrap_content"
-    android:layout_gravity="center"
     android:layout_marginTop="8dp"
     android:fitsSystemWindows="true"
-    android:gravity="center">
+    android:gravity="center"
+    android:padding="4dp">
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="120dp"
@@ -25,9 +25,7 @@
             android:layout_gravity="center"
             android:clickable="true"
             android:foreground="?selectableItemBackground"
-            app:cardUseCompatPadding="true"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent">
+            app:cardUseCompatPadding="true">
 
             <ImageView
                 android:id="@+id/thumbnail"
@@ -40,10 +38,10 @@
                 android:scaleType="matrix" />
 
             <ImageButton
+                android:id="@+id/more_fav"
                 style="?android:attr/actionOverflowButtonStyle"
                 android:layout_width="20dp"
                 android:layout_height="30dp"
-                android:id="@+id/more"
                 android:layout_gravity="bottom|right"
                 android:contentDescription="Option Menu"
                 android:tint="#fff" />
@@ -54,9 +52,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
+            android:gravity="left"
             android:maxLines="1"
             android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="@+id/card"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/card"
             tools:text="Titolo" />
 
@@ -64,9 +63,12 @@
             android:id="@+id/author"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
             android:ellipsize="end"
+            android:gravity="left"
             android:maxLines="1"
-            app:layout_constraintLeft_toLeftOf="@+id/card"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/title"
             tools:text="Autore" />
 
@@ -76,9 +78,10 @@
             android:layout_height="wrap_content"
             android:ellipsize="end"
             android:maxLines="1"
+            android:gravity="left"
             android:textColor="@color/colorAccent"
             android:textStyle="bold"
-            app:layout_constraintLeft_toLeftOf="@+id/card"
+            app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintTop_toBottomOf="@id/author"
             tools:text="Valutazione 5.5" />
     </android.support.constraint.ConstraintLayout>
