@@ -37,6 +37,9 @@ dependencies {
     implementation 'com.android.support:support-v4:27.0.2'
     implementation 'com.google.android.gms:play-services-vision:11.8.0'
     implementation 'com.makeramen:roundedimageview:2.3.0'
+    implementation 'com.android.support:customtabs:27.0.2'
+    //searchbar
+    implementation 'com.github.crysehillmes:PersistentSearchView:4da778cd90'
     //JSON STUFF
     implementation 'com.squareup.retrofit2:retrofit:2.4.0'
     implementation 'com.squareup.retrofit2:converter-gson:2.4.0'

@@ -26,6 +26,7 @@ public class ResultsActivity extends AppCompatActivity {
     private String TAG = this.getClass().getSimpleName();
     RecyclerView recyclerView;
     ProgressBar pbar;
+    String result;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,19 +38,28 @@ public class ResultsActivity extends AppCompatActivity {
         pbar = findViewById(R.id.loadingBar);
         pbar.setIndeterminate(true);
         pbar.setVisibility(View.VISIBLE);
+
         //recyclerview stuff
         recyclerView = findViewById(R.id.RecyclerView);
         recyclerView.setHasFixedSize(true);
         int columns = getNumberOfColumns();
         recyclerView.setLayoutManager(new GridLayoutManager(this, columns));
-
-        String result = getIntent().getExtras().getString("result");
-        getBookList(result);
+        if (getIntent().getExtras() != null && getIntent().getExtras().getString("result") != null) {
+            Boolean isCategSearch = getIntent().getExtras().getBoolean("isCat");
+            if (isCategSearch) {
+                result = getIntent().getExtras().getString("result");
+                getBookList("subject:" + result);
+                toolbar.setTitle(result);
+            } else {
+                result = getIntent().getExtras().getString("result");
+                getBookList(result);
+                toolbar.setTitle(result);
+            }
+        }
 
     }
 
     private void getBookList(String query) {
-
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://www.googleapis.com/books/v1/")
                 .addConverterFactory(GsonConverterFactory.create())

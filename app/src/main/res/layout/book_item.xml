@@ -33,17 +33,18 @@
                 android:id="@+id/thumbnail"
                 android:layout_width="120dp"
                 android:layout_height="180dp"
-                android:transitionName="@string/transition_string"
                 android:adjustViewBounds="true"
                 android:contentDescription="thumbnail"
+                android:foreground="?selectableItemBackground"
                 android:minWidth="120dp"
-                android:scaleType="matrix" />
+                android:scaleType="matrix"
+                android:transitionName="@string/transition_string" />
 
             <ImageButton
+                android:id="@+id/more"
                 style="?android:attr/actionOverflowButtonStyle"
                 android:layout_width="20dp"
                 android:layout_height="30dp"
-                android:id="@+id/more"
                 android:layout_gravity="bottom|right"
                 android:contentDescription="Option Menu"
                 android:tint="#fff" />

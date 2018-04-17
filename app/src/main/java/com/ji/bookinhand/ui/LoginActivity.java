@@ -111,12 +111,11 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         try {
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             // Signed in successfully, show authenticated UI.
-            if (account != null)
+            if (account != null) {
                 startActivity(new Intent(this, HomeActivity.class).putExtra("name", account.getDisplayName())
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                        .addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                        .addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
-
+                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+                this.finish();
+            }
             // TODO:   updateUI(account);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.

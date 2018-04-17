@@ -3,18 +3,28 @@ package com.ji.bookinhand.ui;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.AppCompatButton;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
+import com.bumptech.glide.request.target.SimpleTarget;
+import com.bumptech.glide.request.transition.Transition;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.common.api.CommonStatusCodes;
@@ -23,7 +33,9 @@ import com.ji.bookinhand.adapters.BooksListAdapter;
 import com.ji.bookinhand.api.models.ImageLinks;
 import com.ji.bookinhand.api.models.Item;
 import com.ji.bookinhand.api.models.VolumeInfo;
-import com.makeramen.roundedimageview.RoundedImageView;
+
+import org.cryse.widget.persistentsearch.PersistentSearchView;
+import org.cryse.widget.persistentsearch.SearchItem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -47,14 +59,18 @@ import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_RATING_C
 import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_SUBTITLE;
 import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_TITLE;
 
-public class HomeActivity extends AppCompatActivity {
+public class HomeActivity extends AppCompatActivity implements PersistentSearchView.SearchListener {
 
     GoogleSignInAccount account;
-    AppCompatButton takePhoto;
+    FloatingActionButton takePhoto;
     private String TAG = this.getClass().getSimpleName();
     private static final int RC_OCR_CAPTURE = 9003;
     RecyclerView favRecyclerview;
     BooksListAdapter adapter;
+    ArrayList<Item> mFavList;
+    PersistentSearchView mSearchView;
+    MenuItem mSearchMenuItem;
+    MenuItem mProfileMenuItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +79,8 @@ public class HomeActivity extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Home");
+        CollapsingToolbarLayout ct = findViewById(R.id.collapstoolbar);
+        ct.setTitle("Home");
 
         if (getIntent() != null && getIntent().getExtras() != null) {
             String name = getIntent().getExtras().getString("name");
@@ -77,16 +95,22 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }).show();
         }
-        RoundedImageView profilePic = findViewById(R.id.profilePic);
+        mSearchView = (PersistentSearchView) findViewById(R.id.searchview);
+        mSearchView.setSearchListener(this);
+
+      /*  RoundedImageView profilePic = findViewById(R.id.profilePic);
         if (account != null)
             Glide.with(this).load(account.getPhotoUrl()).into(profilePic);
-        else profilePic.setVisibility(View.GONE);
+        else
+            Glide.with(this).load("https://lh3.googleusercontent.com/-KpBZmzRBm4A/AAAAAAAAAAI/AAAAAAAAM0k/qVSHIMlvopQ/s60-p-rw-no/photo.jpg").into(profilePic);
+
+       */
         favRecyclerview = findViewById(R.id.favRecyclerview);
         favRecyclerview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         loadFav();
         adapter.notifyDataSetChanged();
-
         takePhoto = findViewById(R.id.takePhoto);
+        takePhoto.setVisibility(View.VISIBLE);
         takePhoto.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -97,11 +121,48 @@ public class HomeActivity extends AppCompatActivity {
                 startActivityForResult(intent, RC_OCR_CAPTURE);
             }
         });
+        if (mProfileMenuItem != null && account != null) {
+            Glide.with(this)
+                    .load(account.getPhotoUrl())
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(new SimpleTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            mProfileMenuItem.setIcon(resource);
+                        }
+                    });
+        } else {
+            Glide.with(this)
+                    .load("https://lh3.googleusercontent.com/-KpBZmzRBm4A/AAAAAAAAAAI/AAAAAAAAM0k/qVSHIMlvopQ/s60-p-rw-no/photo.jpg")
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(new SimpleTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            mProfileMenuItem.setIcon(resource);
+                        }
+                    });
 
+        }
+    }
+
+    public void openSearch() {
+        View menuItemView = findViewById(R.id.action_search);
+        mSearchView.setStartPositionFromMenuItem(menuItemView);
+        mSearchView.openSearch();
     }
 
     private void loadFav() {
-        adapter = new BooksListAdapter(this, getFav());
+        mFavList = getFav();
+        adapter = new BooksListAdapter(this, mFavList);
+        adapter.notifyDataSetChanged();
+        favRecyclerview.setAdapter(adapter);
+    }
+
+    void updateRV() {
+        mFavList.clear();
+        adapter.notifyDataSetChanged();
+        mFavList = getFav();
+        adapter = new BooksListAdapter(this, mFavList);
         adapter.notifyDataSetChanged();
         favRecyclerview.setAdapter(adapter);
     }
@@ -229,7 +290,9 @@ public class HomeActivity extends AppCompatActivity {
                 .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // FIRE ZE MISSILES!
-                        startActivity(new Intent(HomeActivity.this, ResultsActivity.class).putExtra("result", text));
+                        startActivity(new Intent(HomeActivity.this, ResultsActivity.class)
+                                .putExtra("result", text)
+                                .putExtra("isCat", false)); //is a category search (here is false since it is not)
                     }
                 })
                 .setNegativeButton("Try again", new DialogInterface.OnClickListener() {
@@ -256,9 +319,91 @@ public class HomeActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        if (adapter != null) {
-            adapter.notifyDataSetChanged();
-            adapter.notifyItemRangeInserted(favRecyclerview.getLayoutManager().getItemCount(), getFav().size());
+        updateRV();
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+
+        if (mSearchView.isSearching()) {
+            mSearchView.closeSearch();
         }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_searchview, menu);
+        mSearchMenuItem = menu.findItem(R.id.action_search);
+        mProfileMenuItem = menu.findItem(R.id.action_profile);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.action_profile:
+                if (account != null) {
+                    //settings activity?
+                } else {
+                    startActivity(new Intent(this, LoginActivity.class));
+                }
+                break;
+            case R.id.action_search:
+                if (mSearchMenuItem != null) {
+                    openSearch();
+                    return true;
+                } else {
+                    return false;
+                }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onSuggestion(SearchItem searchItem) {
+        return false;
+    }
+
+    @Override
+    public void onSearchCleared() {
+
+    }
+
+    @Override
+    public void onSearchTermChanged(String term) {
+
+    }
+
+    @Override
+    public void onSearch(String query) {
+        mSearchView.closeSearch();
+        startActivity(new Intent(HomeActivity.this, ResultsActivity.class)
+                .putExtra("result", query)
+                .putExtra("isCat", false)); //is a category search (here is false since it is not)
+    }
+
+    @Override
+    public void onSearchEditOpened() {
+
+    }
+
+    @Override
+    public void onSearchEditClosed() {
+
+    }
+
+    @Override
+    public boolean onSearchEditBackPressed() {
+        return false;
+    }
+
+    @Override
+    public void onSearchExit() {
+
     }
 }

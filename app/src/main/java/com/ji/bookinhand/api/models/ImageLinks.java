@@ -15,13 +15,29 @@ public class ImageLinks implements Parcelable {
     @SerializedName("thumbnail")
     @Expose
     private String thumbnail;
+    @SerializedName("extraLarge")
+    @Expose
+    private String extraLarge;
+    @SerializedName("large")
+    @Expose
+    private String large;
+    @SerializedName("medium")
+    @Expose
+    private String medium;
+
+
+    public ImageLinks( ) {
+    }
+
 
     protected ImageLinks(Parcel in) {
         smallThumbnail = in.readString();
         thumbnail = in.readString();
+        extraLarge = in.readString();
+        large = in.readString();
+        medium = in.readString();
     }
-    public ImageLinks( ) {
-    }
+
     public static final Creator<ImageLinks> CREATOR = new Creator<ImageLinks>() {
         @Override
         public ImageLinks createFromParcel(Parcel in) {
@@ -50,6 +66,30 @@ public class ImageLinks implements Parcelable {
         this.thumbnail = thumbnail;
     }
 
+    public String getExtraLarge() {
+        return extraLarge;
+    }
+
+    public void setExtraLarge(String extraLarge) {
+        this.extraLarge = extraLarge;
+    }
+
+    public String getLarge() {
+        return large;
+    }
+
+    public void setLarge(String large) {
+        this.large = large;
+    }
+
+    public String getMedium() {
+        return medium;
+    }
+
+    public void setMedium(String medium) {
+        this.medium = medium;
+    }
+
     @Override
     public int describeContents() {
         return 0;
@@ -59,5 +99,8 @@ public class ImageLinks implements Parcelable {
     public void writeToParcel(Parcel parcel, int i) {
         parcel.writeString(smallThumbnail);
         parcel.writeString(thumbnail);
+        parcel.writeString(extraLarge);
+        parcel.writeString(large);
+        parcel.writeString(medium);
     }
 }

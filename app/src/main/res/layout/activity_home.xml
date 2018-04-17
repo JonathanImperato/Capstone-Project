@@ -1,79 +1,119 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:fitsSystemWindows="true">
 
 
     <android.support.design.widget.AppBarLayout
-        android:id="@+id/appbar"
+        android:id="@+id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="200dp"
+        android:theme="@style/AppTheme.AppBarOverlay">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/my_toolbar"
+
+        <android.support.design.widget.CollapsingToolbarLayout
+            android:id="@+id/collapstoolbar"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="?attr/colorPrimary"
-            android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="Home"
-            app:titleTextColor="#fff">
+            android:layout_height="match_parent"
+            android:fitsSystemWindows="true"
+            app:contentScrim="@color/colorPrimary"
+            app:elevation="@dimen/cardview_default_elevation"
+            app:layout_scrollFlags="scroll|exitUntilCollapsed"
+            app:toolbarId="@+id/my_toolbar">
 
-            <com.makeramen.roundedimageview.RoundedImageView
-                android:id="@+id/profilePic"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="right|top"
-                android:layout_marginRight="8dp" />
-        </android.support.v7.widget.Toolbar>
+
+                <android.support.v7.widget.Toolbar
+                    android:id="@+id/my_toolbar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?actionBarSize"
+                    android:background="?attr/colorPrimary"
+                    app:layout_collapseMode="pin"
+                    app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                    app:title="Home"
+                    app:titleTextColor="#fff">
+
+
+                    <!--
+                                    <android.support.v7.widget.AppCompatButton
+                                        android:id="@+id/takePhoto"
+                                        style="@style/Widget.AppCompat.Button.Colored"
+                                        android:layout_width="150dp"
+                                        android:layout_height="wrap_content"
+                                        android:background="@drawable/roundbutton"
+                                        android:backgroundTint="@color/colorPrimaryDark"
+                                        android:drawableLeft="@drawable/ic_photo_camera_black_24dp"
+                                        android:drawableTint="#ffffff"
+                                        android:foreground="?selectableItemBackground"
+                                        android:gravity="center"
+                                        android:padding="16dp"
+                                        android:text="Take Photo"
+                                        android:textAllCaps="false"
+                                        app:elevation="4dp" /> -->
+
+                </android.support.v7.widget.Toolbar>
+
+        </android.support.design.widget.CollapsingToolbarLayout>
     </android.support.design.widget.AppBarLayout>
 
 
-    <android.support.constraint.ConstraintLayout
-        android:id="@+id/bar_body"
+    <org.cryse.widget.persistentsearch.PersistentSearchView
+        android:id="@+id/searchview"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:background="@color/colorPrimary"
-        android:elevation="4dp"
-        app:layout_constraintTop_toBottomOf="@id/appbar">
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:elevation="6dp"
+        android:visibility="gone"
+        app:layout_constraintTop_toTopOf="@id/app_bar"
+        app:persistentSV_customToolbarHeight="56dp"
+        app:persistentSV_displayMode="menuItem"
+        app:persistentSV_editHintText="@string/search_book"
+        app:persistentSV_editHintTextColor="#61000000"
+        app:persistentSV_editTextColor="#DE000000"
+        app:persistentSV_searchCardElevation="4dp"
+        app:persistentSV_searchTextColor="#DE000000" />
+    <android.support.v4.widget.NestedScrollView
+        android:id="@+id/scrollview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="8dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <android.support.v7.widget.AppCompatButton
-            android:id="@+id/takePhoto"
-            style="@style/Widget.AppCompat.Button.Colored"
-            android:layout_width="150dp"
-            android:layout_height="wrap_content"
-            android:background="@drawable/roundbutton"
-            android:backgroundTint="@color/colorPrimaryDark"
-            android:drawableLeft="@drawable/ic_photo_camera_black_24dp"
-            android:drawableTint="#ffffff"
-            android:foreground="?selectableItemBackground"
-            android:padding="16dp"
-            android:text="Take Photo"
-            android:textAllCaps="false"
-            app:elevation="4dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintLeft_toLeftOf="parent"
-            app:layout_constraintRight_toRightOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+        <android.support.constraint.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
 
-    </android.support.constraint.ConstraintLayout>
+            <TextView
+                android:id="@+id/favsText"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:text="Welcome, here will appear your favourite books!"
+                android:textSize="16sp"
+                android:textStyle="bold" />
 
-    <TextView
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/favRecyclerview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:layout_constraintTop_toBottomOf="@id/favsText"
+                tools:listitem="@layout/fav_book_item" />
+        </android.support.constraint.ConstraintLayout>
+    </android.support.v4.widget.NestedScrollView>
+
+    <!-- WILL HAVE TO SEPARATE DIFFERENT CATEGORIES ON DIFFERENT LINES-->
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/takePhoto"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="16dp"
-        android:text="Start the research by hitting the take photo button or the search book one to start. We will do the rest for you."
-        android:textSize="16sp"
-        android:textStyle="bold"
-        android:visibility="gone"
-        app:layout_constraintTop_toBottomOf="@id/bar_body" />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/favRecyclerview"
-        android:layout_width="match_parent"
-        app:layout_constraintTop_toBottomOf="@id/bar_body"
-        android:layout_height="wrap_content"
-        tools:listitem="@layout/fav_book_item"></android.support.v7.widget.RecyclerView>
-</android.support.constraint.ConstraintLayout>
+        android:layout_marginRight="4dp"
+        android:background="@color/colorAccent"
+        android:src="@drawable/ic_photo_camera_black_24dp"
+        android:visibility="visible"
+        app:fabSize="normal"
+        app:layout_anchor="@id/app_bar"
+        app:layout_anchorGravity="bottom|end|right" />
+</android.support.design.widget.CoordinatorLayout>

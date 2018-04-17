@@ -18,6 +18,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.ji.bookinhand.R;
@@ -25,7 +26,7 @@ import com.ji.bookinhand.api.models.BooksList;
 import com.ji.bookinhand.api.models.ImageLinks;
 import com.ji.bookinhand.api.models.Item;
 import com.ji.bookinhand.api.models.VolumeInfo;
-import com.ji.bookinhand.ui.BookDetail;
+import com.ji.bookinhand.ui.BookDetailActivity;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,14 +96,28 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                 if (rating != null && rating != 0.0)
                     holder.rating.setText("Rating " + rating);
                 else holder.rating.setText("N/A");
-                if (image != null && image.getThumbnail() != null) {
-                    String imgUrl = image.getThumbnail();
-                    Glide.with(mContext)
-                            .load(imgUrl)
-                            .into(holder.thumbnail);
-                }
+                if (image != null)
+                    if (image.getExtraLarge() != null)
+                        Glide.with(mContext)
+                                .load(image.getExtraLarge())
+                                .into(holder.thumbnail);
+                    else if (image.getLarge() != null)
+                        Glide.with(mContext)
+                                .load(image.getLarge())
+                                .into(holder.thumbnail);
+                    else if (image.getMedium() != null)
+                        Glide.with(mContext)
+                                .load(image.getMedium())
+                                .into(holder.thumbnail);
+                    else if (image.getThumbnail() != null)
+                        Glide.with(mContext)
+                                .load(image.getThumbnail())
+                                .into(holder.thumbnail);
+
             }
-        } else {
+        } else
+
+        {
             if (position < 10 && mBooksList != null) { //every page contains 10
                 String title = mBooksList.getItems().get(position).getVolumeInfo().getTitle();
                 List<String> author = mBooksList.getItems().get(position).getVolumeInfo().getAuthors();
@@ -117,12 +132,23 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                 if (rating != null)
                     holder.rating.setText("Rating " + rating);
                 else holder.rating.setText("N/A");
-                if (image != null && image.getThumbnail() != null) {
-                    String imgUrl = image.getThumbnail();
-                    Glide.with(mContext)
-                            .load(imgUrl)
-                            .into(holder.thumbnail);
-                }
+                if (image != null)
+                    if (image.getExtraLarge() != null)
+                        Glide.with(mContext)
+                                .load(image.getExtraLarge())
+                                .into(holder.thumbnail);
+                    else if (image.getLarge() != null)
+                        Glide.with(mContext)
+                                .load(image.getLarge())
+                                .into(holder.thumbnail);
+                    else if (image.getMedium() != null)
+                        Glide.with(mContext)
+                                .load(image.getMedium())
+                                .into(holder.thumbnail);
+                    else if (image.getThumbnail() != null)
+                        Glide.with(mContext)
+                                .load(image.getThumbnail())
+                                .into(holder.thumbnail);
             }
         }
     }
@@ -131,10 +157,12 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
     public int getItemCount() {
         if (isFav) {
             if (mFavList != null && mFavList.size() >= 10) return 10;
-            return (mFavList == null || mFavList.size() - 1 == 0) ? 0 : mFavList.size();
+            return (mFavList == null) ? 0 : mFavList.size();
         } else {
             if (mBooksList != null && mBooksList.getTotalItems() >= 10) return 10;
-            return (mBooksList == null || mBooksList.getTotalItems() - 1 == 0) ? 0 : mBooksList.getTotalItems();
+            else if (mBooksList == null || mBooksList.getTotalItems() == 0)
+                Toast.makeText(mContext, "Sorry, no results found.", Toast.LENGTH_SHORT).show();
+            return (mBooksList == null) ? 0 : mBooksList.getTotalItems();
         }
     }
 
@@ -167,7 +195,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
             final PopupMenu popup = new PopupMenu(mContext, view);
             MenuInflater inflater = popup.getMenuInflater();
 
-            Intent intent = new Intent(mContext, BookDetail.class);
+            Intent intent = new Intent(mContext, BookDetailActivity.class);
             // Get the transition name from the string
             String transitionName = mContext.getString(R.string.transition_string);
             ActivityOptionsCompat options =
@@ -216,6 +244,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                                     if (position != -1) {
                                         addFavourite(position);
                                         mFavList.add(position, justRemovedItem);
+                                        //        notifyItemRangeInserted(position, mFavList.size());
                                         notifyItemInserted(position);
                                         hasRestored[0] = true;
                                     }
@@ -237,22 +266,27 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                 case R.id.book_item:
                     if (isFav) {
                         intent.putExtra("volume", mFavList.get(position).getVolumeInfo());
+                        intent.putExtra("isFav", true);
                         intent.putExtra("imgs", mFavList.get(position).getVolumeInfo().getImageLinks());
                         ActivityCompat.startActivity(mContext, intent, options.toBundle());
                     } else {
                         intent.putExtra("volume", mBooksList.getItems().get(position).getVolumeInfo());
+                        intent.putExtra("isFav", false);
+                        intent.putExtra("isbn", mBooksList.getItems().get(position).getVolumeInfo().getIndustryIdentifiers().get(0).getIdentifier());
                         intent.putExtra("imgs", mBooksList.getItems().get(position).getVolumeInfo().getImageLinks());
                         ActivityCompat.startActivity(mContext, intent, options.toBundle());
                     }
                     break;
-
                 case R.id.thumbnail:
                     if (isFav) {
                         intent.putExtra("volume", mFavList.get(position).getVolumeInfo());
+                        intent.putExtra("isFav", true);
                         intent.putExtra("imgs", mFavList.get(position).getVolumeInfo().getImageLinks());
                         ActivityCompat.startActivity(mContext, intent, options.toBundle());
                     } else {
                         intent.putExtra("volume", mBooksList.getItems().get(position).getVolumeInfo());
+                        intent.putExtra("isFav", false);
+                        intent.putExtra("isbn", mBooksList.getItems().get(position).getVolumeInfo().getIndustryIdentifiers().get(0).getIdentifier());
                         intent.putExtra("imgs", mBooksList.getItems().get(position).getVolumeInfo().getImageLinks());
                         ActivityCompat.startActivity(mContext, intent, options.toBundle());
                     }
@@ -270,10 +304,14 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                 if (info.getAuthors() != null)
                     for (String author : info.getAuthors()) {
                         if (authorsList != null)
-                            if (!authorsList.toString().contains(author))
-                                authorsList.append(author).append(","); //i separate every author using a ,
-                            else
-                                authorsList = new StringBuilder(author + ","); //i separate every author using a ,
+                            if (info.getAuthors().size() == 1)
+                                authorsList.append(author);
+                            else {
+                                if (!authorsList.toString().contains(author))
+                                    authorsList.append(author).append(","); //i separate every author using a ,
+                                else
+                                    authorsList = new StringBuilder(author + ","); //i separate every author using a ,
+                            }
                     }
                 values.put(COLUMN_AUTHORS, authorsList.toString());
                 values.put(COLUMN_PUBLISHER, info.getPublisher());
@@ -289,11 +327,18 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                         if (!categories.contains(cat))
                             authorsList.append(cat).append(","); //i separate every author using a ,
                     }
-                values.put(COLUMN_CATEGORIES, categories);
+                values.put(COLUMN_CATEGORIES, categories.toString());
                 values.put(COLUMN_AVERAGE_RATING, info.getAverageRating());
                 values.put(COLUMN_RATING_COUNT, info.getRatingsCount());
                 values.put(COLUMN_MATURITY_RATING, info.getMaturityRating());
-                values.put(COLUMN_IMAGE_LINKS, info.getImageLinks().getThumbnail());
+                if (info.getImageLinks().getExtraLarge() != null)
+                    values.put(COLUMN_IMAGE_LINKS, info.getImageLinks().getExtraLarge());
+                else if (info.getImageLinks().getLarge() != null)
+                    values.put(COLUMN_IMAGE_LINKS, info.getImageLinks().getLarge());
+                else if (info.getImageLinks().getMedium() != null)
+                    values.put(COLUMN_IMAGE_LINKS, info.getImageLinks().getMedium());
+                else if (info.getImageLinks().getThumbnail() != null)
+                    values.put(COLUMN_IMAGE_LINKS, info.getImageLinks().getThumbnail());
                 values.put(COLUMN_LANGUAGE, info.getLanguage());
                 values.put(COLUMN_PREVIEW_LINK, info.getPreviewLink());
                 values.put(COLUMN_INFO_LINK, info.getInfoLink());
@@ -329,4 +374,68 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
             return c.getCount() > 0;
         }
     }
+/*
+    class MySection extends StatelessSection {
+
+        ArrayList<String> totalCategories = new ArrayList<>();
+
+        public MySection() {
+            // call constructor with layout resources for this Section header and items
+            super(SectionParameters.builder()
+                    .itemResourceId(R.layout.section_item)
+                    .headerResourceId(R.layout.section_header)
+                    .build());
+        }
+
+        void generateSections() {
+            for (Item item : mFavList) {getCategories();
+            }
+        }
+
+        void getCategories(String title) {
+            String newName = title.replace("_", " ");
+            String[] selections = {newName};
+            ArrayList<String> categories = new ArrayList<>();
+
+            Cursor cursor = mContext.getContentResolver().query(
+                    BASE_CONTENT_URI,
+                    new String[]{COLUMN_CATEGORIES},
+                    COLUMN_TITLE + " =? ",
+                    selections,
+                    null);
+            if (cursor != null) {
+                cursor.moveToFirst();
+                String category;
+                for (int i = 0; i < cursor.getCount(); i++) {
+                    category = cursor.getString(cursor
+                            .getColumnIndexOrThrow(COLUMN_CATEGORIES));
+                    categories.add(category);
+                    cursor.moveToNext();
+                }
+                // always close the cursor
+                cursor.close();
+            }
+
+            totalCategories = categories;
+        }
+
+        @Override
+        public int getContentItemsTotal() {
+            return itemList.size(); // number of items of this section
+        }
+
+        @Override
+        public RecyclerView.ViewHolder getItemViewHolder(View view) {
+            // return a custom instance of ViewHolder for the items of this section
+            return new MyItemViewHolder(view);
+        }
+
+        @Override
+        public void onBindItemViewHolder(RecyclerView.ViewHolder holder, int position) {
+            MyItemViewHolder itemHolder = (MyItemViewHolder) holder;
+
+            // bind your view here
+            itemHolder.tvItem.setText(itemList.get(position));
+        }
+    } */
 }
