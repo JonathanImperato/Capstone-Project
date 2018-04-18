@@ -299,7 +299,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                 Item libro = mBooksList.getItems().get(position);
                 VolumeInfo info = libro.getVolumeInfo();
                 ContentValues values = new ContentValues();
-                values.put(COLUMN_TITLE, info.getTitle().replace("_", " "));
+                values.put(COLUMN_TITLE, info.getTitle());
                 StringBuilder authorsList = new StringBuilder();
                 if (info.getAuthors() != null)
                     for (String author : info.getAuthors()) {
@@ -357,12 +357,12 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
             mContext.getContentResolver().delete(
                     BASE_CONTENT_URI,
                     COLUMN_TITLE + " =? ",
-                    new String[]{title.replace("_", " ")}
+                    new String[]{title}
             );
         }
 
         boolean isFavourite(String title) {
-            String newName = title.replace("_", " ");
+            String newName = title;
             String[] selections = {newName};
             Cursor c = mContext.getContentResolver().query(
                     BASE_CONTENT_URI,

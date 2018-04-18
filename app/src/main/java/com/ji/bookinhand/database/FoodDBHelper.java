@@ -14,7 +14,7 @@ public class FoodDBHelper extends SQLiteOpenHelper {
 
     //name & version
     private static final String DATABASE_NAME = "recipes.db";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
 
     public FoodDBHelper(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);

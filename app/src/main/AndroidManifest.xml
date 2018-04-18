@@ -65,7 +65,11 @@
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
             android:name=".ui.MoreInfoActivity"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.BottomNavActivity"
+            android:theme="@style/AppTheme.NoActionBar"
+            android:label="@string/title_activity_bottom_nav"></activity>
     </application>
 
 </manifest>

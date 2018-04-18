@@ -131,7 +131,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
                             mProfileMenuItem.setIcon(resource);
                         }
                     });
-        } else {
+        } else if (mProfileMenuItem != null && account == null) {
             Glide.with(this)
                     .load("https://lh3.googleusercontent.com/-KpBZmzRBm4A/AAAAAAAAAAI/AAAAAAAAM0k/qVSHIMlvopQ/s60-p-rw-no/photo.jpg")
                     .apply(RequestOptions.circleCropTransform())
@@ -178,7 +178,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
         ArrayList<Item> books = new ArrayList<>();
         if (ingredientCursor != null) {
             while (ingredientCursor.moveToNext()) {
-                Item ingredient = getIngredientFromCursor(ingredientCursor);
+                Item ingredient = getDataFromCursor(ingredientCursor);
                 books.add(ingredient);
             }
             ingredientCursor.close();
@@ -187,7 +187,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
         return books;
     }
 
-    private Item getIngredientFromCursor(Cursor ingredientCursor) {
+    private Item getDataFromCursor(Cursor ingredientCursor) {
         Item ingredient = new Item();
         VolumeInfo volumeInfo = new VolumeInfo();
         volumeInfo.setTitle(

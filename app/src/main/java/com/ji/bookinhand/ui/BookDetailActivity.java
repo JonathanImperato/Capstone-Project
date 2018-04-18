@@ -22,6 +22,7 @@ import com.ji.bookinhand.adapters.CategoriesAdapter;
 import com.ji.bookinhand.api.models.ImageLinks;
 import com.ji.bookinhand.api.models.VolumeInfo;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -49,7 +50,7 @@ import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_SUBTITLE
 import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_TITLE;
 
 public class BookDetailActivity extends AppCompatActivity {
-    TextView titleTextView, authorTextView, pubblishdateTextView, addBookMark, descriptionBook;
+    TextView titleTextView, authorTextView, pubblishdateTextView, addBookMark, descriptionBook, ratingTextView;
     List<String> authors;
     ImageView bookmark;
     Boolean isFav;
@@ -57,6 +58,7 @@ public class BookDetailActivity extends AppCompatActivity {
     VolumeInfo item;
     RecyclerView catRecyclerView;
     CategoriesAdapter adapter;
+    ImageLinks imgs;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,19 +69,22 @@ public class BookDetailActivity extends AppCompatActivity {
         titleTextView = findViewById(id.book_title);
         authorTextView = findViewById(id.author);
         pubblishdateTextView = findViewById(id.pubblish_date);
+        ratingTextView = findViewById(id.rating_text);
         addBookMark = findViewById(id.addToFav2);
         catRecyclerView = findViewById(id.categories);
         descriptionBook = findViewById(id.description);
         catRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         bookmark = findViewById(id.addToFav);
+
         if (getIntent().getExtras() != null) {
             item = getIntent().getExtras().getParcelable("volume");
             isFav = isFavourite(item.getTitle());
             isbn = getIntent().getExtras().getString("isbn");
-            ImageLinks imgs = getIntent().getExtras().getParcelable("imgs");
+            imgs = getIntent().getExtras().getParcelable("imgs");
+
             String title_book = item.getTitle();
             String description = item.getDescription();
-
+            Double rating = item.getAverageRating();
             if (item.getPublishedDate() != null)
                 if (item.getPublishedDate().length() == 25)
                     date = item.getPublishedDate().substring(0, item.getPublishedDate().length() - 15);
@@ -93,6 +98,7 @@ public class BookDetailActivity extends AppCompatActivity {
                     authors = Arrays.asList(item.getAuthors().get(0).split(","));
             }
 
+            ratingTextView.setText("Rating " + rating);
             titleTextView.setText(title_book);
             if (description != null && description.length() > 15)
                 descriptionBook.setText(description);
@@ -107,7 +113,7 @@ public class BookDetailActivity extends AppCompatActivity {
             if (date != null)
                 pubblishdateTextView.setText(date);
 
-            if (authors != null)
+            if (authors != null) {
                 for (int i = 0; i < authors.size(); i++) {
                     String author = authors.get(i);
                     if (i == 0) {
@@ -121,6 +127,7 @@ public class BookDetailActivity extends AppCompatActivity {
                         authorTextView.setText(authorTextView.getText() + " " + author);
 
                 }
+            }
 
             ImageView img = findViewById(id.img);
             if (imgs != null) {
@@ -137,15 +144,41 @@ public class BookDetailActivity extends AppCompatActivity {
             List<String> cats = null;
             if (item.getCategories() != null)
                 if (isFav) {
-                    for (int i = 0; i < item.getCategories().size(); i++) {
-                        cats = Arrays.asList(item.getCategories().get(0).split(","));
-                    }
+                    cats = getFavCategories();//Arrays.asList(item.getCategories().get(i).split(","));
                 } else {
                     cats = item.getCategories();
                 }
             adapter = new CategoriesAdapter(this, cats);
             catRecyclerView.setAdapter(adapter);
         }
+    }
+
+    List<String> getFavCategories() {
+        List<String> lista = new ArrayList<>();
+
+        String[] projection = new String[]{COLUMN_CATEGORIES};
+        String selection = COLUMN_TITLE + " =? ";
+        String newName = item.getTitle();
+        String[] selectionArgs = {newName};
+        String sortOrder = null;
+        Cursor cursor = getContentResolver().query(BASE_CONTENT_URI, projection, selection, selectionArgs,
+                sortOrder);
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+            String category;
+            for (int i = 0; i < cursor.getCount(); i++) {
+                category = cursor.getString(cursor
+                        .getColumnIndexOrThrow(COLUMN_CATEGORIES));
+                List<String> cat = Arrays.asList(category.split(","));
+                lista.addAll(cat);
+                cursor.moveToNext();
+            }
+
+            cursor.close();
+        }
+
+        return lista;
     }
 
     public void onAddBookmark(View view) {
@@ -164,7 +197,7 @@ public class BookDetailActivity extends AppCompatActivity {
     }
 
     boolean isFavourite(String title) {
-        String newName = title.replace("_", " ");
+        String newName = title;
         String[] selections = {newName};
         Cursor c = this.getContentResolver().query(
                 BASE_CONTENT_URI,
@@ -179,7 +212,7 @@ public class BookDetailActivity extends AppCompatActivity {
     void addToFavourite() {
         VolumeInfo info = item;
         ContentValues values = new ContentValues();
-        values.put(COLUMN_TITLE, info.getTitle().replace("_", " "));
+        values.put(COLUMN_TITLE, info.getTitle());
         StringBuilder authorsList = new StringBuilder();
         if (info.getAuthors() != null)
             for (String author : info.getAuthors()) {
@@ -207,15 +240,15 @@ public class BookDetailActivity extends AppCompatActivity {
         values.put(COLUMN_AVERAGE_RATING, info.getAverageRating());
         values.put(COLUMN_RATING_COUNT, info.getRatingsCount());
         values.put(COLUMN_MATURITY_RATING, info.getMaturityRating());
-        if (info.getImageLinks() != null)
-            if (info.getImageLinks().getExtraLarge() != null)
-                values.put(COLUMN_IMAGE_LINKS, info.getImageLinks().getExtraLarge());
-            else if (info.getImageLinks().getLarge() != null)
-                values.put(COLUMN_IMAGE_LINKS, info.getImageLinks().getLarge());
-            else if (info.getImageLinks().getMedium() != null)
-                values.put(COLUMN_IMAGE_LINKS, info.getImageLinks().getMedium());
-            else if (info.getImageLinks().getThumbnail() != null)
-                values.put(COLUMN_IMAGE_LINKS, info.getImageLinks().getThumbnail());
+        if (imgs != null)
+            if (imgs.getExtraLarge() != null)
+                values.put(COLUMN_IMAGE_LINKS, imgs.getExtraLarge());
+            else if (imgs.getLarge() != null)
+                values.put(COLUMN_IMAGE_LINKS, imgs.getLarge());
+            else if (imgs.getMedium() != null)
+                values.put(COLUMN_IMAGE_LINKS, imgs.getMedium());
+            else if (imgs.getThumbnail() != null)
+                values.put(COLUMN_IMAGE_LINKS, imgs.getThumbnail());
         values.put(COLUMN_LANGUAGE, info.getLanguage());
         values.put(COLUMN_PREVIEW_LINK, info.getPreviewLink());
         values.put(COLUMN_INFO_LINK, info.getInfoLink());
@@ -233,7 +266,7 @@ public class BookDetailActivity extends AppCompatActivity {
         );
     }
 
-    public void onPreviewClick(View view) {
+    public void onPreview(View view) {
         if (item != null) {
             String previewLink = item.getPreviewLink();
             if (previewLink != null) {
@@ -265,4 +298,5 @@ public class BookDetailActivity extends AppCompatActivity {
         startActivity(intent);
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
+
 }
