@@ -8,7 +8,6 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -133,9 +132,10 @@ public class HomeFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_home, container, false);
-        mRecyclerView = v.findViewById(R.id.latestBook_recyclerView);
-        mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
-        loadFav();
+        /** mRecyclerView = v.findViewById(R.id.latestBook_recyclerView);
+         mRecyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.HORIZONTAL, false));
+         loadFav();
+         */
         takePhoto = v.findViewById(R.id.takePhoto);
         takePhoto.setVisibility(View.VISIBLE);
         takePhoto.setOnClickListener(new View.OnClickListener() {
@@ -151,92 +151,5 @@ public class HomeFragment extends Fragment {
         return v;
     }
 
-    private void loadFav() {
-        mFavList = getFav();
-        adapter = new BooksListAdapter(getContext(), mFavList);
-        adapter.notifyDataSetChanged();
-        mRecyclerView.setAdapter(adapter);
-    }
-
-    public ArrayList<Item> getFav() {
-        Cursor ingredientCursor = getActivity().getContentResolver()
-                .query(BASE_CONTENT_URI,
-                        null,
-                        null,
-                        null,
-                        null);
-
-        ArrayList<Item> books = new ArrayList<>();
-        if (ingredientCursor != null) {
-            while (ingredientCursor.moveToNext()) {
-                Item ingredient = getDataFromCursor(ingredientCursor);
-                books.add(ingredient);
-            }
-            ingredientCursor.close();
-        }
-
-        return books;
-    }
-
-    private Item getDataFromCursor(Cursor ingredientCursor) {
-        Item ingredient = new Item();
-        VolumeInfo volumeInfo = new VolumeInfo();
-        volumeInfo.setTitle(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_TITLE)));
-        volumeInfo.setAuthors(Arrays.asList(new String[]{
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_AUTHORS))}));
-        volumeInfo.setAverageRating(
-                ingredientCursor.getDouble(ingredientCursor
-                        .getColumnIndex(COLUMN_AVERAGE_RATING)));
-        volumeInfo.setCanonicalVolumeLink(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_CANONICAL_VOLUME_LINK)));
-        volumeInfo.setCategories(Arrays.asList(new String[]{
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_CATEGORIES))}));
-        volumeInfo.setDescription(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_DESCRIPTION)));
-        ImageLinks img = new ImageLinks();
-        img.setThumbnail(ingredientCursor.getString(ingredientCursor
-                .getColumnIndex(COLUMN_IMAGE_LINKS)));
-        volumeInfo.setImageLinks(img);
-        volumeInfo.setInfoLink(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_INFO_LINK)));
-        volumeInfo.setLanguage(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_LANGUAGE)));
-        volumeInfo.setMaturityRating(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_MATURITY_RATING)));
-        volumeInfo.setPageCount(
-                ingredientCursor.getInt(ingredientCursor
-                        .getColumnIndex(COLUMN_PAGE_COUNT)));
-        volumeInfo.setPreviewLink(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_PREVIEW_LINK)));
-        volumeInfo.setPrintType(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_PRINT_TYPE)));
-        volumeInfo.setPublishedDate(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_PUBLISH_DATE)));
-        volumeInfo.setPublisher(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_PUBLISHER)));
-        volumeInfo.setRatingsCount(
-                ingredientCursor.getInt(ingredientCursor
-                        .getColumnIndex(COLUMN_RATING_COUNT)));
-        volumeInfo.setSubtitle(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_SUBTITLE)));
-
-        ingredient.setVolumeInfo(volumeInfo);
-
-        return ingredient;
-    }
 
 }

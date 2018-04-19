@@ -321,11 +321,11 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                 values.put(COLUMN_PAGE_COUNT, info.getPageCount());
                 values.put(COLUMN_PRINT_TYPE, info.getPrintType());
 
-                String categories = "";
+                StringBuilder categories = new StringBuilder();
                 if (info.getCategories() != null)
                     for (String cat : info.getCategories()) {
-                        if (!categories.contains(cat))
-                            authorsList.append(cat).append(","); //i separate every author using a ,
+                        if (!categories.toString().contains(cat))
+                            categories.append(cat).append(","); //i separate every author using a ,
                     }
                 values.put(COLUMN_CATEGORIES, categories.toString());
                 values.put(COLUMN_AVERAGE_RATING, info.getAverageRating());

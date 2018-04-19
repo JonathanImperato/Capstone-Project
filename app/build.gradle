@@ -39,6 +39,8 @@ dependencies {
     implementation 'com.google.android.gms:play-services-vision:11.8.0'
     implementation 'com.makeramen:roundedimageview:2.3.0'
     implementation 'com.android.support:customtabs:27.0.2'
+    implementation 'com.github.IntruderShanky:Sectioned-RecyclerView:2.1.1'
+
     //searchbar
     implementation 'com.github.crysehillmes:PersistentSearchView:4da778cd90'
     //JSON STUFF

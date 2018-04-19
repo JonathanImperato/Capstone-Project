@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <android.support.constraint.ConstraintLayout
+        android:id="@+id/main"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/thumbnailRoot"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fitsSystemWindows="true">
+
+            <ImageView
+                android:id="@+id/thumbnail"
+                android:layout_width="80dp"
+                android:layout_height="120dp"
+                android:adjustViewBounds="true"
+                android:contentDescription="thumbnail"
+                android:foreground="?selectableItemBackground"
+                android:minWidth="120dp"
+                android:scaleType="matrix"
+                android:transitionName="@string/transition_string"
+                app:layout_constraintLeft_toLeftOf="parent" />
+
+            <ImageButton
+                android:id="@+id/more_fav"
+                style="?android:attr/actionOverflowButtonStyle"
+                android:layout_width="20dp"
+                android:layout_height="30dp"
+                android:layout_gravity="bottom|right"
+                android:contentDescription="Option Menu"
+                android:tint="#fff" />
+        </android.support.constraint.ConstraintLayout>
+
+        <TextView
+            android:id="@+id/title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:ellipsize="end"
+            android:gravity="left"
+            android:maxLines="1"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/author"
+            app:layout_constraintLeft_toRightOf="@id/thumbnailRoot"
+            tools:text="Titolo" />
+
+        <TextView
+            android:id="@+id/author"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:ellipsize="end"
+            android:gravity="left"
+            android:maxLines="1"
+            app:layout_constraintBottom_toTopOf="@id/rating"
+            app:layout_constraintLeft_toLeftOf="@id/title"
+            app:layout_constraintLeft_toRightOf="@id/thumbnailRoot"
+            tools:text="Autore" />
+
+        <TextView
+            android:id="@+id/rating"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:gravity="left"
+            android:maxLines="1"
+            android:textColor="@color/colorAccent"
+            android:textStyle="bold"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="@id/title"
+            app:layout_constraintLeft_toRightOf="@id/thumbnailRoot"
+            tools:text="Valutazione 5.5" />
+    </android.support.constraint.ConstraintLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="16dp"
+        android:background="#9E9E9E"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/main" />
+</android.support.constraint.ConstraintLayout>
