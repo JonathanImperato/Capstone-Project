@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if (account != null) startActivity(new Intent(this, ResultsActivity.class));
+        if (account != null) startActivity(new Intent(this, BottomNavActivity.class));
         setContentView(R.layout.activity_login);
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -112,7 +112,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             // Signed in successfully, show authenticated UI.
             if (account != null) {
-                startActivity(new Intent(this, HomeActivity.class).putExtra("name", account.getDisplayName())
+                startActivity(new Intent(this, BottomNavActivity.class).putExtra("name", account.getDisplayName())
                         .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
                 this.finish();
             }

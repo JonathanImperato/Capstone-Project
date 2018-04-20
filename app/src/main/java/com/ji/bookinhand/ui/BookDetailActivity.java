@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.Snackbar;
@@ -11,20 +12,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.ji.bookinhand.R;
+import com.ji.bookinhand.adapters.BooksListAdapter;
 import com.ji.bookinhand.adapters.CategoriesAdapter;
+import com.ji.bookinhand.api.BooksClient;
+import com.ji.bookinhand.api.models.BooksList;
 import com.ji.bookinhand.api.models.ImageLinks;
 import com.ji.bookinhand.api.models.VolumeInfo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.view.View.GONE;
 import static com.ji.bookinhand.R.drawable;
@@ -53,12 +65,13 @@ public class BookDetailActivity extends AppCompatActivity {
     TextView titleTextView, authorTextView, pubblishdateTextView, addBookMark, descriptionBook, ratingTextView;
     List<String> authors;
     ImageView bookmark;
-    Boolean isFav;
+    Boolean isFav, isMore;
     String date, isbn = "";
     VolumeInfo item;
-    RecyclerView catRecyclerView;
+    RecyclerView catRecyclerView, moreRecyclerView;
     CategoriesAdapter adapter;
     ImageLinks imgs;
+    String TAG = this.getClass().getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -72,13 +85,16 @@ public class BookDetailActivity extends AppCompatActivity {
         ratingTextView = findViewById(id.rating_text);
         addBookMark = findViewById(id.addToFav2);
         catRecyclerView = findViewById(id.categories);
+        moreRecyclerView = findViewById(id.moreRecyclerView);
         descriptionBook = findViewById(id.description);
         catRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
+        moreRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         bookmark = findViewById(id.addToFav);
 
         if (getIntent().getExtras() != null) {
             item = getIntent().getExtras().getParcelable("volume");
             isFav = isFavourite(item.getTitle());
+            isMore = getIntent().getExtras().getBoolean("isMore");
             isbn = getIntent().getExtras().getString("isbn");
             imgs = getIntent().getExtras().getParcelable("imgs");
 
@@ -148,8 +164,9 @@ public class BookDetailActivity extends AppCompatActivity {
                 } else {
                     cats = item.getCategories();
                 }
-            adapter = new CategoriesAdapter(this, cats);
+            adapter = new CategoriesAdapter(this, cats, item.getAverageRating());
             catRecyclerView.setAdapter(adapter);
+            setMoreFromAuthorRecyclerView();
         }
     }
 
@@ -266,6 +283,32 @@ public class BookDetailActivity extends AppCompatActivity {
         );
     }
 
+    private void setMoreFromAuthorRecyclerView() {
+        final Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl("https://www.googleapis.com/books/v1/")
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
+        BooksClient service = retrofit.create(BooksClient.class);
+        Call<BooksList> books = service.getBookFromAuthor("inauthor:" + item.getAuthors().get(0));
+        books.enqueue(new Callback<BooksList>() {
+            @Override
+            public void onResponse(Call<BooksList> call, Response<BooksList> response) {
+                BooksList result = response.body();
+                Log.d(TAG, "Numero di libri da autore: " + result.getTotalItems());
+                BooksListAdapter adapter = new BooksListAdapter(BookDetailActivity.this, result, true);
+                moreRecyclerView.setAdapter(adapter);
+            }
+
+            @Override
+            public void onFailure(Call<BooksList> call, Throwable t) {
+                Toast.makeText(BookDetailActivity.this, "Error while fetching data :(", Toast.LENGTH_SHORT).show();
+                Log.d(TAG, t.getMessage(), t);
+            }
+        });
+
+    }
+
     public void onPreview(View view) {
         if (item != null) {
             String previewLink = item.getPreviewLink();
@@ -299,4 +342,10 @@ public class BookDetailActivity extends AppCompatActivity {
         overridePendingTransition(android.R.anim.fade_in, android.R.anim.fade_out);
     }
 
+    public void onMoreFromAuthor(View view) {
+        Intent intent = new Intent(this, ResultsActivity.class);
+        intent.putExtra("isCat", false);
+        intent.putExtra("result", "inauthor:" + item.getAuthors().get(0));
+        startActivity(intent);
+    }
 }

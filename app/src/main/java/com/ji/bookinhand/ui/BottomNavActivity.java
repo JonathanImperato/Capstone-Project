@@ -80,17 +80,6 @@ public class BottomNavActivity extends AppCompatActivity implements PersistentSe
                             mProfileMenuItem.setIcon(resource);
                         }
                     });
-        } else if (mProfileMenuItem != null && account == null) {
-            Glide.with(this)
-                    .load("https://lh3.googleusercontent.com/-KpBZmzRBm4A/AAAAAAAAAAI/AAAAAAAAM0k/qVSHIMlvopQ/s60-p-rw-no/photo.jpg")
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(new SimpleTarget<Drawable>() {
-                        @Override
-                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                            mProfileMenuItem.setIcon(resource);
-                        }
-                    });
-
         }
         homeFragment = new HomeFragment();
         fragmentManager = getSupportFragmentManager();
@@ -151,6 +140,23 @@ public class BottomNavActivity extends AppCompatActivity implements PersistentSe
                 }
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        //return super.onPrepareOptionsMenu(menu);
+        mProfileMenuItem = menu.getItem(1);
+        if (account != null)
+            Glide.with(this)
+                    .load(account.getPhotoUrl())
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(new SimpleTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            mProfileMenuItem.setIcon(resource);
+                        }
+                    });
+        return true;
     }
 
     @Override

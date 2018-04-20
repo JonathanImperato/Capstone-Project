@@ -56,6 +56,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
     public BooksList mBooksList;
     public ArrayList<Item> mFavList;
     boolean isFav;
+    boolean isMoreRecyclerview = false;
 
     public BooksListAdapter(Context mContext, BooksList mBooksList) {
         this.mContext = mContext;
@@ -69,11 +70,18 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
         isFav = true;
     }
 
+    public BooksListAdapter(Context mContext, BooksList mBooksList, boolean isMoreRecyclerview) {
+        this.mContext = mContext;
+        this.mBooksList = mBooksList;
+        isFav = false;
+        this.isMoreRecyclerview = isMoreRecyclerview;
+    }
+
     @Override
     public BooksListAdapter.BooksListAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layoutId = R.layout.book_item;
-        if (isFav)
-            layoutId = R.layout.fav_book_item;
+        if (isFav) layoutId = R.layout.fav_book_item;
+        else if (!isFav && isMoreRecyclerview) layoutId = R.layout.more_book_item;
         View view = LayoutInflater.from(mContext).inflate(layoutId, parent, false);
         BooksListAdapterViewHolder holder = new BooksListAdapterViewHolder(view);
         return holder;
@@ -82,7 +90,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
     @Override
     public void onBindViewHolder(BooksListAdapterViewHolder holder, int position) {
         if (isFav) {
-            if (position < 10 && mFavList != null) { //every page contains 10
+            if (mFavList != null) { //every page contains 10
                 String title = mFavList.get(position).getVolumeInfo().getTitle();
                 List<String> author = mFavList.get(position).getVolumeInfo().getAuthors();
                 Double rating = mFavList.get(position).getVolumeInfo().getAverageRating();
@@ -115,10 +123,33 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                                 .into(holder.thumbnail);
 
             }
-        } else
+        } else if (!isFav && isMoreRecyclerview && position < 10) {
+            if (mBooksList != null) {
+                String title = mBooksList.getItems().get(position).getVolumeInfo().getTitle();
+                ImageLinks image = mBooksList.getItems().get(position).getVolumeInfo().getImageLinks();
+                holder.title.setText(title);
+                if (image != null)
+                    if (image.getExtraLarge() != null)
+                        Glide.with(mContext)
+                                .load(image.getExtraLarge())
+                                .into(holder.thumbnail);
+                    else if (image.getLarge() != null)
+                        Glide.with(mContext)
+                                .load(image.getLarge())
+                                .into(holder.thumbnail);
+                    else if (image.getMedium() != null)
+                        Glide.with(mContext)
+                                .load(image.getMedium())
+                                .into(holder.thumbnail);
+                    else if (image.getThumbnail() != null)
+                        Glide.with(mContext)
+                                .load(image.getThumbnail())
+                                .into(holder.thumbnail);
 
-        {
-            if (position < 10 && mBooksList != null) { //every page contains 10
+            }
+
+        } else {
+            if (mBooksList != null) { //every page contains 10
                 String title = mBooksList.getItems().get(position).getVolumeInfo().getTitle();
                 List<String> author = mBooksList.getItems().get(position).getVolumeInfo().getAuthors();
                 Double rating = mBooksList.getItems().get(position).getVolumeInfo().getAverageRating();
@@ -156,10 +187,13 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
     @Override
     public int getItemCount() {
         if (isFav) {
-            if (mFavList != null && mFavList.size() >= 10) return 10;
+            if (mFavList != null && mFavList.size() >= 20) return 20;
             return (mFavList == null) ? 0 : mFavList.size();
-        } else {
+        } else if (!isFav && isMoreRecyclerview) {
             if (mBooksList != null && mBooksList.getTotalItems() >= 10) return 10;
+            return (mBooksList == null) ? 0 : mBooksList.getTotalItems();
+        } else {
+            if (mBooksList != null && mBooksList.getTotalItems() >= 20) return 20;
             else if (mBooksList == null || mBooksList.getTotalItems() == 0)
                 Toast.makeText(mContext, "Sorry, no results found.", Toast.LENGTH_SHORT).show();
             return (mBooksList == null) ? 0 : mBooksList.getTotalItems();
@@ -178,12 +212,16 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
             author = view.findViewById(R.id.author);
             rating = view.findViewById(R.id.rating);
             thumbnail = view.findViewById(R.id.thumbnail);
+
             if (isFav)
                 menu = view.findViewById(R.id.more_fav);
+            else if (!isFav && isMoreRecyclerview)
+                menu = null;
             else
                 menu = view.findViewById(R.id.more);
 
-            menu.setOnClickListener(this);
+            if (menu != null)
+                menu.setOnClickListener(this);
             thumbnail.setOnClickListener(this);
             view.setOnClickListener(this);
 
@@ -242,7 +280,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                                 @Override
                                 public void onClick(View view) {
                                     if (position != -1) {
-                                        addFavourite(position);
+                                        //      addFavourite(position);
                                         mFavList.add(position, justRemovedItem);
                                         //        notifyItemRangeInserted(position, mFavList.size());
                                         notifyItemInserted(position);
@@ -374,68 +412,5 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
             return c.getCount() > 0;
         }
     }
-/*
-    class MySection extends StatelessSection {
 
-        ArrayList<String> totalCategories = new ArrayList<>();
-
-        public MySection() {
-            // call constructor with layout resources for this Section header and items
-            super(SectionParameters.builder()
-                    .itemResourceId(R.layout.section_item)
-                    .headerResourceId(R.layout.section_header)
-                    .build());
-        }
-
-        void generateSections() {
-            for (Item item : mFavList) {getCategories();
-            }
-        }
-
-        void getCategories(String title) {
-            String newName = title.replace("_", " ");
-            String[] selections = {newName};
-            ArrayList<String> categories = new ArrayList<>();
-
-            Cursor cursor = mContext.getContentResolver().query(
-                    BASE_CONTENT_URI,
-                    new String[]{COLUMN_CATEGORIES},
-                    COLUMN_TITLE + " =? ",
-                    selections,
-                    null);
-            if (cursor != null) {
-                cursor.moveToFirst();
-                String category;
-                for (int i = 0; i < cursor.getCount(); i++) {
-                    category = cursor.getString(cursor
-                            .getColumnIndexOrThrow(COLUMN_CATEGORIES));
-                    categories.add(category);
-                    cursor.moveToNext();
-                }
-                // always close the cursor
-                cursor.close();
-            }
-
-            totalCategories = categories;
-        }
-
-        @Override
-        public int getContentItemsTotal() {
-            return itemList.size(); // number of items of this section
-        }
-
-        @Override
-        public RecyclerView.ViewHolder getItemViewHolder(View view) {
-            // return a custom instance of ViewHolder for the items of this section
-            return new MyItemViewHolder(view);
-        }
-
-        @Override
-        public void onBindItemViewHolder(RecyclerView.ViewHolder holder, int position) {
-            MyItemViewHolder itemHolder = (MyItemViewHolder) holder;
-
-            // bind your view here
-            itemHolder.tvItem.setText(itemList.get(position));
-        }
-    } */
 }

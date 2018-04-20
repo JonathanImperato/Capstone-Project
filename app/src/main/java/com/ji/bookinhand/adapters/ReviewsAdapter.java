@@ -14,31 +14,31 @@ import com.ji.bookinhand.ui.ResultsActivity;
 
 import java.util.List;
 
-public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.CategoriesAdapterViewHolder> {
+public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsAdapterViewHolder> {
 
     Context mContext;
     Double rating;
     List<String> categories;
 
-    public CategoriesAdapter(Context mContext, List<String> categories, Double rating) {
+    public ReviewsAdapter(Context mContext, List<String> categories, Double rating) {
         this.mContext = mContext;
         this.categories = categories;
         this.rating = rating;
     }
 
     @Override
-    public CategoriesAdapter.CategoriesAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public ReviewsAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layoutId = R.layout.category_item;
         View view = LayoutInflater.from(mContext).inflate(layoutId, parent, false);
-        CategoriesAdapterViewHolder holder = new CategoriesAdapterViewHolder(view);
+        ReviewsAdapterViewHolder holder = new ReviewsAdapterViewHolder(view);
         return holder;
     }
 
     @Override
-    public void onBindViewHolder(CategoriesAdapter.CategoriesAdapterViewHolder holder, int position) {
+    public void onBindViewHolder(ReviewsAdapterViewHolder holder, int position) {
 
-            String name = categories.get(position);
-            holder.name.setText(name);
+        String name = categories.get(position);
+        holder.name.setText(name);
 
     }
 
@@ -48,17 +48,17 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
         return categories == null ? 0 : categories.size();
     } //the 1 is for the rating fab
 
-    public class CategoriesAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
+    public class ReviewsAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView name;
         FloatingActionButton fabc;
 
-        public CategoriesAdapterViewHolder(View itemView) {
+        public ReviewsAdapterViewHolder(View itemView) {
             super(itemView);
-                fabc = itemView.findViewById(R.id.fabc);
-                name = itemView.findViewById(R.id.category_name);
-                fabc.setOnClickListener(this);
-                name.setOnClickListener(this);
-                itemView.setOnClickListener(this);
+            fabc = itemView.findViewById(R.id.fabc);
+            name = itemView.findViewById(R.id.category_name);
+            fabc.setOnClickListener(this);
+            name.setOnClickListener(this);
+            itemView.setOnClickListener(this);
 
         }
 

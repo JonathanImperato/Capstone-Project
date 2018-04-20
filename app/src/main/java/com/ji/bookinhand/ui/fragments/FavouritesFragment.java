@@ -1,25 +1,20 @@
 package com.ji.bookinhand.ui.fragments;
 
-import android.content.Context;
-import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.intrusoft.sectionedrecyclerview.Section;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.adapters.BooksListAdapter;
-import com.ji.bookinhand.adapters.FavBooksAdapter;
 import com.ji.bookinhand.api.models.ImageLinks;
 import com.ji.bookinhand.api.models.Item;
 import com.ji.bookinhand.api.models.VolumeInfo;
@@ -47,7 +42,7 @@ import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_RATING_C
 import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_SUBTITLE;
 import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_TITLE;
 
-public class FavouritesFragment extends Fragment {
+public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
 
     public FavouritesFragment() {
         // Required empty public constructor
@@ -55,12 +50,14 @@ public class FavouritesFragment extends Fragment {
         setHasOptionsMenu(true);
     }
 
-    SharedPreferences prefs;
+    SwipeRefreshLayout refreshLayout;
     ArrayList<Item> mFavList = new ArrayList<>();
     List<SectionHeader> mSectionsDataList = new ArrayList<>();
     List<String> mSectionsList = new ArrayList<>();
     RecyclerView recyclerView;
-    boolean isDashboard = true;
+    BooksListAdapter adapter;
+   /* boolean isDashboard = true;
+    SharedPreferences prefs;*/
 
     public static FavouritesFragment newInstance() {
         FavouritesFragment fragment = new FavouritesFragment();
@@ -81,8 +78,13 @@ public class FavouritesFragment extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_favourites, container, false);
         recyclerView = v.findViewById(R.id.latestBook_recyclerView);
-        loadData();
-
+        refreshLayout = v.findViewById(R.id.recyclerview_swipe);
+        refreshLayout.setOnRefreshListener(this);
+        refreshLayout.setColorSchemeResources(
+                R.color.refresh_progress_3,
+                R.color.refresh_progress_2,
+                R.color.refresh_progress_1);
+/*
         prefs = getContext().getSharedPreferences("general_settings", Context.MODE_PRIVATE);
         String layoutSetting = prefs.getString("layoutSetting", "");
         if (layoutSetting == null)
@@ -90,22 +92,27 @@ public class FavouritesFragment extends Fragment {
         else if (layoutSetting.equals("list"))
             isDashboard = false;
         else isDashboard = true;
+        */
+        loadData();
         return v;
     }
 
 
     private void loadData() {
+        mFavList.clear();
         mFavList = getFav();
-        if (isDashboard) {
-            recyclerView.setLayoutManager(new GridLayoutManager(getContext(), getNumberOfColumns()));
-            recyclerView.setAdapter(new BooksListAdapter(getContext(), mFavList));
-        } else {
+        //    if (isDashboard) {
+        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), getNumberOfColumns()));
+        if (adapter == null)
+            adapter = new BooksListAdapter(getContext(), mFavList);
+        recyclerView.setAdapter(adapter);
+  /*      } else {
             loadSections();
             loadLists();
             recyclerView.setLayoutManager(new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false));
-            recyclerView.setAdapter(new FavBooksAdapter(getContext(), mSectionsDataList));
+            recyclerView.setAdapter(new FavBooksAdapter(getContext(), mSectionsDataList, mFavList));
 
-        }
+        }*/
     }
 
     public ArrayList<Item> getFav() {
@@ -190,6 +197,7 @@ public class FavouritesFragment extends Fragment {
     }
 
     void loadSections() {
+        mSectionsList.clear();
         for (Item i : mFavList) {
             List<String> sections = Arrays.asList(i.getVolumeInfo().getCategories().get(0).split(","));
             for (String section : sections) {
@@ -203,6 +211,7 @@ public class FavouritesFragment extends Fragment {
     }
 
     void loadLists() {
+        mSectionsDataList.clear();
         for (String section : mSectionsList) {
             List<Item> childList = new ArrayList<>();
             for (int i = 0; i < mFavList.size(); i++) {
@@ -220,6 +229,24 @@ public class FavouritesFragment extends Fragment {
         if (mFavList.get(itemPosition).getVolumeInfo().getCategories().get(0).contains(sectionName))
             return true;
         return false;
+    }
+
+    @Override
+    public void onRefresh() {
+        if (!refreshLayout.isRefreshing())
+            refreshLayout.setRefreshing(true);
+        new Handler().postDelayed(
+                new Runnable() {
+                    @Override
+                    public void run() {
+                        mFavList.clear();
+                        mFavList.addAll(getFav());
+                        adapter.notifyDataSetChanged();
+                        recyclerView.setAdapter(adapter);
+                        refreshLayout.setRefreshing(false);
+                    }
+                }, 3000
+        );
     }
 
     public class SectionHeader implements Section<Item> {
@@ -250,6 +277,12 @@ public class FavouritesFragment extends Fragment {
     }
 
     @Override
+    public void onResume() {
+        super.onResume();
+        onRefresh();
+    }
+
+    /*  @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         inflater.inflate(R.menu.fav_menu, menu);
         super.onCreateOptionsMenu(menu, inflater);
@@ -283,6 +316,5 @@ public class FavouritesFragment extends Fragment {
         } else {
             cl.setIcon(getContext().getResources().getDrawable(R.drawable.ic_sort_black_24dp));
         }
-
-    }
+    }*/
 }

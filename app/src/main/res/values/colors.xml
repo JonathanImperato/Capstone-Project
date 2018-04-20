@@ -4,4 +4,8 @@
     <color name="colorPrimaryDark">#FFA000</color>
     <color name="colorPrimaryLight">#FFECB3</color>
     <color name="colorAccent">#03A9F4</color>
+    <color name="refresh_progress_1">@color/colorPrimary</color>
+    <color name="refresh_progress_2">@color/colorPrimaryDark</color>
+    <color name="refresh_progress_3">@color/colorAccent</color>
+
 </resources>
