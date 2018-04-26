@@ -50,13 +50,10 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
     public class CategoriesAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         TextView name;
-        FloatingActionButton fabc;
 
         public CategoriesAdapterViewHolder(View itemView) {
             super(itemView);
-                fabc = itemView.findViewById(R.id.fabc);
                 name = itemView.findViewById(R.id.category_name);
-                fabc.setOnClickListener(this);
                 name.setOnClickListener(this);
                 itemView.setOnClickListener(this);
 

@@ -77,7 +77,7 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
 
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_favourites, container, false);
-        recyclerView = v.findViewById(R.id.latestBook_recyclerView);
+        recyclerView = v.findViewById(R.id.ebookfictionRv);
         refreshLayout = v.findViewById(R.id.recyclerview_swipe);
         refreshLayout.setOnRefreshListener(this);
         refreshLayout.setColorSchemeResources(
@@ -116,79 +116,82 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
     }
 
     public ArrayList<Item> getFav() {
-        Cursor ingredientCursor = getContext().getContentResolver()
-                .query(BASE_CONTENT_URI,
-                        null,
-                        null,
-                        null,
-                        null);
+        if (getActivity() != null) {
+            Cursor ingredientCursor = getActivity().getApplicationContext().getContentResolver()
+                    .query(BASE_CONTENT_URI,
+                            null,
+                            null,
+                            null,
+                            null);
 
-        ArrayList<Item> books = new ArrayList<>();
-        if (ingredientCursor != null) {
-            while (ingredientCursor.moveToNext()) {
-                Item ingredient = getDataFromCursor(ingredientCursor);
-                books.add(ingredient);
+            ArrayList<Item> books = new ArrayList<>();
+            if (ingredientCursor != null) {
+                while (ingredientCursor.moveToNext()) {
+                    Item ingredient = getDataFromCursor(ingredientCursor);
+                    books.add(ingredient);
+                }
+                ingredientCursor.close();
             }
-            ingredientCursor.close();
-        }
 
-        return books;
+            return books;
+        }
+        return null;
     }
 
-    private Item getDataFromCursor(Cursor ingredientCursor) {
+    private Item getDataFromCursor(Cursor itemCurso) {
         Item item = new Item();
         VolumeInfo volumeInfo = new VolumeInfo();
         volumeInfo.setTitle(
-                ingredientCursor.getString(ingredientCursor
+                itemCurso.getString(itemCurso
                         .getColumnIndex(COLUMN_TITLE)));
         volumeInfo.setAuthors(Arrays.asList(new String[]{
-                ingredientCursor.getString(ingredientCursor
+                itemCurso.getString(itemCurso
                         .getColumnIndex(COLUMN_AUTHORS))}));
         volumeInfo.setAverageRating(
-                ingredientCursor.getDouble(ingredientCursor
+                itemCurso.getDouble(itemCurso
                         .getColumnIndex(COLUMN_AVERAGE_RATING)));
         volumeInfo.setCanonicalVolumeLink(
-                ingredientCursor.getString(ingredientCursor
+                itemCurso.getString(itemCurso
                         .getColumnIndex(COLUMN_CANONICAL_VOLUME_LINK)));
         volumeInfo.setCategories(Arrays.asList(new String[]{
-                ingredientCursor.getString(ingredientCursor
+                itemCurso.getString(itemCurso
                         .getColumnIndex(COLUMN_CATEGORIES))}));
         volumeInfo.setDescription(
-                ingredientCursor.getString(ingredientCursor
+                itemCurso.getString(itemCurso
                         .getColumnIndex(COLUMN_DESCRIPTION)));
         ImageLinks img = new ImageLinks();
-        img.setThumbnail(ingredientCursor.getString(ingredientCursor
+        img.setThumbnail(itemCurso.getString(itemCurso
                 .getColumnIndex(COLUMN_IMAGE_LINKS)));
         volumeInfo.setImageLinks(img);
         volumeInfo.setInfoLink(
-                ingredientCursor.getString(ingredientCursor
+                itemCurso.getString(itemCurso
                         .getColumnIndex(COLUMN_INFO_LINK)));
         volumeInfo.setLanguage(
-                ingredientCursor.getString(ingredientCursor
+                itemCurso.getString(itemCurso
                         .getColumnIndex(COLUMN_LANGUAGE)));
         volumeInfo.setMaturityRating(
-                ingredientCursor.getString(ingredientCursor
+                itemCurso.getString(itemCurso
                         .getColumnIndex(COLUMN_MATURITY_RATING)));
         volumeInfo.setPageCount(
-                ingredientCursor.getInt(ingredientCursor
+                itemCurso.getInt(itemCurso
                         .getColumnIndex(COLUMN_PAGE_COUNT)));
         volumeInfo.setPreviewLink(
-                ingredientCursor.getString(ingredientCursor
+                itemCurso.getString(itemCurso
                         .getColumnIndex(COLUMN_PREVIEW_LINK)));
         volumeInfo.setPrintType(
-                ingredientCursor.getString(ingredientCursor
+                itemCurso.getString(itemCurso
                         .getColumnIndex(COLUMN_PRINT_TYPE)));
         volumeInfo.setPublishedDate(
-                ingredientCursor.getString(ingredientCursor
+                itemCurso.getString(itemCurso
                         .getColumnIndex(COLUMN_PUBLISH_DATE)));
         volumeInfo.setPublisher(
-                ingredientCursor.getString(ingredientCursor
+                itemCurso.getString(itemCurso
                         .getColumnIndex(COLUMN_PUBLISHER)));
         volumeInfo.setRatingsCount(
-                ingredientCursor.getInt(ingredientCursor
+                itemCurso.getInt(itemCurso
                         .getColumnIndex(COLUMN_RATING_COUNT)));
         volumeInfo.setSubtitle(
-                ingredientCursor.getString(ingredientCursor
+                itemCurso.getString(itemCurso
                         .getColumnIndex(COLUMN_SUBTITLE)));
 
         item.setVolumeInfo(volumeInfo);
@@ -239,10 +242,16 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
                 new Runnable() {
                     @Override
                     public void run() {
-                        mFavList.clear();
-                        mFavList.addAll(getFav());
-                        adapter.notifyDataSetChanged();
-                        recyclerView.setAdapter(adapter);
+                        if (adapter != null) {
+                            if (mFavList == null)
+                                mFavList = new ArrayList<>();
+                            mFavList.clear();
+                            ArrayList<Item> data = getFav();
+                            if (mFavList != null && data != null)
+                                mFavList.addAll(data);
+                            adapter.notifyDataSetChanged();
+                            recyclerView.setAdapter(adapter);
+                        }
                         refreshLayout.setRefreshing(false);
                     }
                 }, 3000

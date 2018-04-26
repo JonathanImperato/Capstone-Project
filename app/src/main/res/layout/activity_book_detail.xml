@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main_root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.BookDetailActivity">
@@ -18,6 +19,7 @@
             android:layout_height="?actionBarSize"
             android:background="?attr/colorPrimary"
             app:layout_collapseMode="pin"
+            app:layout_scrollFlags="scroll|enterAlways|snap"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:title="Home"
             app:titleTextColor="#fff">
@@ -26,10 +28,10 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <ScrollView
+    <android.support.v4.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="?actionBarSize">
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <android.support.constraint.ConstraintLayout
             android:layout_width="match_parent"
@@ -190,7 +192,7 @@
                 app:layout_constraintTop_toBottomOf="@id/share" />
 
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/categories"
+                android:id="@+id/categoriesRecyclerView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
@@ -206,7 +208,8 @@
                 android:layout_height="1dp"
                 android:layout_margin="16dp"
                 android:background="#9E9E9E"
-                app:layout_constraintTop_toBottomOf="@id/categories" />
+                android:visibility="gone"
+                app:layout_constraintTop_toBottomOf="@id/categoriesRecyclerView" />
 
             <TextView
                 android:id="@+id/description"
@@ -240,31 +243,33 @@
                 android:background="#9E9E9E"
                 app:layout_constraintTop_toBottomOf="@id/moreBtn" />
 
+            <TextView
+                android:id="@+id/review_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:text="Reviews"
+                android:textAllCaps="true"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider4" />
+
             <android.support.v7.widget.RecyclerView
                 android:id="@+id/reviewsRecyclerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:padding="16dp"
-                android:visibility="gone"
-                app:layout_constraintTop_toBottomOf="@id/divider4"></android.support.v7.widget.RecyclerView>
-
-            <View
-                android:id="@+id/divider5"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_margin="16dp"
-                android:background="#9E9E9E"
-                app:layout_constraintTop_toBottomOf="@id/reviewsRecyclerView" />
+                app:layout_constraintTop_toBottomOf="@id/review_title"></android.support.v7.widget.RecyclerView>
 
             <android.support.v7.widget.CardView
                 android:id="@+id/cardMore"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="8dp"
-                android:layout_marginBottom="8dp"
+                android:paddingBottom="16dp"
                 app:cardUseCompatPadding="true"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/divider5">
+                app:layout_constraintTop_toBottomOf="@id/reviewsRecyclerView">
 
                 <android.support.constraint.ConstraintLayout
                     android:layout_width="match_parent"
@@ -276,7 +281,6 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
                         android:text="@string/more_from_author"
-                        android:textColor="#9E9E9E"
                         android:textStyle="bold"
                         app:layout_constraintLeft_toLeftOf="parent"
                         app:layout_constraintTop_toTopOf="parent" />
@@ -296,9 +300,13 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="8dp"
                         android:paddingTop="16dp"
-                        app:layout_constraintTop_toBottomOf="@id/more_author"  />
+                        app:layout_constraintTop_toBottomOf="@id/more_author" />
                 </android.support.constraint.ConstraintLayout>
+
             </android.support.v7.widget.CardView>
+
         </android.support.constraint.ConstraintLayout>
-    </ScrollView>
-</android.support.constraint.ConstraintLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+</android.support.design.widget.CoordinatorLayout>

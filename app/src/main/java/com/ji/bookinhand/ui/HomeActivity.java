@@ -1,19 +1,15 @@
 package com.ji.bookinhand.ui;
 
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
@@ -25,39 +21,20 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.SimpleTarget;
 import com.bumptech.glide.request.transition.Transition;
+import com.google.android.gms.ads.AdListener;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.InterstitialAd;
+import com.google.android.gms.ads.MobileAds;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
-import com.google.android.gms.common.api.CommonStatusCodes;
+import com.ji.bookinhand.BuildConfig;
 import com.ji.bookinhand.R;
-import com.ji.bookinhand.adapters.BooksListAdapter;
-import com.ji.bookinhand.api.models.ImageLinks;
-import com.ji.bookinhand.api.models.Item;
-import com.ji.bookinhand.api.models.VolumeInfo;
+import com.ji.bookinhand.ui.fragments.FavouritesFragment;
+import com.ji.bookinhand.ui.fragments.HomeFragment;
 
 import org.cryse.widget.persistentsearch.PersistentSearchView;
 import org.cryse.widget.persistentsearch.SearchItem;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static com.ji.bookinhand.database.ItemsContract.BASE_CONTENT_URI;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_AUTHORS;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_AVERAGE_RATING;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_CANONICAL_VOLUME_LINK;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_CATEGORIES;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_DESCRIPTION;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_IMAGE_LINKS;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_INFO_LINK;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_LANGUAGE;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_MATURITY_RATING;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PAGE_COUNT;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PREVIEW_LINK;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PRINT_TYPE;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PUBLISHER;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PUBLISH_DATE;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_RATING_COUNT;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_SUBTITLE;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_TITLE;
 
 public class HomeActivity extends AppCompatActivity implements PersistentSearchView.SearchListener {
 
@@ -65,28 +42,51 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
     FloatingActionButton takePhoto;
     private String TAG = this.getClass().getSimpleName();
     private static final int RC_OCR_CAPTURE = 9003;
-    RecyclerView favRecyclerview;
-    BooksListAdapter adapter;
-    ArrayList<Item> mFavList;
     PersistentSearchView mSearchView;
     MenuItem mSearchMenuItem;
     MenuItem mProfileMenuItem;
+    FragmentManager fragmentManager;
+    FavouritesFragment favouritesFragment;
+    HomeFragment homeFragment;
+    InterstitialAd mInterstitialAd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
         Toolbar toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Home");
-        CollapsingToolbarLayout ct = findViewById(R.id.collapstoolbar);
-        ct.setTitle("Home");
 
-        if (getIntent() != null && getIntent().getExtras() != null) {
-            String name = getIntent().getExtras().getString("name");
-            Snackbar.make(toolbar, "Welcome " + name + "!", Snackbar.LENGTH_LONG).setAction("action", null).show();
-        } else if (account != null) {
-            Snackbar.make(toolbar, "Welcome back " + account.getDisplayName() + "!", Snackbar.LENGTH_LONG).show();
+        if (BuildConfig.FLAVOR.equals("free")) {
+            // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
+            MobileAds.initialize(this,
+                    getString(R.string.admob_app_id));
+            mInterstitialAd = new InterstitialAd(this);
+            //TODO: REMOVE TEST DEVICE BEFORE PUBLISHING
+            //TODO: AFTER PUBLISHED, ADD THE APP TO THE ADMOB CONSOLE
+            final AdRequest request = new AdRequest.Builder()
+                    .addTestDevice(new String(AdRequest.DEVICE_ID_EMULATOR))  // An example device ID
+                    .build();
+
+            mInterstitialAd.setAdUnitId(getString(R.string.admob_interstitial_id));
+            mInterstitialAd.loadAd(request);//new AdRequest.Builder().build());
+            mInterstitialAd.setAdListener(new AdListener() {
+                @Override
+                public void onAdClosed() {
+                    // Load the next interstitial.
+                    mInterstitialAd.loadAd(request);//new AdRequest.Builder().build());
+                }
+
+            });
+        }
+
+        if (account != null) {
+            Snackbar.make(toolbar, "Welcome " + account.getDisplayName() + "!", Snackbar.LENGTH_LONG).show();
         } else {
             Snackbar.make(toolbar, "Welcome! You are not authenticated.", Snackbar.LENGTH_LONG).setAction("Login", new View.OnClickListener() {
                 @Override
@@ -98,29 +98,248 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
         mSearchView = (PersistentSearchView) findViewById(R.id.searchview);
         mSearchView.setSearchListener(this);
 
-      /*  RoundedImageView profilePic = findViewById(R.id.profilePic);
-        if (account != null)
-            Glide.with(this).load(account.getPhotoUrl()).into(profilePic);
-        else
-            Glide.with(this).load("https://lh3.googleusercontent.com/-KpBZmzRBm4A/AAAAAAAAAAI/AAAAAAAAM0k/qVSHIMlvopQ/s60-p-rw-no/photo.jpg").into(profilePic);
+        if (mProfileMenuItem != null && account != null) {
+            Glide.with(this)
+                    .load(account.getPhotoUrl())
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(new SimpleTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            mProfileMenuItem.setIcon(resource);
+                        }
+                    });
+        }
+        homeFragment = new HomeFragment();
+        fragmentManager = getSupportFragmentManager();
+        fragmentManager.beginTransaction()
+                .add(R.id.fragment_container, homeFragment)
+                .commit();
+    }
 
-       */
-        favRecyclerview = findViewById(R.id.favRecyclerview);
-        favRecyclerview.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
-        loadFav();
-        adapter.notifyDataSetChanged();
-        takePhoto = findViewById(R.id.takePhoto);
-        takePhoto.setVisibility(View.VISIBLE);
-        takePhoto.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(HomeActivity.this, OcrCaptureActivity.class);
-                intent.putExtra(OcrCaptureActivity.AutoFocus, true); //focus
-                intent.putExtra(OcrCaptureActivity.UseFlash, true); //flash
+    public void openSearch() {
+        View menuItemView = findViewById(R.id.action_search);
+        mSearchView.setStartPositionFromMenuItem(menuItemView);
+        mSearchView.openSearch();
+    }
 
-                startActivityForResult(intent, RC_OCR_CAPTURE);
+    @Override
+    protected void onStart() {
+        super.onStart();
+        account = GoogleSignIn.getLastSignedInAccount(this);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        if (mSearchView.isSearching()) {
+            mSearchView.closeSearch();
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        Log.d("Home", "onPause called");
+        super.onPause();
+        if (BuildConfig.FLAVOR.equals("free") && mInterstitialAd != null) {
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+            } else {
+                Log.d("HomeActivity", "The interstitial wasn't loaded yet.");
             }
-        });
+        }
+        Log.d("Home", "onPause finished");
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_searchview, menu);
+        mSearchMenuItem = menu.findItem(R.id.action_search);
+        mProfileMenuItem = menu.findItem(R.id.action_profile);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                return true;
+            case R.id.action_profile:
+                if (account != null) {
+                    //settings activity?
+                } else {
+                    startActivity(new Intent(this, LoginActivity.class));
+                }
+                break;
+            case R.id.action_search:
+                if (mSearchMenuItem != null) {
+                    openSearch();
+                    return true;
+                } else {
+                    return false;
+                }
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        //return super.onPrepareOptionsMenu(menu);
+        mProfileMenuItem = menu.getItem(1);
+        if (account != null)
+            Glide.with(this)
+                    .load(account.getPhotoUrl())
+                    .apply(RequestOptions.circleCropTransform())
+                    .into(new SimpleTarget<Drawable>() {
+                        @Override
+                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
+                            mProfileMenuItem.setIcon(resource);
+                        }
+                    });
+        return true;
+    }
+
+    @Override
+    public boolean onSuggestion(SearchItem searchItem) {
+        return false;
+    }
+
+    @Override
+    public void onSearchCleared() {
+
+    }
+
+    @Override
+    public void onSearchTermChanged(String term) {
+
+    }
+
+    @Override
+    public void onSearch(String query) {
+        mSearchView.closeSearch();
+        startActivity(new Intent(this, ResultsActivity.class)
+                .putExtra("result", query));
+    }
+
+    @Override
+    public void onSearchEditOpened() {
+
+    }
+
+    @Override
+    public void onSearchEditClosed() {
+
+    }
+
+    @Override
+    public boolean onSearchEditBackPressed() {
+        return false;
+    }
+
+    @Override
+    public void onSearchExit() {
+
+    }
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+
+
+            if (item.getItemId() == R.id.navigation_home) {
+                if (homeFragment == null)
+                    homeFragment = new HomeFragment();
+                fragmentManager.beginTransaction()
+                        .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                        .replace(R.id.fragment_container, homeFragment).commit();
+            } else if (item.getItemId() == R.id.navigation_settings) {
+                //todo: switch to setting fragment
+
+            } else {
+                if (favouritesFragment == null)
+                    favouritesFragment = new FavouritesFragment();
+                favouritesFragment = new FavouritesFragment();
+                fragmentManager.beginTransaction()
+                        .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                        .replace(R.id.fragment_container, favouritesFragment).commit();
+            }
+            return true; //this highlight the selected item with primary color
+        }
+
+    };
+}
+
+/*extends AppCompatActivity implements PersistentSearchView.SearchListener {
+
+    FragmentManager fragmentManager;
+
+    GoogleSignInAccount account;
+    FloatingActionButton takePhoto;
+    private String TAG = this.getClass().getSimpleName();
+    private static final int RC_OCR_CAPTURE = 9003;
+    PersistentSearchView mSearchView;
+    MenuItem mSearchMenuItem;
+    MenuItem mProfileMenuItem;
+
+
+
+    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
+            = new BottomNavigationView.OnNavigationItemSelectedListener() {
+
+        @Override
+        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
+            switch (item.getItemId()) {
+                case R.id.navigation_home:
+
+                    return true;
+                case R.id.navigation_dashboard:
+
+                    return true;
+                case R.id.navigation_notifications:
+
+                    return true;
+            }
+            return false;
+        }
+    };
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_bottom_nav);
+
+        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
+
+        if (getIntent() != null && getIntent().getExtras() != null) {
+            String name = getIntent().getExtras().getString("name");
+            Snackbar.make(navigation, "Welcome " + name + "!", Snackbar.LENGTH_LONG).setAction("action", null).show();
+        } else if (account != null) {
+            Snackbar.make(navigation, "Welcome back " + account.getDisplayName() + "!", Snackbar.LENGTH_LONG).show();
+        } else {
+            Snackbar.make(navigation, "Welcome! You are not authenticated.", Snackbar.LENGTH_LONG).setAction("Login", new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    startActivity(new Intent(HomeActivity.this, LoginActivity.class));
+                }
+            }).show();
+        }
+
+
+        fragmentManager = getSupportFragmentManager();
+
+        HomeFragment homeFragment = new HomeFragment();
+        fragmentManager.beginTransaction()
+                .add(R.id.fragment_container, homeFragment)
+                .addToBackStack("backStack")
+                .commit();
+        mSearchView = findViewById(R.id.searchview);
+
+        mSearchView = (PersistentSearchView) findViewById(R.id.searchview);
+        mSearchView.setSearchListener(this);
+
         if (mProfileMenuItem != null && account != null) {
             Glide.with(this)
                     .load(account.getPhotoUrl())
@@ -143,111 +362,14 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
                     });
 
         }
+
     }
 
-    public void openSearch() {
-        View menuItemView = findViewById(R.id.action_search);
-        mSearchView.setStartPositionFromMenuItem(menuItemView);
-        mSearchView.openSearch();
+    @Override
+    public void onStart() {
+        super.onStart();
+        account = GoogleSignIn.getLastSignedInAccount(this);
     }
-
-    private void loadFav() {
-        mFavList = getFav();
-        adapter = new BooksListAdapter(this, mFavList);
-        adapter.notifyDataSetChanged();
-        favRecyclerview.setAdapter(adapter);
-    }
-
-    void updateRV() {
-        mFavList.clear();
-        adapter.notifyDataSetChanged();
-        mFavList = getFav();
-        adapter = new BooksListAdapter(this, mFavList);
-        adapter.notifyDataSetChanged();
-        favRecyclerview.setAdapter(adapter);
-    }
-
-    public ArrayList<Item> getFav() {
-        Cursor ingredientCursor = this.getContentResolver()
-                .query(BASE_CONTENT_URI,
-                        null,
-                        null,
-                        null,
-                        null);
-
-        ArrayList<Item> books = new ArrayList<>();
-        if (ingredientCursor != null) {
-            while (ingredientCursor.moveToNext()) {
-                Item ingredient = getDataFromCursor(ingredientCursor);
-                books.add(ingredient);
-            }
-            ingredientCursor.close();
-        }
-
-        return books;
-    }
-
-    private Item getDataFromCursor(Cursor ingredientCursor) {
-        Item ingredient = new Item();
-        VolumeInfo volumeInfo = new VolumeInfo();
-        volumeInfo.setTitle(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_TITLE)));
-        volumeInfo.setAuthors(Arrays.asList(new String[]{
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_AUTHORS))}));
-        volumeInfo.setAverageRating(
-                ingredientCursor.getDouble(ingredientCursor
-                        .getColumnIndex(COLUMN_AVERAGE_RATING)));
-        volumeInfo.setCanonicalVolumeLink(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_CANONICAL_VOLUME_LINK)));
-        volumeInfo.setCategories(Arrays.asList(new String[]{
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_CATEGORIES))}));
-        volumeInfo.setDescription(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_DESCRIPTION)));
-        ImageLinks img = new ImageLinks();
-        img.setThumbnail(ingredientCursor.getString(ingredientCursor
-                .getColumnIndex(COLUMN_IMAGE_LINKS)));
-        volumeInfo.setImageLinks(img);
-        volumeInfo.setInfoLink(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_INFO_LINK)));
-        volumeInfo.setLanguage(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_LANGUAGE)));
-        volumeInfo.setMaturityRating(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_MATURITY_RATING)));
-        volumeInfo.setPageCount(
-                ingredientCursor.getInt(ingredientCursor
-                        .getColumnIndex(COLUMN_PAGE_COUNT)));
-        volumeInfo.setPreviewLink(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_PREVIEW_LINK)));
-        volumeInfo.setPrintType(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_PRINT_TYPE)));
-        volumeInfo.setPublishedDate(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_PUBLISH_DATE)));
-        volumeInfo.setPublisher(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_PUBLISHER)));
-        volumeInfo.setRatingsCount(
-                ingredientCursor.getInt(ingredientCursor
-                        .getColumnIndex(COLUMN_RATING_COUNT)));
-        volumeInfo.setSubtitle(
-                ingredientCursor.getString(ingredientCursor
-                        .getColumnIndex(COLUMN_SUBTITLE)));
-
-        ingredient.setVolumeInfo(volumeInfo);
-
-        return ingredient;
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -267,7 +389,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
                 /* statusMessage.setText(String.format(getString(R.string.ocr_error),
                         CommonStatusCodes.getStatusCodeString(resultCode)));
                 */
-                Snackbar.make(takePhoto, "Something went wrong.", Snackbar.LENGTH_LONG).setAction("Try again", new View.OnClickListener() {
+ /*               Snackbar.make(takePhoto, "Something went wrong.", Snackbar.LENGTH_LONG).setAction("Try again", new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(HomeActivity.this, OcrCaptureActivity.class);
@@ -310,17 +432,6 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
         builder.show();
     }
 
-    @Override
-    protected void onStart() {
-        super.onStart();
-        account = GoogleSignIn.getLastSignedInAccount(this);
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-        updateRV();
-    }
 
     @Override
     public void onBackPressed() {
@@ -364,6 +475,13 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
         return super.onOptionsItemSelected(item);
     }
 
+
+    public void openSearch() {
+        View menuItemView = findViewById(R.id.action_search);
+        mSearchView.setStartPositionFromMenuItem(menuItemView);
+        mSearchView.openSearch();
+    }
+
     @Override
     public boolean onSuggestion(SearchItem searchItem) {
         return false;
@@ -382,7 +500,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
     @Override
     public void onSearch(String query) {
         mSearchView.closeSearch();
-        startActivity(new Intent(HomeActivity.this, ResultsActivity.class)
+        startActivity(new Intent(this, ResultsActivity.class)
                 .putExtra("result", query)
                 .putExtra("isCat", false)); //is a category search (here is false since it is not)
     }
@@ -407,3 +525,4 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
 
     }
 }
+*/

@@ -59,6 +59,7 @@ public class OcrCaptureActivity extends AppCompatActivity {
     // Helper objects for detecting taps and pinches.
     private ScaleGestureDetector scaleGestureDetector;
     private GestureDetector gestureDetector;
+    boolean isWidget;
 
     /**
      * Initializes the UI and creates the detector pipeline.
@@ -71,19 +72,17 @@ public class OcrCaptureActivity extends AppCompatActivity {
         mPreview = (CameraSourcePreview) findViewById(R.id.preview);
         mGraphicOverlay = (GraphicOverlay<OcrGraphic>) findViewById(R.id.graphicOverlay);
 
-        // read parameters from the intent used to launch the activity.
-        boolean autoFocus = getIntent().getBooleanExtra(AutoFocus, false);
-        boolean useFlash = getIntent().getBooleanExtra(UseFlash, false);
 
         // Check for the camera permission before accessing the camera.  If the
         // permission is not granted yet, request permission.
         int rc = ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA);
         if (rc == PackageManager.PERMISSION_GRANTED) {
-            createCameraSource(autoFocus, useFlash);
+            createCameraSource();
         } else {
             requestCameraPermission();
         }
 
+        if (getIntent().getExtras() != null) isWidget = getIntent().getExtras().getBoolean("iswidget");
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
@@ -163,7 +162,7 @@ public class OcrCaptureActivity extends AppCompatActivity {
      * the constant.
      */
     @SuppressLint("InlinedApi")
-    private void createCameraSource(boolean autoFocus, boolean useFlash) {
+    private void createCameraSource() {
         Context context = getApplicationContext();
 
         // A text recognizer is created to find text.  An associated processor instance
@@ -202,8 +201,8 @@ public class OcrCaptureActivity extends AppCompatActivity {
                         .setFacing(CameraSource.CAMERA_FACING_BACK)
                         .setRequestedPreviewSize(1280, 1024)
                         .setRequestedFps(2.0f)
-                        .setFlashMode(useFlash ? Camera.Parameters.FLASH_MODE_TORCH : null)
-                        .setFocusMode(autoFocus ? Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE : null)
+                        .setFlashMode(false ? Camera.Parameters.FLASH_MODE_TORCH : null)
+                        .setFocusMode(true ? Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE : null)
                         .build();
     }
 
@@ -240,6 +239,14 @@ public class OcrCaptureActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onBackPressed() {
+        if (isWidget){
+            System.exit(0);
+        }
+        super.onBackPressed();
+    }
+
     /**
      * Callback for the result from requesting permissions. This method
      * is invoked for every call on {@link #requestPermissions(String[], int)}.
@@ -268,10 +275,8 @@ public class OcrCaptureActivity extends AppCompatActivity {
 
         if (grantResults.length != 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
             Log.d(TAG, "Camera permission granted - initialize the camera source");
-            // We have permission, so create the camerasource
-            boolean autoFocus = getIntent().getBooleanExtra(AutoFocus, false);
-            boolean useFlash = getIntent().getBooleanExtra(UseFlash, false);
-            createCameraSource(autoFocus, useFlash);
+
+            createCameraSource();
             return;
         }
 
@@ -331,10 +336,14 @@ public class OcrCaptureActivity extends AppCompatActivity {
         if (graphic != null) {
             text = graphic.getTextBlock();
             if (text != null && text.getValue() != null) {
-                Intent data = new Intent();
-                data.putExtra(TextBlockObject, text.getValue());
-                setResult(CommonStatusCodes.SUCCESS, data);
-                finish();
+                if (!isWidget) {
+                    Intent data = new Intent();
+                    data.putExtra(TextBlockObject, text.getValue());
+                    setResult(CommonStatusCodes.SUCCESS, data);
+                    finish();
+                } else {
+                    createConfirmDialog(text.getValue());
+                }
             } else {
                 Log.d(TAG, "text data is null");
             }
@@ -342,6 +351,28 @@ public class OcrCaptureActivity extends AppCompatActivity {
             Log.d(TAG, "no text detected");
         }
         return text != null;
+    }
+
+    void createConfirmDialog(final String text) {
+        android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
+        builder.setMessage("You selected \"" + text + "\". Are you sure?")
+                .setTitle("Confirm your choice")
+                .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        Intent data = new Intent(OcrCaptureActivity.this, ResultsActivity.class);
+                        data.putExtra("result", text);
+                        data.putExtra("isCat", false);
+                        startActivity(data);
+                        finish();
+                    }
+                })
+                .setNegativeButton("Try again", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                    }
+                });
+        builder.create();
+        builder.show();
     }
 
     private class CaptureGestureListener extends GestureDetector.SimpleOnGestureListener {

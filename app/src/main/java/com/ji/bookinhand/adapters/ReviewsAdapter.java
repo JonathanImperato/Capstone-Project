@@ -1,7 +1,6 @@
 package com.ji.bookinhand.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -10,25 +9,21 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.ji.bookinhand.R;
-import com.ji.bookinhand.ui.ResultsActivity;
-
-import java.util.List;
+import com.ji.bookinhand.api.models.Review;
 
 public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsAdapterViewHolder> {
 
     Context mContext;
-    Double rating;
-    List<String> categories;
+    Review reviews;
 
-    public ReviewsAdapter(Context mContext, List<String> categories, Double rating) {
+    public ReviewsAdapter(Context mContext, Review reviews) {
         this.mContext = mContext;
-        this.categories = categories;
-        this.rating = rating;
+        this.reviews = reviews;
     }
 
     @Override
     public ReviewsAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        int layoutId = R.layout.category_item;
+        int layoutId = R.layout.review_item;
         View view = LayoutInflater.from(mContext).inflate(layoutId, parent, false);
         ReviewsAdapterViewHolder holder = new ReviewsAdapterViewHolder(view);
         return holder;
@@ -36,38 +31,29 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsA
 
     @Override
     public void onBindViewHolder(ReviewsAdapterViewHolder holder, int position) {
-
-        String name = categories.get(position);
-        holder.name.setText(name);
-
+        String summary = reviews.getResults().get(position).getSummary();
+        String author = reviews.getResults().get(position).getByline();
+        if (summary.length() < 1 || author.length() <1)
+            holder.itemView.setVisibility(View.GONE);
+        holder.review_text.setText(summary);
+        holder.name.setText(author);
     }
 
 
     @Override
     public int getItemCount() {
-        return categories == null ? 0 : categories.size();
+        return reviews == null ? 0 : reviews.getResults().size();
     } //the 1 is for the rating fab
 
-    public class ReviewsAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
-        TextView name;
-        FloatingActionButton fabc;
+    public class ReviewsAdapterViewHolder extends RecyclerView.ViewHolder {
+        TextView name, review_text;
 
         public ReviewsAdapterViewHolder(View itemView) {
             super(itemView);
-            fabc = itemView.findViewById(R.id.fabc);
-            name = itemView.findViewById(R.id.category_name);
-            fabc.setOnClickListener(this);
-            name.setOnClickListener(this);
-            itemView.setOnClickListener(this);
+            review_text = itemView.findViewById(R.id.review_text);
+            name = itemView.findViewById(R.id.author);
 
         }
 
-        @Override
-        public void onClick(View view) {
-            int position = getAdapterPosition();
-            mContext.startActivity(new Intent(mContext, ResultsActivity.class)
-                    .putExtra("result", categories.get(position))
-                    .putExtra("isCat", true));
-        }
     }
 }

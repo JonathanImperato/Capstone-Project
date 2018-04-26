@@ -5,24 +5,24 @@
     android:id="@+id/category_item"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:layout_gravity="center_horizontal">
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/fabc"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:src="@drawable/ic_book_black_24dp"
-        android:tint="#fff"
-        app:elevation="0dp"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent" />
+    android:layout_gravity="center_horizontal"
+    android:layout_margin="4dp"
+    android:elevation="4dp">
 
     <TextView
         android:id="@+id/category_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:background="@drawable/circle2"
+        android:paddingBottom="4dp"
+        android:paddingLeft="8dp"
+        android:paddingRight="8dp"
+        android:paddingTop="4dp"
+        android:textAllCaps="true"
+        android:textColor="#fff"
+        android:textSize="12sp"
+        android:textStyle="bold"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/fabc"
         tools:text="Psychology" />
 </android.support.constraint.ConstraintLayout>

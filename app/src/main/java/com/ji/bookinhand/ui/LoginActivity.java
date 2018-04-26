@@ -33,7 +33,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         GoogleSignInAccount account = GoogleSignIn.getLastSignedInAccount(this);
-        if (account != null) startActivity(new Intent(this, BottomNavActivity.class));
+        if (account != null) startActivity(new Intent(this, HomeActivity.class));
         setContentView(R.layout.activity_login);
         // Configure sign-in to request the user's ID, email address, and basic
         // profile. ID and basic profile are included in DEFAULT_SIGN_IN.
@@ -55,7 +55,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         welcomeText.setAnimation(animation);
         welcomeText.setVisibility(View.VISIBLE);
 
-        // TODO:   updateUI(account);
         // Set the dimensions of the sign-in button.
         SignInButton signInButton = findViewById(R.id.sign_in_button);
         signInButton.setSize(SignInButton.SIZE_STANDARD);
@@ -112,18 +111,20 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
             GoogleSignInAccount account = completedTask.getResult(ApiException.class);
             // Signed in successfully, show authenticated UI.
             if (account != null) {
-                startActivity(new Intent(this, BottomNavActivity.class).putExtra("name", account.getDisplayName())
-                        .setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
-                this.finish();
+                startNextActivity();
             }
-            // TODO:   updateUI(account);
         } catch (ApiException e) {
             // The ApiException status code indicates the detailed failure reason.
             // Please refer to the GoogleSignInStatusCodes class reference for more information.
             Log.w(TAG, "signInResult:failed code=" + e.getStatusCode());
 
-            // TODO:   updateUI(null);
         }
+    }
+
+    void startNextActivity() {
+        startActivity(new Intent(this, HomeActivity.class).setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK));
+        this.finish();
+
     }
 
     @Override
@@ -133,7 +134,8 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 signIn();
                 break;
             case R.id.skipLogin:
-                startActivity(new Intent(this, BottomNavActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
+                startNextActivity();
+                // startActivity(new Intent(this, HomeActivity.class).addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP));
                 break;
         }
     }

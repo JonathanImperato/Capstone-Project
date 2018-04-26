@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.ji.bookinhand">
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <permission android:name="com.ji.bookinhand.database.provider.READ_WRITE" />
+
+    <uses-feature
+        android:name="android.software.leanback"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <activity
+            android:name=".ui.ResultsActivity"
+            android:label="Results"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.BookDetailActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.OcrCaptureActivity"
+            android:label="Read Text"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <provider
+            android:name=".database.FoodProvider"
+            android:authorities="com.ji.bakingapp.database.FoodProvider"
+            android:exported="true" />
+        <!--
+       SCHEMATIC CONTENT PROVIDER
+       - CANNOT BE USED IN CAPSTONE -
+        <provider
+            android:name=".database.Schematic.BooksProvider"
+            android:authorities="com.ji.bookinhand.database.Schematic.BooksProvider"
+            android:exported="true"
+            android:permission="com.ji.bookinhand.database.Schematic.BooksProvider.READ_WRITE" />
+        -->
+        <!--
+       ROOM CONTENT PROVIDER
+       - CANNOT BE USED IN CAPSTONE -
+         <provider
+              android:name=".database.Room.BookContentProvider"
+              android:authorities="com.ji.bookinhand.database.provider"
+              android:exported="true"
+              android:permission="com.ji.bookinhand.database.provider.READ_WRITE"/>
+        -->
+
+        <activity
+            android:name=".ui.LoginActivity"
+            android:label="@string/app_name"
+            android:theme="@style/AppTheme.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".ui.MoreInfoActivity"
+            android:theme="@style/AppTheme.NoActionBar" />
+        <activity
+            android:name=".ui.HomeActivity"
+            android:label="@string/title_activity_bottom_nav"
+            android:theme="@style/AppTheme.NoActionBar" />
+
+        <receiver
+            android:name=".widget.CameraAppWidget"
+            android:description="@string/appwidget_text"
+            android:label="@string/appwidget_text">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/camera_app_widget_info" />
+        </receiver>
+    </application>
+
+</manifest>

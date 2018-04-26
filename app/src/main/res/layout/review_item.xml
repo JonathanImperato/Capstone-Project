@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:padding="4dp">
 
     <ImageView
@@ -11,6 +11,7 @@
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:tint="#000"
+        android:visibility="gone"
         tools:src="@drawable/ic_photo_camera_black_24dp" />
 
     <TextView
@@ -33,6 +34,7 @@
         android:ellipsize="end"
         android:maxLines="1"
         android:textSize="12sp"
+        android:visibility="gone"
         app:layout_constraintLeft_toRightOf="@id/ratingBar"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/title"
@@ -51,13 +53,13 @@
 
     <TextView
         android:id="@+id/title"
-        android:visibility="gone"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="1"
         android:textSize="12sp"
         android:textStyle="bold"
+        android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="@id/author"
         app:layout_constraintRight_toRightOf="parent"
         app:layout_constraintTop_toBottomOf="@id/author"
@@ -72,7 +74,18 @@
         android:maxLines="1"
         android:maxWidth="50dp"
         android:textSize="12sp"
+        android:visibility="gone"
         app:layout_constraintLeft_toLeftOf="@id/author"
         app:layout_constraintTop_toBottomOf="@id/title"
         tools:text="5.0" />
+
+    <View
+        android:id="@+id/divider5"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginLeft="32dp"
+        android:layout_marginRight="32dp"
+        android:background="#9E9E9E"
+        app:layout_constraintTop_toBottomOf="@id/review_text" />
 </android.support.constraint.ConstraintLayout>

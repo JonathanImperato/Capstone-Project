@@ -89,6 +89,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
 
     @Override
     public void onBindViewHolder(BooksListAdapterViewHolder holder, int position) {
+
         if (isFav) {
             if (mFavList != null) { //every page contains 10
                 String title = mFavList.get(position).getVolumeInfo().getTitle();
@@ -182,6 +183,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                                 .into(holder.thumbnail);
             }
         }
+
     }
 
     @Override
@@ -253,14 +255,14 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                             //    Toast.makeText(mContext, "Position is " + position, Toast.LENGTH_SHORT).show();
                             if (!isFavourite(bookTitle)) {
                                 addFavourite(position);
-                                Snackbar.make(view, bookTitle + " has been added to favourite", Snackbar.LENGTH_LONG).setAction("Cancel", new View.OnClickListener() {
+                                Snackbar.make(view.getRootView(), bookTitle + " has been added to favourite", Snackbar.LENGTH_LONG).setAction("Cancel", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         removeFromFav(bookTitle);
                                     }
                                 }).show();
                             } else
-                                Snackbar.make(view, bookTitle + " is already a favourite", Snackbar.LENGTH_LONG).setAction("Cancel", null).show();
+                                Snackbar.make(view.getRootView(), bookTitle + " is already a favourite", Snackbar.LENGTH_LONG).setAction("Cancel", null).show();
                             return true;
                         }
                     });
@@ -276,7 +278,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                             notifyItemRemoved(position);
                             final Item justRemovedItem = mFavList.get(position);
                             mFavList.remove(position);
-                            Snackbar snack = Snackbar.make(view, bookTitle + " has been removed from favourites", Snackbar.LENGTH_LONG).setAction("Cancel", new View.OnClickListener() {
+                            Snackbar snack = Snackbar.make(view.getRootView(), bookTitle + " has been removed from favourites", Snackbar.LENGTH_LONG).setAction("Cancel", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     if (position != -1) {
@@ -324,7 +326,8 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                     } else {
                         intent.putExtra("volume", mBooksList.getItems().get(position).getVolumeInfo());
                         intent.putExtra("isFav", false);
-                        intent.putExtra("isbn", mBooksList.getItems().get(position).getVolumeInfo().getIndustryIdentifiers().get(0).getIdentifier());
+                        if (mBooksList.getItems().get(position) != null && mBooksList.getItems().get(position).getVolumeInfo().getIndustryIdentifiers() != null && mBooksList.getItems().get(position).getVolumeInfo().getIndustryIdentifiers().get(0) != null)
+                            intent.putExtra("isbn", mBooksList.getItems().get(position).getVolumeInfo().getIndustryIdentifiers().get(0).getIdentifier());
                         intent.putExtra("imgs", mBooksList.getItems().get(position).getVolumeInfo().getImageLinks());
                         ActivityCompat.startActivity(mContext, intent, options.toBundle());
                     }

@@ -11,6 +11,7 @@ import android.widget.TextView;
 
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.api.models.VolumeInfo;
+import com.ji.bookinhand.api.nytmodels.BookDetail;
 
 public class MoreInfoActivity extends AppCompatActivity {
     TextView description, pages, ISBN;
@@ -28,12 +29,20 @@ public class MoreInfoActivity extends AppCompatActivity {
         ISBN = findViewById(R.id.isbn);
 
         VolumeInfo item = getIntent().getExtras().getParcelable("item");
+        BookDetail libro = getIntent().getExtras().getParcelable("libro");
         String data = getIntent().getExtras().getString("isbn");
-        description.setText(item.getDescription());
-        pages.setText(item.getPageCount() + " " + getString(R.string.pages));
-        if (data != null && data.length() > 1)
-            ISBN.setText("ISBN " + data);
-        else ISBN.setVisibility(View.GONE);
+        if (item != null) {
+            description.setText(item.getDescription());
+            pages.setText(item.getPageCount() + " " + getString(R.string.pages));
+            if (data != null && data.length() > 1)
+                ISBN.setText("ISBN " + data);
+            else ISBN.setVisibility(View.GONE);
+        } else {
+            description.setText(libro.getDescription());
+            if (data != null && data.length() > 1)
+                ISBN.setText("ISBN " + data);
+            else ISBN.setVisibility(View.GONE);
+        }
     }
 
     @Override

@@ -7,6 +7,7 @@ import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -22,6 +23,9 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
+import static com.ji.bookinhand.R.id;
+import static com.ji.bookinhand.R.layout;
+
 public class ResultsActivity extends AppCompatActivity {
     private String TAG = this.getClass().getSimpleName();
     RecyclerView recyclerView;
@@ -31,16 +35,18 @@ public class ResultsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_result);
+        setContentView(layout.activity_result);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(id.toolbar);
         setSupportActionBar(toolbar);
-        pbar = findViewById(R.id.loadingBar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        pbar = findViewById(id.loadingBar);
         pbar.setIndeterminate(true);
         pbar.setVisibility(View.VISIBLE);
 
         //recyclerview stuff
-        recyclerView = findViewById(R.id.RecyclerView);
+        recyclerView = findViewById(id.RecyclerView);
         recyclerView.setHasFixedSize(true);
         int columns = getNumberOfColumns();
         recyclerView.setLayoutManager(new GridLayoutManager(this, columns));
@@ -57,6 +63,17 @@ public class ResultsActivity extends AppCompatActivity {
             }
         }
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            // Respond to the action bar's Up/Home button
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private void getBookList(String query) {
@@ -90,7 +107,7 @@ public class ResultsActivity extends AppCompatActivity {
     public int getNumberOfColumns() {
         DisplayMetrics displayMetrics = this.getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        int numberOfCs = (int) (dpWidth / 180);
+        int numberOfCs = (int) (dpWidth / 120);
         return numberOfCs;
     }
 
