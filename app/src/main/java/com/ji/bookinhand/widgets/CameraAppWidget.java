@@ -1,4 +1,4 @@
-package com.ji.bookinhand.widget;
+package com.ji.bookinhand.widgets;
 
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;

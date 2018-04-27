@@ -11,6 +11,7 @@
     <android.support.design.widget.AppBarLayout
         android:id="@+id/app_bar"
         android:layout_width="match_parent"
+        android:fitsSystemWindows="true"
         android:layout_height="wrap_content"
         android:theme="@style/AppTheme.AppBarOverlay"
         app:layout_constraintTop_toTopOf="parent">
@@ -18,6 +19,7 @@
         <android.support.v7.widget.Toolbar
             android:id="@+id/my_toolbar"
             android:layout_width="match_parent"
+            android:fitsSystemWindows="true"
             android:layout_height="?actionBarSize"
             android:background="?attr/colorPrimary"
             app:layout_collapseMode="pin"
@@ -48,6 +50,7 @@
     <FrameLayout
         android:id="@+id/fragment_container"
         android:layout_width="0dp"
+        android:fitsSystemWindows="true"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/navigation"
         app:layout_constraintLeft_toLeftOf="parent"

@@ -4,6 +4,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.Snackbar;
@@ -14,6 +15,7 @@ import android.support.v7.widget.LinearSnapHelper;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SnapHelper;
 import android.support.v7.widget.Toolbar;
+import android.transition.TransitionInflater;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -93,6 +95,11 @@ public class BookDetailActivity extends AppCompatActivity {
         getSupportActionBar().setHomeButtonEnabled(true);
 
         bindViews();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            getWindow().setSharedElementEnterTransition(TransitionInflater.from(this)
+                    .inflateTransition(R.transition.curve));
+        }
 
         if (getIntent().getExtras() != null) {
             isNyt = getIntent().getExtras().getBoolean("isNyt");
@@ -269,7 +276,7 @@ public class BookDetailActivity extends AppCompatActivity {
 
         if (cursor != null) {
             cursor.moveToFirst();
-            String category;
+            String category = "";
             for (int i = 0; i < cursor.getCount(); i++) {
                 category = cursor.getString(cursor
                         .getColumnIndexOrThrow(COLUMN_CATEGORIES));
@@ -426,7 +433,7 @@ public class BookDetailActivity extends AppCompatActivity {
 
     void removeFromFav() {
         String bookTitle = null;
-        if (isNyt) bookTitle = item.getTitle();
+        if (!isNyt) bookTitle = item.getTitle();
         else bookTitle = libro.getTitle();
         this.getContentResolver().delete(
                 BASE_CONTENT_URI,
@@ -476,7 +483,7 @@ public class BookDetailActivity extends AppCompatActivity {
                     BooksList result = response.body();
                     BooksListAdapter adapter = new BooksListAdapter(BookDetailActivity.this, result, true);
                     moreRecyclerView.setAdapter(adapter);
-                    if (result.getTotalItems() == 0) {
+                    if (result == null || result.getTotalItems() == 0) {
                         CardView cardView = findViewById(R.id.cardMore);
                         cardView.setVisibility(GONE);
                     }
@@ -505,15 +512,15 @@ public class BookDetailActivity extends AppCompatActivity {
         BooksClient service = retrofit.create(BooksClient.class);
         Call<Review> books;
         if (!isNyt)
-            books = service.getBookReviewsByTitle(item.getTitle(), getString(R.string.api_key));
+            books = service.getBookReviewsByTitle(item.getTitle(), getString(R.string.nyt_api_key));
         else
-            books = service.getBookReviewsByTitle(libro.getTitle(), getString(R.string.api_key));
+            books = service.getBookReviewsByTitle(libro.getTitle(), getString(R.string.nyt_api_key));
 
         books.enqueue(new Callback<Review>() {
             @Override
             public void onResponse(Call<Review> call, Response<Review> response) {
                 Review result = response.body();
-                if (result.getNumResults() == 0) revs_title.setVisibility(GONE);
+                if (result == null || result.getNumResults() == 0) revs_title.setVisibility(GONE);
                 reviewsAdapter = new ReviewsAdapter(BookDetailActivity.this, result);
                 reviewsRecyclerView.setAdapter(reviewsAdapter);
             }

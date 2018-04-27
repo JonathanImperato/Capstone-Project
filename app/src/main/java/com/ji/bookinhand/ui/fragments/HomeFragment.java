@@ -17,15 +17,11 @@ import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.ji.bookinhand.R;
-import com.ji.bookinhand.adapters.BooksListAdapter;
 import com.ji.bookinhand.adapters.PopularBooksAdapter;
 import com.ji.bookinhand.api.BooksClient;
-import com.ji.bookinhand.api.models.Item;
 import com.ji.bookinhand.api.nytmodels.NytBooksList;
 import com.ji.bookinhand.ui.OcrCaptureActivity;
 import com.ji.bookinhand.ui.ResultsActivity;
-
-import java.util.ArrayList;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -134,7 +130,6 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), OcrCaptureActivity.class);
-
                 startActivityForResult(intent, RC_OCR_CAPTURE);
             }
         });
@@ -162,7 +157,7 @@ public class HomeFragment extends Fragment {
         BooksClient service = retrofit.create(BooksClient.class);
         //do a setting screen to choose wich categories of book show based on this:
         //https://www.nytimes.com/books/best-sellers/
-        Call<NytBooksList> data = service.getPopularBooks("hardcover-fiction", getString(R.string.api_key));
+        Call<NytBooksList> data = service.getPopularBooks("hardcover-fiction", getString(R.string.nyt_api_key));
         data.enqueue(new Callback<NytBooksList>() {
             @Override
             public void onResponse(Call<NytBooksList> call, Response<NytBooksList> response) {
@@ -191,7 +186,7 @@ public class HomeFragment extends Fragment {
         BooksClient service = retrofit.create(BooksClient.class);
         //do a setting screen to choose wich categories of book show based on this:
         //https://www.nytimes.com/books/best-sellers/
-        Call<NytBooksList> data = service.getPopularBooks("hardcover-nonfiction", getString(R.string.api_key));
+        Call<NytBooksList> data = service.getPopularBooks("hardcover-nonfiction", getString(R.string.nyt_api_key));
         data.enqueue(new Callback<NytBooksList>() {
             @Override
             public void onResponse(Call<NytBooksList> call, Response<NytBooksList> response) {
@@ -221,7 +216,7 @@ public class HomeFragment extends Fragment {
         BooksClient service = retrofit.create(BooksClient.class);
         //do a setting screen to choose wich categories of book show based on this:
         //https://www.nytimes.com/books/best-sellers/
-        Call<NytBooksList> data = service.getPopularBooks("e-book-fiction", getString(R.string.api_key));
+        Call<NytBooksList> data = service.getPopularBooks("e-book-fiction", getString(R.string.nyt_api_key));
         data.enqueue(new Callback<NytBooksList>() {
             @Override
             public void onResponse(Call<NytBooksList> call, Response<NytBooksList> response) {
@@ -250,7 +245,7 @@ public class HomeFragment extends Fragment {
         BooksClient service = retrofit.create(BooksClient.class);
         //do a setting screen to choose wich categories of book show based on this:
         //https://www.nytimes.com/books/best-sellers/
-        Call<NytBooksList> data = service.getPopularBooks("paperback-nonfiction", getString(R.string.api_key));
+        Call<NytBooksList> data = service.getPopularBooks("paperback-nonfiction", getString(R.string.nyt_api_key));
         data.enqueue(new Callback<NytBooksList>() {
             @Override
             public void onResponse(Call<NytBooksList> call, Response<NytBooksList> response) {

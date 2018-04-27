@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ji.bookinhand">
+    package="com.ji.bookinhand" >
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -74,8 +74,22 @@
             android:label="@string/title_activity_bottom_nav"
             android:theme="@style/AppTheme.NoActionBar" />
 
+        <receiver android:name=".widgets.BooksListProvider">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/booklist_app_widget" />
+        </receiver>
+
+        <service
+            android:name=".widgets.BookGridService"
+            android:permission="android.permission.BIND_REMOTEVIEWS" />
+
         <receiver
-            android:name=".widget.CameraAppWidget"
+            android:name=".widgets.CameraAppWidget"
             android:description="@string/appwidget_text"
             android:label="@string/appwidget_text">
             <intent-filter>

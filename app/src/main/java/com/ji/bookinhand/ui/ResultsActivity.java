@@ -9,6 +9,9 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Interpolator;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -64,6 +67,8 @@ public class ResultsActivity extends AppCompatActivity {
         }
 
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

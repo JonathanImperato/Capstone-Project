@@ -281,7 +281,7 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
     public int getNumberOfColumns() {
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
-        int numberOfCs = (int) (dpWidth / 180);
+        int numberOfCs = (int) (dpWidth / 120);
         return numberOfCs;
     }
 

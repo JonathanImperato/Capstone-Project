@@ -13,7 +13,7 @@
         tools:src="@drawable/common_full_open_on_phone" />
 
     <TextView
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:maxLines="2"

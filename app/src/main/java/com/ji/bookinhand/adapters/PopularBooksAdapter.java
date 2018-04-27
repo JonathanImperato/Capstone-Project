@@ -16,6 +16,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -70,6 +72,7 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
     public BooksListAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layoutId = R.layout.book_item;
         View view = LayoutInflater.from(mContext).inflate(layoutId, parent, false);
+
         BooksListAdapterViewHolder holder = new BooksListAdapterViewHolder(view);
         return holder;
     }
@@ -124,11 +127,11 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
                     .build();
 
             BooksClient service = retrofit.create(BooksClient.class);
-            Call<BooksList> data = service.getBookWithQuery("intitle:"+mBooksList.getResults().get(position).getBookDetails().get(0).getTitle());
-            data.enqueue(new Callback<BooksList>() {
+            Call<BooksListProvider> data = service.getBookWithQuery("intitle:"+mBooksList.getResults().get(position).getBookDetails().get(0).getTitle());
+            data.enqueue(new Callback<BooksListProvider>() {
                 @Override
-                public void onResponse(Call<BooksList> call, Response<BooksList> response) {
-                    BooksList data = response.body();
+                public void onResponse(Call<BooksListProvider> call, Response<BooksListProvider> response) {
+                    BooksListProvider data = response.body();
                     if (data != null && data.getItems() != null && data.getItems().get(0) != null && data.getItems().get(0).getVolumeInfo() != null && data.getItems().get(0).getVolumeInfo().getImageLinks() != null) {
                         ImageLinks img = data.getItems().get(0).getVolumeInfo().getImageLinks();
                         imgs.add(img);
@@ -140,7 +143,7 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
                 }
 
                 @Override
-                public void onFailure(Call<BooksList> call, Throwable t) {
+                public void onFailure(Call<BooksListProvider> call, Throwable t) {
 
                 }
             });
