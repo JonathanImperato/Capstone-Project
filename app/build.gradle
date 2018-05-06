@@ -28,9 +28,9 @@ android {
     }
     flavorDimensions "official"
     productFlavors {
-        pro {
+        paid {
             dimension "official"
-            applicationId 'com.ji.bookinhand.pro'
+            applicationId 'com.ji.bookinhand.paid'
             signingConfig signingConfigs.BookInHandKey
         }
         free {
@@ -51,9 +51,11 @@ dependencies {
     implementation 'com.android.support:support-v4:27.1.1'
     implementation 'com.google.android.gms:play-services-vision:15.0.0'
     implementation 'com.android.support:customtabs:27.1.1'
-    implementation 'com.github.IntruderShanky:Sectioned-RecyclerView:2.1.1'
     implementation 'com.google.android.gms:play-services-ads:15.0.0'
     implementation 'com.google.android.gms:play-services-auth:15.0.0'
+    implementation 'com.android.support:preference-v7:27.1.1'
+    //Used licenses activity
+    implementation 'com.github.franmontiel:AttributionPresenter:1.0'
     //searchbar
     implementation 'com.github.crysehillmes:PersistentSearchView:4da778cd90'
     //JSON STUFF

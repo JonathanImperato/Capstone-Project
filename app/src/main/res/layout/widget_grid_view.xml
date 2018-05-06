@@ -50,25 +50,17 @@
             app:srcCompat="@drawable/ic_photo_camera_black_24dp" />
     </RelativeLayout>
 
-    <RelativeLayout
+
+    <TextView
         android:id="@+id/empty_view"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:text="Empty view"
-            android:textAlignment="center"
-            android:textColor="#ffffff"
-            android:textSize="20sp"
-            android:textStyle="bold"
-            android:visibility="gone" />
-
-
-    </RelativeLayout>
-
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/no_fav_to_display"
+        android:textAlignment="center"
+        android:textSize="20sp"
+        android:textStyle="bold" />
 
 </FrameLayout>

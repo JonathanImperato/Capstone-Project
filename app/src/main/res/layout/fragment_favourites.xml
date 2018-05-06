@@ -1,23 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:clipChildren="false"
     android:clipToPadding="false"
     android:fitsSystemWindows="true"
+    app:layout_constraintTop_toTopOf="parent"
     tools:context=".ui.fragments.FavouritesFragment">
 
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/recyclerview_swipe"
+    <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/ebookfictionRv"
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/recyclerview_swipe"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            tools:listitem="@layout/book_item" />
-    </android.support.v4.widget.SwipeRefreshLayout>
+            android:layout_height="wrap_content">
 
-</android.support.design.widget.CoordinatorLayout>
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/ebookfictionRv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                tools:listitem="@layout/book_item" />
+        </android.support.v4.widget.SwipeRefreshLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/no_fav"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:visibility="gone">
+
+            <ImageView
+                android:id="@+id/heart"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/ic_favorite_black_24dp" />
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/add_favs"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/heart" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:maxWidth="200dp"
+                android:text="@string/subtitle"
+                app:layout_constraintLeft_toLeftOf="@id/title"
+                app:layout_constraintRight_toRightOf="@id/title"
+                app:layout_constraintTop_toBottomOf="@id/title" />
+
+        </android.support.constraint.ConstraintLayout>
+    </android.support.design.widget.CoordinatorLayout>
+</FrameLayout>

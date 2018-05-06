@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".ui.MoreInfoActivity">
 
     <android.support.design.widget.AppBarLayout
@@ -25,46 +25,64 @@
         </android.support.v7.widget.Toolbar>
     </android.support.design.widget.AppBarLayout>
 
-    <TextView
-        android:id="@+id/descriptionBook"
+    <ScrollView
+        android:id="@+id/scollLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        app:layout_constraintTop_toBottomOf="@id/app_bar"
-        tools:text="@string/lorem_ipsum" />
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/app_bar">
 
-    <View
-        android:id="@+id/divider"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_margin="16dp"
-        android:background="#9E9E9E"
-        app:layout_constraintTop_toBottomOf="@id/descriptionBook" />
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/book_info"
+            android:layout_marginTop="20dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top">
 
-    <android.support.constraint.Guideline
-        android:id="@+id/veticalguide"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        app:layout_constraintGuide_percent="0.5" />
+            <TextView
+                android:id="@+id/descriptionBook"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                tools:text="@string/lorem_ipsum" />
 
-    <TextView
-        android:id="@+id/pages"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        app:layout_constraintLeft_toLeftOf="@id/descriptionBook"
-        android:layout_marginTop="16dp"
-        android:textSize="12sp"
-        app:layout_constraintTop_toBottomOf="@id/divider"
-        tools:text="220 pages" />
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:layout_margin="16dp"
+                android:background="#9E9E9E"
+                app:layout_constraintTop_toBottomOf="@id/descriptionBook" />
 
-    <TextView
-        app:layout_constraintLeft_toRightOf="@id/veticalguide"
-        android:id="@+id/isbn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="16dp"
-        android:textSize="12sp"
-        app:layout_constraintTop_toBottomOf="@id/divider"
-        tools:text="ISBN 1928371648291" />
+            <android.support.constraint.Guideline
+                android:id="@+id/veticalguide"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintGuide_percent="0.5" />
+
+            <TextView
+                android:id="@+id/pages"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:textSize="12sp"
+                app:layout_constraintLeft_toLeftOf="@id/descriptionBook"
+                app:layout_constraintTop_toBottomOf="@id/divider"
+                tools:text="220 pages" />
+
+            <TextView
+                android:id="@+id/isbn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:textSize="12sp"
+                app:layout_constraintLeft_toRightOf="@id/veticalguide"
+                app:layout_constraintTop_toBottomOf="@id/divider"
+                tools:text="ISBN 1928371648291" />
+
+        </android.support.constraint.ConstraintLayout>
+
+    </ScrollView>
+
 </android.support.constraint.ConstraintLayout>

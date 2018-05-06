@@ -3,6 +3,8 @@ package com.ji.bookinhand.ui.fragments;
 import android.database.Cursor;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.annotation.Nullable;
+import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
@@ -12,7 +14,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.intrusoft.sectionedrecyclerview.Section;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.adapters.BooksListAdapter;
 import com.ji.bookinhand.api.models.ImageLinks;
@@ -42,7 +43,7 @@ import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_RATING_C
 import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_SUBTITLE;
 import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_TITLE;
 
-public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener {
+public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, View.OnLayoutChangeListener {
 
     public FavouritesFragment() {
         // Required empty public constructor
@@ -50,9 +51,10 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
         setHasOptionsMenu(true);
     }
 
+    ConstraintLayout noFavLayout;
     SwipeRefreshLayout refreshLayout;
     ArrayList<Item> mFavList = new ArrayList<>();
-    List<SectionHeader> mSectionsDataList = new ArrayList<>();
+    // List<SectionHeader> mSectionsDataList = new ArrayList<>();
     List<String> mSectionsList = new ArrayList<>();
     RecyclerView recyclerView;
     BooksListAdapter adapter;
@@ -77,6 +79,7 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
 
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_favourites, container, false);
+        noFavLayout = v.findViewById(R.id.no_fav);
         recyclerView = v.findViewById(R.id.ebookfictionRv);
         refreshLayout = v.findViewById(R.id.recyclerview_swipe);
         refreshLayout.setOnRefreshListener(this);
@@ -98,14 +101,39 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
     }
 
 
+    @Override
+    public void onResume() {
+        super.onResume();
+
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        if (savedInstanceState != null) {
+            mFavList = savedInstanceState.getParcelableArrayList("recyclerViewData");
+            adapter = new BooksListAdapter(getContext(), mFavList);
+            recyclerView.setAdapter(adapter);
+        }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelableArrayList("recyclerViewData", mFavList);
+    }
+
     private void loadData() {
         mFavList.clear();
         mFavList = getFav();
         //    if (isDashboard) {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), getNumberOfColumns()));
-        if (adapter == null)
-            adapter = new BooksListAdapter(getContext(), mFavList);
+        adapter = new BooksListAdapter(getContext(), mFavList);
+        recyclerView.addOnLayoutChangeListener(this);
         recyclerView.setAdapter(adapter);
+        if (mFavList.size() < 1)
+            noFavLayout.setVisibility(View.VISIBLE);
+
   /*      } else {
             loadSections();
             loadLists();
@@ -199,35 +227,35 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
         return item;
     }
 
-    void loadSections() {
-        mSectionsList.clear();
-        for (Item i : mFavList) {
-            List<String> sections = Arrays.asList(i.getVolumeInfo().getCategories().get(0).split(","));
-            for (String section : sections) {
-                String sezione = section.replace(",", "");
-                if (mSectionsList == null || !mSectionsList.contains(sezione)) {
-                    if (sezione != null)
-                        mSectionsList.add(sezione);
-                }
-            }
-        }
-    }
+    /*  void loadSections() {
+          mSectionsList.clear();
+          for (Item i : mFavList) {
+              List<String> sections = Arrays.asList(i.getVolumeInfo().getCategories().get(0).split(","));
+              for (String section : sections) {
+                  String sezione = section.replace(",", "");
+                  if (mSectionsList == null || !mSectionsList.contains(sezione)) {
+                      if (sezione != null)
+                          mSectionsList.add(sezione);
+                  }
+              }
+          }
+      }
 
-    void loadLists() {
-        mSectionsDataList.clear();
-        for (String section : mSectionsList) {
-            List<Item> childList = new ArrayList<>();
-            for (int i = 0; i < mFavList.size(); i++) {
-                if (isItemInSectionAt(i, section)) {
-                    childList.add(mFavList.get(i));
-                }
-            }
-            SectionHeader sectionHeader = new SectionHeader(childList, section);
-            mSectionsDataList.add(sectionHeader);
-        }
+      void loadLists() {
+          mSectionsDataList.clear();
+          for (String section : mSectionsList) {
+              List<Item> childList = new ArrayList<>();
+              for (int i = 0; i < mFavList.size(); i++) {
+                  if (isItemInSectionAt(i, section)) {
+                      childList.add(mFavList.get(i));
+                  }
+              }
+              SectionHeader sectionHeader = new SectionHeader(childList, section);
+              mSectionsDataList.add(sectionHeader);
+          }
 
-    }
-
+      }
+  */
     boolean isItemInSectionAt(int itemPosition, String sectionName) {
         if (mFavList.get(itemPosition).getVolumeInfo().getCategories().get(0).contains(sectionName))
             return true;
@@ -258,7 +286,7 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
         );
     }
 
-    public class SectionHeader implements Section<Item> {
+    /*public class SectionHeader implements Section<Item> {
 
         List<Item> childList;
         String sectionText;
@@ -278,6 +306,7 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
         }
     }
 
+   */
     public int getNumberOfColumns() {
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
@@ -286,10 +315,13 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        onRefresh();
+    public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
+        if (recyclerView.getAdapter().getItemCount() == 0) {
+            noFavLayout.setVisibility(View.VISIBLE);
+        } else noFavLayout.setVisibility(View.GONE);
     }
+
+
 
     /*  @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

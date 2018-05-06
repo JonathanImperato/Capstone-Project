@@ -5,24 +5,26 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.util.SparseArray;
 import android.view.LayoutInflater;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.view.animation.Interpolator;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.api.BooksClient;
 import com.ji.bookinhand.api.models.BooksList;
@@ -31,9 +33,6 @@ import com.ji.bookinhand.api.nytmodels.BookDetail;
 import com.ji.bookinhand.api.nytmodels.NytBooksList;
 import com.ji.bookinhand.api.nytmodels.Result;
 import com.ji.bookinhand.ui.BookDetailActivity;
-
-import java.util.HashMap;
-import java.util.Map;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -60,11 +59,12 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
     private static final String TAG = PopularBooksAdapter.class.getSimpleName();
     public Context mContext;
     public NytBooksList mBooksList;
-    public Map imgs = new HashMap<Integer, ImageLinks>();
+    public SparseArray<ImageLinks> imgs;
 
     public PopularBooksAdapter(Context mContext, NytBooksList mBooksList) {
         this.mContext = mContext;
         this.mBooksList = mBooksList;
+        imgs = new SparseArray<>();
         imgs.clear();
     }
 
@@ -80,6 +80,7 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
     @Override
     public void onBindViewHolder(BooksListAdapterViewHolder holder, int position) {
         if (mBooksList != null) { //every page contains 10
+
             String title = mBooksList.getResults().get(position).getBookDetails().get(0).getTitle();
             String author = mBooksList.getResults().get(position).getBookDetails().get(0).getAuthor();
 
@@ -116,6 +117,7 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
             loadSingleImage(position, holder.thumbnail);
         }
     }
+
 /*
     void loadImage() {
         imgs.clear();
@@ -163,24 +165,30 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
             @Override
             public void onResponse(Call<BooksList> call, Response<BooksList> response) {
                 BooksList data = response.body();
+                RequestOptions option = new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL);
                 if (data != null && data.getItems() != null && data.getItems().get(0) != null && data.getItems().get(0).getVolumeInfo() != null && data.getItems().get(0).getVolumeInfo().getImageLinks() != null) {
                     ImageLinks image = data.getItems().get(0).getVolumeInfo().getImageLinks();
                     if (image != null) {
                         if (image.getExtraLarge() != null)
                             Glide.with(mContext)
                                     .load(image.getExtraLarge())
+                                    .apply(option)
                                     .into(imageView);
                         else if (image.getLarge() != null)
                             Glide.with(mContext)
                                     .load(image.getLarge())
+                                    .apply(option)
                                     .into(imageView);
                         else if (image.getMedium() != null)
                             Glide.with(mContext)
                                     .load(image.getMedium())
+                                    .apply(option)
                                     .into(imageView);
                         else if (image.getThumbnail() != null)
                             Glide.with(mContext)
                                     .load(image.getThumbnail())
+                                    .apply(option)
                                     .into(imageView);
                         imgs.put(position, image);
                     }
@@ -209,7 +217,6 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
 
         TextView title, author, rating;
         ImageView thumbnail, menu;
-
         public BooksListAdapterViewHolder(View view) {
             super(view);
             title = view.findViewById(R.id.title);
@@ -217,7 +224,6 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
             rating = view.findViewById(R.id.rating);
             thumbnail = view.findViewById(R.id.thumbnail);
             menu = view.findViewById(R.id.more);
-
             if (menu != null)
                 menu.setOnClickListener(this);
             thumbnail.setOnClickListener(this);
@@ -266,7 +272,7 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
                 case R.id.book_item:
                     intent.putExtra("volume", mBooksList.getResults().get(position).getBookDetails().get(0));
                     intent.putExtra("isFav", false);
-                    intent.putExtra("imgs", (ImageLinks) imgs.get(position));
+                    intent.putExtra("imgs", imgs.get(position));
                     intent.putExtra("isNyt", true);
                     intent.putExtra("amazonUrl", mBooksList.getResults().get(position).getAmazonProductUrl());
                     ActivityCompat.startActivity(mContext, intent, options.toBundle());
@@ -276,7 +282,7 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
                     intent.putExtra("isFav", false);
                     intent.putExtra("isNyt", true);
                     intent.putExtra("amazonUrl", mBooksList.getResults().get(position).getAmazonProductUrl());
-                    intent.putExtra("imgs", (ImageLinks) imgs.get(position));
+                    intent.putExtra("imgs", imgs.get(position));
                     ActivityCompat.startActivity(mContext, intent, options.toBundle());
 
                     break;
@@ -302,15 +308,15 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
                 values.put(COLUMN_AVERAGE_RATING, libro.getRank());
                 //  values.put(COLUMN_RATING_COUNT, info.getRatingsCount());
                 //  values.put(COLUMN_MATURITY_RATING, info.getMaturityRating());
-                if ((ImageLinks) imgs.get(position) != null)
-                    if (((ImageLinks) imgs.get(position)).getExtraLarge() != null)
-                        values.put(COLUMN_IMAGE_LINKS, ((ImageLinks) imgs.get(position)).getExtraLarge());
-                    else if (((ImageLinks) imgs.get(position)).getLarge() != null)
-                        values.put(COLUMN_IMAGE_LINKS, ((ImageLinks) imgs.get(position)).getLarge());
-                    else if (((ImageLinks) imgs.get(position)).getMedium() != null)
-                        values.put(COLUMN_IMAGE_LINKS, ((ImageLinks) imgs.get(position)).getMedium());
-                    else if (((ImageLinks) imgs.get(position)).getThumbnail() != null)
-                        values.put(COLUMN_IMAGE_LINKS, ((ImageLinks) imgs.get(position)).getThumbnail());
+                if (imgs.get(position) != null)
+                    if ((imgs.get(position)).getExtraLarge() != null)
+                        values.put(COLUMN_IMAGE_LINKS, (imgs.get(position)).getExtraLarge());
+                    else if ((imgs.get(position)).getLarge() != null)
+                        values.put(COLUMN_IMAGE_LINKS, (imgs.get(position)).getLarge());
+                    else if ((imgs.get(position)).getMedium() != null)
+                        values.put(COLUMN_IMAGE_LINKS, (imgs.get(position)).getMedium());
+                    else if ((imgs.get(position)).getThumbnail() != null)
+                        values.put(COLUMN_IMAGE_LINKS, (imgs.get(position)).getThumbnail());
 
                 //       values.put(COLUMN_LANGUAGE, info.getLanguage());
                 //       values.put(COLUMN_PREVIEW_LINK, info.getPreviewLink());

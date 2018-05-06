@@ -11,7 +11,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.intrusoft.sectionedrecyclerview.SectionRecyclerViewAdapter;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.api.models.ImageLinks;
 import com.ji.bookinhand.api.models.Item;
@@ -26,7 +25,7 @@ import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_TITLE;
  * WORKS ONLY IF A VERTICAL LINEAR LAYOUT MANAGER IS USED
  * CURRENTLY NOT USED
  */
-
+/*
 public class FavBooksAdapter extends SectionRecyclerViewAdapter<FavouritesFragment.SectionHeader, Item, FavBooksAdapter.SectionViewHolder, FavBooksAdapter.MyItemViewHolder> {
     private static final String TAG = FavBooksAdapter.class.getSimpleName();
     List<FavouritesFragment.SectionHeader> mSectionsDataList;
@@ -201,7 +200,7 @@ public class FavBooksAdapter extends SectionRecyclerViewAdapter<FavouritesFragme
                     ActivityCompat.startActivity(mContext, intent, options.toBundle());
                     break;
             }
-            */
+            *//*
                 }
             });
         }
@@ -226,4 +225,4 @@ public class FavBooksAdapter extends SectionRecyclerViewAdapter<FavouritesFragme
         }
     }
 
-}
+}*/

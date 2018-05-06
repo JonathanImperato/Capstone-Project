@@ -1,13 +1,22 @@
 package com.ji.bookinhand.ui;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.drawable.AnimatedVectorDrawable;
 import android.graphics.drawable.Drawable;
+import android.net.ConnectivityManager;
+import android.net.Network;
+import android.net.NetworkCapabilities;
+import android.net.NetworkInfo;
+import android.net.NetworkRequest;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.BottomNavigationView;
 import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -16,6 +25,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.request.RequestOptions;
@@ -31,6 +43,7 @@ import com.ji.bookinhand.BuildConfig;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.ui.fragments.FavouritesFragment;
 import com.ji.bookinhand.ui.fragments.HomeFragment;
+import com.ji.bookinhand.ui.fragments.SettingsFragment;
 
 import org.cryse.widget.persistentsearch.PersistentSearchView;
 import org.cryse.widget.persistentsearch.SearchItem;
@@ -43,25 +56,37 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
     private String TAG = this.getClass().getSimpleName();
     private static final int RC_OCR_CAPTURE = 9003;
     PersistentSearchView mSearchView;
+    private String MY_PREFS_NAME;
     MenuItem mSearchMenuItem;
     MenuItem mProfileMenuItem;
     FragmentManager fragmentManager;
     FavouritesFragment favouritesFragment;
     HomeFragment homeFragment;
+    SettingsFragment settingsFragment;
+    ImageView noConnectionImg;
+    FrameLayout frameLayout;
     InterstitialAd mInterstitialAd;
+    SharedPreferences.Editor editor;
+    SharedPreferences prefs;
+    BottomNavigationView navigation;
+    String TEST_DEVICE = "69A744B1C87D5CA7268C31E20AC93CCA";
+    Fragment selectedFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
         Toolbar toolbar = findViewById(R.id.my_toolbar);
         setSupportActionBar(toolbar);
         toolbar.setTitle("Home");
-
+        MY_PREFS_NAME = getResources().getString(R.string.history_pref_name);
+        frameLayout = findViewById(R.id.fragment_container);
+        noConnectionImg = findViewById(R.id.imageNoCon);
+        prefs = this.getSharedPreferences(MY_PREFS_NAME, MODE_PRIVATE);
+        editor = prefs.edit();
+        navigation = findViewById(R.id.navigation);
+        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
         if (BuildConfig.FLAVOR.equals("free")) {
             // Sample AdMob app ID: ca-app-pub-3940256099942544~3347511713
             MobileAds.initialize(this,
@@ -71,6 +96,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
             //TODO: AFTER PUBLISHED, ADD THE APP TO THE ADMOB CONSOLE
             final AdRequest request = new AdRequest.Builder()
                     .addTestDevice(new String(AdRequest.DEVICE_ID_EMULATOR))  // An example device ID
+                    .addTestDevice(TEST_DEVICE)
                     .build();
 
             mInterstitialAd.setAdUnitId(getString(R.string.admob_interstitial_id));
@@ -86,17 +112,13 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
         }
 
         if (account != null) {
-            Snackbar.make(toolbar, "Welcome " + account.getDisplayName() + "!", Snackbar.LENGTH_LONG).show();
-        } else {
-            Snackbar.make(toolbar, "Welcome! You are not authenticated.", Snackbar.LENGTH_LONG).setAction("Login", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    startActivity(new Intent(HomeActivity.this, LoginActivity.class));
-                }
-            }).show();
+            Toast.makeText(this, "Welcome " + account.getDisplayName() + "!", Toast.LENGTH_SHORT).show();
         }
+
         mSearchView = (PersistentSearchView) findViewById(R.id.searchview);
         mSearchView.setSearchListener(this);
+        SuggestionBuilder mSuggestionBuilder = new SuggestionBuilder(this);
+        mSearchView.setSuggestionBuilder(mSuggestionBuilder);
 
         if (mProfileMenuItem != null && account != null) {
             Glide.with(this)
@@ -109,11 +131,76 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
                         }
                     });
         }
-        homeFragment = new HomeFragment();
+        Fragment fragment = null;
         fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .add(R.id.fragment_container, homeFragment)
-                .commit();
+
+
+        navigation.setSelectedItemId(R.id.navigation_home);
+        selectedFragment = fragment = new HomeFragment();
+        /*switch (navigation.getSelectedItemId()) {
+            case R.id.navigation_settings:
+                fragment = selectedFragment = new SettingsFragment();
+                break;
+            case R.id.navigation_home:
+                fragment = selectedFragment = new HomeFragment();
+                break;
+            default:
+                fragment = selectedFragment = new FavouritesFragment();
+                break;
+        }*/
+        if (savedInstanceState == null) {
+            fragmentManager.beginTransaction()
+                    .add(R.id.fragment_container, fragment)
+                    .commit();
+        }
+
+        if (isOnline()) {
+            frameLayout.setVisibility(View.VISIBLE);
+            noConnectionImg.setVisibility(View.GONE);
+
+        } else {
+            animateNoConnection();
+            frameLayout.setVisibility(View.GONE);
+            noConnectionImg.setVisibility(View.VISIBLE);
+        }
+
+    }
+
+
+    private ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
+        @Override
+        public void onAvailable(Network network) {
+            runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    noConnectionImg.setVisibility(View.GONE);
+                    frameLayout.setVisibility(View.VISIBLE);
+                }
+            });
+        }
+
+        @Override
+        public void onLost(Network network) {
+            runOnUiThread(new Runnable() {
+
+                @Override
+                public void run() {
+                    noConnectionImg.setVisibility(View.VISIBLE);
+                    frameLayout.setVisibility(View.GONE);
+                    animateNoConnection();
+                }
+            });
+        }
+    };
+
+    void animateNoConnection() {
+        AnimatedVectorDrawable failed = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+            failed = (AnimatedVectorDrawable) getDrawable(R.drawable.avd_no_connection);
+            noConnectionImg.setImageDrawable(failed);
+            failed.start();
+        }
     }
 
     public void openSearch() {
@@ -126,6 +213,13 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
     protected void onStart() {
         super.onStart();
         account = GoogleSignIn.getLastSignedInAccount(this);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        SuggestionBuilder mSuggestionBuilder = new SuggestionBuilder(this);
+        mSearchView.setSuggestionBuilder(mSuggestionBuilder);
     }
 
     @Override
@@ -168,6 +262,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
             case R.id.action_profile:
                 if (account != null) {
                     //settings activity?
+                    navigation.setSelectedItemId(R.id.navigation_settings);
                 } else {
                     startActivity(new Intent(this, LoginActivity.class));
                 }
@@ -202,7 +297,11 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
 
     @Override
     public boolean onSuggestion(SearchItem searchItem) {
-        return false;
+        /*
+        String query = searchItem.getValue();
+        startActivity(new Intent(this, ResultsActivity.class).putExtra("result", query))
+        */
+        return true;
     }
 
     @Override
@@ -217,11 +316,21 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
 
     @Override
     public void onSearch(String query) {
+        addToHistory(query);
         mSearchView.closeSearch();
         startActivity(new Intent(this, ResultsActivity.class)
                 .putExtra("result", query));
     }
 
+    void addToHistory(String value) {
+        //I save history in SharedPreferences
+        if (prefs.getString(MY_PREFS_NAME, null) == null || !prefs.getString(MY_PREFS_NAME, null).contains(value)) {
+            String newValue = prefs.getString(MY_PREFS_NAME, null) + "," + value;
+            editor.putString(MY_PREFS_NAME, newValue);
+            editor.apply();
+        }
+    }
+
     @Override
     public void onSearchEditOpened() {
 
@@ -246,283 +355,71 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
             = new BottomNavigationView.OnNavigationItemSelectedListener() {
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-
             if (item.getItemId() == R.id.navigation_home) {
+
                 if (homeFragment == null)
-                    homeFragment = new HomeFragment();
-                fragmentManager.beginTransaction()
-                        .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                        .replace(R.id.fragment_container, homeFragment).commit();
+                    homeFragment = HomeFragment.newInstance();
+                loadFragment(homeFragment);
+
+
             } else if (item.getItemId() == R.id.navigation_settings) {
-                //todo: switch to setting fragment
+
+                if (settingsFragment == null)
+                    settingsFragment = SettingsFragment.newInstance();
+                loadFragment(settingsFragment);
+
 
             } else {
+
                 if (favouritesFragment == null)
-                    favouritesFragment = new FavouritesFragment();
-                favouritesFragment = new FavouritesFragment();
-                fragmentManager.beginTransaction()
-                        .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                        .replace(R.id.fragment_container, favouritesFragment).commit();
+                    favouritesFragment = FavouritesFragment.newInstance();
+                loadFragment(favouritesFragment);
+
+
+            }
+            if (!isOnline()) {
+                frameLayout.setVisibility(View.VISIBLE);
+                noConnectionImg.setVisibility(View.GONE);
             }
             return true; //this highlight the selected item with primary color
         }
 
     };
-}
 
-/*extends AppCompatActivity implements PersistentSearchView.SearchListener {
+    void loadFragment(Fragment fragment) {
 
-    FragmentManager fragmentManager;
-
-    GoogleSignInAccount account;
-    FloatingActionButton takePhoto;
-    private String TAG = this.getClass().getSimpleName();
-    private static final int RC_OCR_CAPTURE = 9003;
-    PersistentSearchView mSearchView;
-    MenuItem mSearchMenuItem;
-    MenuItem mProfileMenuItem;
-
-
-
-    private BottomNavigationView.OnNavigationItemSelectedListener mOnNavigationItemSelectedListener
-            = new BottomNavigationView.OnNavigationItemSelectedListener() {
-
-        @Override
-        public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-            switch (item.getItemId()) {
-                case R.id.navigation_home:
-
-                    return true;
-                case R.id.navigation_dashboard:
-
-                    return true;
-                case R.id.navigation_notifications:
-
-                    return true;
-            }
-            return false;
+        for (int i = 0; i < fragmentManager.getFragments().size(); i++) {
+            fragmentManager
+                    .beginTransaction()
+                    .hide(fragmentManager.getFragments().get(i))
+                    .commit();
         }
-    };
-
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_bottom_nav);
-
-        BottomNavigationView navigation = (BottomNavigationView) findViewById(R.id.navigation);
-        navigation.setOnNavigationItemSelectedListener(mOnNavigationItemSelectedListener);
-
-        if (getIntent() != null && getIntent().getExtras() != null) {
-            String name = getIntent().getExtras().getString("name");
-            Snackbar.make(navigation, "Welcome " + name + "!", Snackbar.LENGTH_LONG).setAction("action", null).show();
-        } else if (account != null) {
-            Snackbar.make(navigation, "Welcome back " + account.getDisplayName() + "!", Snackbar.LENGTH_LONG).show();
+        if (fragmentManager.getFragments().contains(fragment)) {
+            fragmentManager.beginTransaction().show(fragment).commit();
         } else {
-            Snackbar.make(navigation, "Welcome! You are not authenticated.", Snackbar.LENGTH_LONG).setAction("Login", new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    startActivity(new Intent(HomeActivity.this, LoginActivity.class));
-                }
-            }).show();
+            fragmentManager
+                    .beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .addToBackStack("backstack")
+                    .add(R.id.fragment_container, fragment)
+                    //    .replace(R.id.fragment_container, fragment)
+                    .commit();
+        }
+        selectedFragment = fragment;
+    }
+
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            cm.registerNetworkCallback(
+                    new NetworkRequest.Builder()
+                            .addCapability(NetworkCapabilities.NET_CAPABILITY_INTERNET).build(),
+                    networkCallback);
         }
 
-
-        fragmentManager = getSupportFragmentManager();
-
-        HomeFragment homeFragment = new HomeFragment();
-        fragmentManager.beginTransaction()
-                .add(R.id.fragment_container, homeFragment)
-                .addToBackStack("backStack")
-                .commit();
-        mSearchView = findViewById(R.id.searchview);
-
-        mSearchView = (PersistentSearchView) findViewById(R.id.searchview);
-        mSearchView.setSearchListener(this);
-
-        if (mProfileMenuItem != null && account != null) {
-            Glide.with(this)
-                    .load(account.getPhotoUrl())
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(new SimpleTarget<Drawable>() {
-                        @Override
-                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                            mProfileMenuItem.setIcon(resource);
-                        }
-                    });
-        } else if (mProfileMenuItem != null && account == null) {
-            Glide.with(this)
-                    .load("https://lh3.googleusercontent.com/-KpBZmzRBm4A/AAAAAAAAAAI/AAAAAAAAM0k/qVSHIMlvopQ/s60-p-rw-no/photo.jpg")
-                    .apply(RequestOptions.circleCropTransform())
-                    .into(new SimpleTarget<Drawable>() {
-                        @Override
-                        public void onResourceReady(@NonNull Drawable resource, @Nullable Transition<? super Drawable> transition) {
-                            mProfileMenuItem.setIcon(resource);
-                        }
-                    });
-
-        }
-
-    }
-
-    @Override
-    public void onStart() {
-        super.onStart();
-        account = GoogleSignIn.getLastSignedInAccount(this);
-    }
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == RC_OCR_CAPTURE) {
-            if (resultCode == CommonStatusCodes.SUCCESS) {
-                if (data != null) {
-                    String text = data.getStringExtra(OcrCaptureActivity.TextBlockObject);
-                    // statusMessage.setText(R.string.ocr_success);
-                    // textValue.setText(text);
-                    createDialog(text);
-                    Log.d(TAG, "Text read: " + text);
-                } else {
-                    //  statusMessage.setText(R.string.ocr_failure);
-                    Log.d(TAG, "No Text captured, intent data is null");
-                }
-            } else {
-                /* statusMessage.setText(String.format(getString(R.string.ocr_error),
-                        CommonStatusCodes.getStatusCodeString(resultCode)));
-                */
- /*               Snackbar.make(takePhoto, "Something went wrong.", Snackbar.LENGTH_LONG).setAction("Try again", new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intent = new Intent(HomeActivity.this, OcrCaptureActivity.class);
-                        intent.putExtra(OcrCaptureActivity.AutoFocus, true); //focus
-                        intent.putExtra(OcrCaptureActivity.UseFlash, true); //flash
-
-                        startActivityForResult(intent, RC_OCR_CAPTURE);
-                    }
-                }).show();
-            }
-        } else {
-            super.onActivityResult(requestCode, resultCode, data);
-        }
-    }
-
-    void createDialog(final String text) {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("You selected \"" + text + "\". Are you sure?")
-                .setTitle("Confirm your choice")
-                .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // FIRE ZE MISSILES!
-                        startActivity(new Intent(HomeActivity.this, ResultsActivity.class)
-                                .putExtra("result", text)
-                                .putExtra("isCat", false)); //is a category search (here is false since it is not)
-                    }
-                })
-                .setNegativeButton("Try again", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // User cancelled the dialog
-                        Intent intent = new Intent(HomeActivity.this, OcrCaptureActivity.class);
-                        intent.putExtra(OcrCaptureActivity.AutoFocus, true); //focus
-                        intent.putExtra(OcrCaptureActivity.UseFlash, true); //flash
-
-                        startActivityForResult(intent, RC_OCR_CAPTURE);
-
-                    }
-                });
-        builder.create();
-        builder.show();
-    }
-
-
-    @Override
-    public void onBackPressed() {
-        super.onBackPressed();
-
-        if (mSearchView.isSearching()) {
-            mSearchView.closeSearch();
-        }
-    }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.menu_searchview, menu);
-        mSearchMenuItem = menu.findItem(R.id.action_search);
-        mProfileMenuItem = menu.findItem(R.id.action_profile);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                finish();
-                return true;
-            case R.id.action_profile:
-                if (account != null) {
-                    //settings activity?
-                } else {
-                    startActivity(new Intent(this, LoginActivity.class));
-                }
-                break;
-            case R.id.action_search:
-                if (mSearchMenuItem != null) {
-                    openSearch();
-                    return true;
-                } else {
-                    return false;
-                }
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-
-    public void openSearch() {
-        View menuItemView = findViewById(R.id.action_search);
-        mSearchView.setStartPositionFromMenuItem(menuItemView);
-        mSearchView.openSearch();
-    }
-
-    @Override
-    public boolean onSuggestion(SearchItem searchItem) {
-        return false;
-    }
-
-    @Override
-    public void onSearchCleared() {
-
-    }
-
-    @Override
-    public void onSearchTermChanged(String term) {
-
-    }
-
-    @Override
-    public void onSearch(String query) {
-        mSearchView.closeSearch();
-        startActivity(new Intent(this, ResultsActivity.class)
-                .putExtra("result", query)
-                .putExtra("isCat", false)); //is a category search (here is false since it is not)
-    }
-
-    @Override
-    public void onSearchEditOpened() {
-
-    }
-
-    @Override
-    public void onSearchEditClosed() {
-
-    }
-
-    @Override
-    public boolean onSearchEditBackPressed() {
-        return false;
-    }
-
-    @Override
-    public void onSearchExit() {
-
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 }
-*/

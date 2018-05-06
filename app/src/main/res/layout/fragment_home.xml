@@ -1,107 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clipToPadding="false"
     android:fitsSystemWindows="true"
-    android:paddingLeft="8dp">
+    app:layout_constraintTop_toTopOf="parent"
+    tools:context=".ui.HomeActivity">
 
-    <android.support.v4.widget.NestedScrollView
-        android:id="@+id/scrollView"
+    <android.support.design.widget.CoordinatorLayout
+        android:id="@+id/coordinator"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:padding="8dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:layout_height="match_parent">
 
-        <android.support.constraint.ConstraintLayout
+        <android.support.v4.widget.NestedScrollView
+            android:id="@+id/scrollView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:clipToPadding="false"
+                android:fitsSystemWindows="true">
+
+                <TextView
+                    android:id="@+id/ebookfiction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/e_book_fiction"
+                    android:textColor="@color/colorAccent"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ProgressBar
+                    android:id="@+id/ebookfictionProgressBar"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@id/ebookfictionRv"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ebookfiction" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/ebookfictionRv"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/home_rv_height"
+                    app:layout_constraintTop_toBottomOf="@id/ebookfiction"
+                    tools:listitem="@layout/book_item" />
+
+                <TextView
+                    android:id="@+id/paperbacknonfiction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/paperback_non_fiction"
+                    android:textColor="@color/colorAccent"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/ebookfictionRv" />
+
+
+                <ProgressBar
+                    android:id="@+id/paperbacknonfictionProgressBar"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@id/paperbacknonfictionRv"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/paperbacknonfiction" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/paperbacknonfictionRv"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/home_rv_height"
+                    app:layout_constraintTop_toBottomOf="@id/paperbacknonfiction"
+                    tools:listitem="@layout/book_item" />
+
+                <TextView
+                    android:id="@+id/hardcoverFiction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/hard_cover_fiction"
+                    android:textColor="@color/colorAccent"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/paperbacknonfictionRv" />
+
+                <ProgressBar
+                    android:id="@+id/hardcoverFictionProgressBar"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@id/hardcoverFictionRv"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/hardcoverFiction" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/hardcoverFictionRv"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/home_rv_height"
+                    app:layout_constraintTop_toBottomOf="@id/hardcoverFiction"
+                    tools:listitem="@layout/book_item" />
+
+                <TextView
+                    android:id="@+id/hardcovernonFiction"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="8dp"
+                    android:layout_marginLeft="8dp"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/hard_cover_non_fiction"
+                    android:textColor="@color/colorAccent"
+                    android:textStyle="bold"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/hardcoverFictionRv" />
+
+                <ProgressBar
+                    android:id="@+id/hardcovernonFictionProgressBar"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintBottom_toBottomOf="@id/hardcovernonFictionRv"
+                    app:layout_constraintLeft_toLeftOf="parent"
+                    app:layout_constraintRight_toRightOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/hardcovernonFiction" />
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/hardcovernonFictionRv"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/home_rv_height"
+                    app:layout_constraintTop_toBottomOf="@id/hardcovernonFiction"
+                    tools:listitem="@layout/book_item" />
+
+
+            </android.support.constraint.ConstraintLayout>
+
+        </android.support.v4.widget.NestedScrollView>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/takePhoto"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_margin="8dp"
+            android:clipChildren="false"
             android:clipToPadding="false"
-            android:fitsSystemWindows="true">
-
-            <TextView
-                android:id="@+id/ebookfiction"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="E-Book Fiction"
-                android:textColor="@color/colorAccent"
-                android:textStyle="bold"
-                app:layout_constraintTop_toTopOf="parent" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/ebookfictionRv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:layout_constraintTop_toBottomOf="@id/ebookfiction" />
-
-            <TextView
-                android:id="@+id/paperbacknonfiction"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text="Paperback Non-Fiction"
-                android:textColor="@color/colorAccent"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/ebookfictionRv" />
-
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/paperbacknonfictionRv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:layout_constraintTop_toBottomOf="@id/paperbacknonfiction" />
-
-            <TextView
-                android:id="@+id/hardcoverFiction"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text="Hard Cover Fiction"
-                android:textColor="@color/colorAccent"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/paperbacknonfictionRv" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/hardcoverFictionRv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:layout_constraintTop_toBottomOf="@id/hardcoverFiction" />
-
-            <TextView
-                android:id="@+id/hardcovernonFiction"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                android:text="Hard Cover Non-Fiction"
-                android:textColor="@color/colorAccent"
-                android:textStyle="bold"
-                app:layout_constraintTop_toBottomOf="@id/hardcoverFictionRv" />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/hardcovernonFictionRv"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="8dp"
-                app:layout_constraintTop_toBottomOf="@id/hardcovernonFiction" />
-
-        </android.support.constraint.ConstraintLayout>
-
-    </android.support.v4.widget.NestedScrollView>
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/takePhoto"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="8dp"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        android:visibility="visible"
-        app:fabSize="normal"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:srcCompat="@drawable/ic_photo_camera_black_24dp" />
-</android.support.constraint.ConstraintLayout>
+            android:visibility="visible"
+            app:fabSize="normal"
+            app:srcCompat="@drawable/ic_photo_camera_black_24dp" />
+    </android.support.design.widget.CoordinatorLayout>
+</FrameLayout>

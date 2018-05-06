@@ -23,16 +23,23 @@ public class BooksListProvider extends AppWidgetProvider {
 
         // Construct the RemoteViews object
         RemoteViews views;
-        views = getGardenGridRemoteView(context);
+        views = getGridRemoteView(context);
 
         appWidgetManager.updateAppWidget(appWidgetId, views);
     }
 
-    private static RemoteViews getGardenGridRemoteView(Context context) {
+    private static RemoteViews getGridRemoteView(Context context) {
         RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget_grid_view);
+
+        // The empty view is displayed when the collection has no items.
+        // It should be in the same layout used to instantiate the RemoteViews
+        // object above.
+        //todo: check if it works
+
         // Set the GridWidgetService intent to act as the adapter for the GridView
         Intent intent = new Intent(context, BookGridService.class);
         views.setRemoteAdapter(R.id.widget_grid_view, intent);
+        views.setEmptyView(R.id.widget_grid_view, R.id.empty_view);
         // Set the BookDetailActivity intent to launch when clicked
         Intent appIntent = new Intent(context, BookDetailActivity.class);
 

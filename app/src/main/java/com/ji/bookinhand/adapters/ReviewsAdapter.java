@@ -1,7 +1,6 @@
 package com.ji.bookinhand.adapters;
 
 import android.content.Context;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +32,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsA
     public void onBindViewHolder(ReviewsAdapterViewHolder holder, int position) {
         String summary = reviews.getResults().get(position).getSummary();
         String author = reviews.getResults().get(position).getByline();
-        if (summary.length() < 1 || author.length() <1)
+        if (summary.length() < 1 || author.length() < 1)
             holder.itemView.setVisibility(View.GONE);
         holder.review_text.setText(summary);
         holder.name.setText(author);
@@ -42,6 +41,7 @@ public class ReviewsAdapter extends RecyclerView.Adapter<ReviewsAdapter.ReviewsA
 
     @Override
     public int getItemCount() {
+        if (reviews != null && reviews.getNumResults() > 3) return 3;
         return reviews == null ? 0 : reviews.getResults().size();
     } //the 1 is for the rating fab
 

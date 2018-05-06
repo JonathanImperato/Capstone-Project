@@ -7,16 +7,17 @@
     android:background="@drawable/gradient"
     tools:context=".ui.LoginActivity">
 
+
     <TextView
         android:id="@+id/welcomeText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingTop="200dp"
-        android:textSize="20sp"
         android:gravity="center"
+        android:paddingTop="200dp"
         android:text="@string/welcome_intro_screen"
         android:textAlignment="center"
         android:textColor="#ffffff"
+        android:textSize="20sp"
         android:textStyle="bold" />
 
     <com.google.android.gms.common.SignInButton

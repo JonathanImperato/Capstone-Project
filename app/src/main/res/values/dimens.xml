@@ -12,4 +12,5 @@ http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
     <dimen name="poster_width">110dp</dimen>
     <dimen name="poster_height">160dp</dimen>
     <dimen name="offset_y">300dp</dimen>
+    <dimen name="home_rv_height">210dp</dimen>
 </resources>

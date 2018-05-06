@@ -21,6 +21,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.request.RequestOptions;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.api.models.BooksList;
 import com.ji.bookinhand.api.models.ImageLinks;
@@ -105,22 +107,30 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                 if (rating != null && rating != 0.0)
                     holder.rating.setText("Rating " + rating);
                 else holder.rating.setText("N/A");
+
+                RequestOptions options = new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL);
+
                 if (image != null)
                     if (image.getExtraLarge() != null)
                         Glide.with(mContext)
                                 .load(image.getExtraLarge())
+                                .apply(options)
                                 .into(holder.thumbnail);
                     else if (image.getLarge() != null)
                         Glide.with(mContext)
                                 .load(image.getLarge())
+                                .apply(options)
                                 .into(holder.thumbnail);
                     else if (image.getMedium() != null)
                         Glide.with(mContext)
                                 .load(image.getMedium())
+                                .apply(options)
                                 .into(holder.thumbnail);
                     else if (image.getThumbnail() != null)
                         Glide.with(mContext)
                                 .load(image.getThumbnail())
+                                .apply(options)
                                 .into(holder.thumbnail);
 
             }
@@ -128,23 +138,29 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
             if (mBooksList != null) {
                 String title = mBooksList.getItems().get(position).getVolumeInfo().getTitle();
                 ImageLinks image = mBooksList.getItems().get(position).getVolumeInfo().getImageLinks();
+                RequestOptions options = new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL);
                 holder.title.setText(title);
                 if (image != null)
                     if (image.getExtraLarge() != null)
                         Glide.with(mContext)
                                 .load(image.getExtraLarge())
+                                .apply(options)
                                 .into(holder.thumbnail);
                     else if (image.getLarge() != null)
                         Glide.with(mContext)
                                 .load(image.getLarge())
+                                .apply(options)
                                 .into(holder.thumbnail);
                     else if (image.getMedium() != null)
                         Glide.with(mContext)
                                 .load(image.getMedium())
+                                .apply(options)
                                 .into(holder.thumbnail);
                     else if (image.getThumbnail() != null)
                         Glide.with(mContext)
                                 .load(image.getThumbnail())
+                                .apply(options)
                                 .into(holder.thumbnail);
 
             }
@@ -155,6 +171,8 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                 List<String> author = mBooksList.getItems().get(position).getVolumeInfo().getAuthors();
                 Double rating = mBooksList.getItems().get(position).getVolumeInfo().getAverageRating();
                 ImageLinks image = mBooksList.getItems().get(position).getVolumeInfo().getImageLinks();
+                RequestOptions options = new RequestOptions()
+                        .diskCacheStrategy(DiskCacheStrategy.ALL);
                 holder.title.setText(title);
                 if (author != null)
                     if (author.size() == 1)
@@ -168,18 +186,22 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                     if (image.getExtraLarge() != null)
                         Glide.with(mContext)
                                 .load(image.getExtraLarge())
+                                .apply(options)
                                 .into(holder.thumbnail);
                     else if (image.getLarge() != null)
                         Glide.with(mContext)
                                 .load(image.getLarge())
+                                .apply(options)
                                 .into(holder.thumbnail);
                     else if (image.getMedium() != null)
                         Glide.with(mContext)
                                 .load(image.getMedium())
+                                .apply(options)
                                 .into(holder.thumbnail);
                     else if (image.getThumbnail() != null)
                         Glide.with(mContext)
                                 .load(image.getThumbnail())
+                                .apply(options)
                                 .into(holder.thumbnail);
             }
         }
@@ -244,7 +266,8 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                             transitionName    // The String
                     );
 
-            switch (view.getId()) {
+            switch (view.getId()) { //todo: fix snackbar showint above bottomnav bar
+
                 case R.id.more:
                     inflater.inflate(R.menu.actions, popup.getMenu());
                     popup.show();
@@ -255,14 +278,14 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                             //    Toast.makeText(mContext, "Position is " + position, Toast.LENGTH_SHORT).show();
                             if (!isFavourite(bookTitle)) {
                                 addFavourite(position);
-                                Snackbar.make(view.getRootView(), bookTitle + " has been added to favourite", Snackbar.LENGTH_LONG).setAction("Cancel", new View.OnClickListener() {
+                                Snackbar.make(view, bookTitle + " has been added to favourite", Snackbar.LENGTH_LONG).setAction("Cancel", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         removeFromFav(bookTitle);
                                     }
                                 }).show();
                             } else
-                                Snackbar.make(view.getRootView(), bookTitle + " is already a favourite", Snackbar.LENGTH_LONG).setAction("Cancel", null).show();
+                                Snackbar.make(view, bookTitle + " is already a favourite", Snackbar.LENGTH_LONG).setAction("Cancel", null).show();
                             return true;
                         }
                     });
@@ -278,7 +301,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                             notifyItemRemoved(position);
                             final Item justRemovedItem = mFavList.get(position);
                             mFavList.remove(position);
-                            Snackbar snack = Snackbar.make(view.getRootView(), bookTitle + " has been removed from favourites", Snackbar.LENGTH_LONG).setAction("Cancel", new View.OnClickListener() {
+                            Snackbar snack = Snackbar.make(view, bookTitle + " has been removed from favourites", Snackbar.LENGTH_LONG).setAction("Cancel", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     if (position != -1) {

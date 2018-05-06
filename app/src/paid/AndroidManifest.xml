@@ -74,7 +74,9 @@
             android:label="@string/title_activity_bottom_nav"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <receiver android:name=".widgets.BooksListProvider">
+        <receiver android:name=".widgets.BooksListProvider"
+            android:description="@string/fav_list"
+            android:label="@string/fav_list">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
@@ -100,6 +102,9 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/camera_app_widget_info" />
         </receiver>
+
+        <activity android:name=".ui.LicensesActivity"
+            android:parentActivityName=".ui.HomeActivity"></activity>
     </application>
 
 </manifest>

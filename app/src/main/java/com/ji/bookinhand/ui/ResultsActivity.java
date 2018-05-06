@@ -1,17 +1,17 @@
 package com.ji.bookinhand.ui;
 
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.view.animation.AnimationUtils;
-import android.view.animation.Interpolator;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -19,6 +19,9 @@ import com.ji.bookinhand.R;
 import com.ji.bookinhand.adapters.BooksListAdapter;
 import com.ji.bookinhand.api.BooksClient;
 import com.ji.bookinhand.api.models.BooksList;
+
+import java.util.Arrays;
+import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -69,7 +72,6 @@ public class ResultsActivity extends AppCompatActivity {
     }
 
 
-
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
@@ -77,8 +79,25 @@ public class ResultsActivity extends AppCompatActivity {
             case android.R.id.home:
                 this.finish();
                 return true;
+            case R.id.sort:
+                createSortingDialog();
+                return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    private void createSortingDialog() {
+        List<String> sortingList = Arrays.asList("Sort by name", "Sort by rating");
+
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.results, menu);
+
+        // return true so that the menu pop up is opened
+        return true;
     }
 
     private void getBookList(String query) {

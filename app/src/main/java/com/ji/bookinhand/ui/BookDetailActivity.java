@@ -1,13 +1,16 @@
 package com.ji.bookinhand.ui;
 
 import android.content.ContentValues;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.constraint.Guideline;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
@@ -25,6 +28,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.ji.bookinhand.BuildConfig;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.adapters.BooksListAdapter;
 import com.ji.bookinhand.adapters.CategoriesAdapter;
@@ -124,7 +128,8 @@ public class BookDetailActivity extends AppCompatActivity {
                         authors = Arrays.asList(item.getAuthors().get(0).split(","));
                 }
 
-                ratingTextView.setText("Rating " + rating);
+                if (rating != null && rating > -1)
+                    ratingTextView.setText("Rating " + rating);
                 titleTextView.setText(title_book);
                 if (description != null && description.length() > 15)
                     descriptionBook.setText(description);
@@ -135,6 +140,7 @@ public class BookDetailActivity extends AppCompatActivity {
                     Button moreInfo = findViewById(id.moreBtn);
                     moreInfo.setVisibility(GONE);
                 }
+
                 toolbar.setTitle(title_book);
                 if (date != null)
                     pubblishdateTextView.setText(date);
@@ -201,6 +207,9 @@ public class BookDetailActivity extends AppCompatActivity {
                     Button moreInfo = findViewById(id.moreBtn);
                     moreInfo.setVisibility(GONE);
                 }
+
+                ratingTextView.setVisibility(GONE);
+
                 toolbar.setTitle(title_book);
 
                 if (imgs != null) {
@@ -219,8 +228,6 @@ public class BookDetailActivity extends AppCompatActivity {
                 Button prvBtn = findViewById(id.previewBtn);
                 if (url != null)
                     prvBtn.setText("Buy on Amazon");
-
-                ratingTextView.setVisibility(GONE);
             }
 
             setMoreFromAuthorRecyclerView();
@@ -256,6 +263,9 @@ public class BookDetailActivity extends AppCompatActivity {
 
         img = findViewById(id.img);
         catRecyclerView = findViewById(id.categoriesRecyclerView);
+        Guideline divider = findViewById(id.guideline);
+        TextView addFav = findViewById(id.addToFav2);
+
         catRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         reviewsRecyclerView = findViewById(id.reviewsRecyclerView);
         reviewsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
@@ -280,8 +290,10 @@ public class BookDetailActivity extends AppCompatActivity {
             for (int i = 0; i < cursor.getCount(); i++) {
                 category = cursor.getString(cursor
                         .getColumnIndexOrThrow(COLUMN_CATEGORIES));
-                List<String> cat = Arrays.asList(category.split(","));
-                lista.addAll(cat);
+                if (category != null) {
+                    List<String> cat = Arrays.asList(category.split(","));
+                    lista.addAll(cat);
+                }
                 cursor.moveToNext();
             }
 
@@ -292,29 +304,56 @@ public class BookDetailActivity extends AppCompatActivity {
     }
 
     public void onAddBookmark(View view) {
-        if (!isNyt) {
-            final String bookTitle = item.getTitle();
-            if (isFavourite(bookTitle)) { //remove fav
-                animateVectorDrawable(true);
-                Snackbar.make(view, bookTitle + " has been removed from favourites", Snackbar.LENGTH_LONG).show();
-                removeFromFav();
-            } else { //add fav
-                animateVectorDrawable(false);
-                addToFavourite();
-                Snackbar.make(view, bookTitle + " has been added to favourites.", Snackbar.LENGTH_LONG).show();
-            }
+        if (BuildConfig.FLAVOR.equals("free")) {
+            createUpgradeDialog();
         } else {
-            final String bookTitle = libro.getTitle();
-            if (isFavourite(bookTitle)) { //remove fav
-                animateVectorDrawable(true);
-                Snackbar.make(view, bookTitle + " has been removed from favourites", Snackbar.LENGTH_LONG).show();
-                removeFromFav();
-            } else { //add fav
-                animateVectorDrawable(false);
-                addToFavourite();
-                Snackbar.make(view, bookTitle + " has been added to favourites.", Snackbar.LENGTH_LONG).show();
+            if (!isNyt) {
+                final String bookTitle = item.getTitle();
+                if (isFavourite(bookTitle)) { //remove fav
+                    animateVectorDrawable(true);
+                    Snackbar.make(view, bookTitle + " has been removed from favourites", Snackbar.LENGTH_LONG).show();
+                    removeFromFav();
+                } else { //add fav
+                    animateVectorDrawable(false);
+                    addToFavourite();
+                    Snackbar.make(view, bookTitle + " has been added to favourites.", Snackbar.LENGTH_LONG).show();
+                }
+            } else {
+                final String bookTitle = libro.getTitle();
+                if (isFavourite(bookTitle)) { //remove fav
+                    animateVectorDrawable(true);
+                    Snackbar.make(view, bookTitle + " has been removed from favourites", Snackbar.LENGTH_LONG).show();
+                    removeFromFav();
+                } else { //add fav
+                    animateVectorDrawable(false);
+                    addToFavourite();
+                    Snackbar.make(view, bookTitle + " has been added to favourites.", Snackbar.LENGTH_LONG).show();
+                }
             }
         }
+    }
+
+    private void createUpgradeDialog() {
+
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setMessage("This feature can be used only from paid users. " +
+                "Would you like to get the paid version of the app? " +
+                "It includes many additional features.")
+                .setTitle("Paid Feature")
+                .setPositiveButton("Learn more", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        final String appPackageName = getPackageName();
+                        try {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
+                        } catch (android.content.ActivityNotFoundException ex) {
+                            startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
+                        }
+                    }
+                })
+                .setNegativeButton("No thanks", null);
+
+        builder.create().show();
     }
 
     void animateVectorDrawable(boolean isBooked) {
@@ -387,7 +426,7 @@ public class BookDetailActivity extends AppCompatActivity {
             StringBuilder categories = new StringBuilder();
             if (info.getCategories() != null)
                 for (String cat : info.getCategories()) {
-                    if (!categories.toString().contains(cat))
+                    if (cat != null && !categories.toString().contains(cat))
                         categories.append(cat).append(","); //i separate every author using a ,
                 }
             values.put(COLUMN_CATEGORIES, categories.toString());
@@ -416,14 +455,15 @@ public class BookDetailActivity extends AppCompatActivity {
             values.put(COLUMN_PAGE_COUNT, 0);
             values.put(COLUMN_AUTHORS, libro.getAuthor().toString());
             values.put(COLUMN_TITLE, bookTitle);
-            if (imgs.getExtraLarge() != null)
-                values.put(COLUMN_IMAGE_LINKS, imgs.getExtraLarge());
-            else if (imgs.getLarge() != null)
-                values.put(COLUMN_IMAGE_LINKS, imgs.getLarge());
-            else if (imgs.getMedium() != null)
-                values.put(COLUMN_IMAGE_LINKS, imgs.getMedium());
-            else if (imgs.getThumbnail() != null)
-                values.put(COLUMN_IMAGE_LINKS, imgs.getThumbnail());
+            if (imgs != null)
+                if (imgs.getExtraLarge() != null)
+                    values.put(COLUMN_IMAGE_LINKS, imgs.getExtraLarge());
+                else if (imgs.getLarge() != null)
+                    values.put(COLUMN_IMAGE_LINKS, imgs.getLarge());
+                else if (imgs.getMedium() != null)
+                    values.put(COLUMN_IMAGE_LINKS, imgs.getMedium());
+                else if (imgs.getThumbnail() != null)
+                    values.put(COLUMN_IMAGE_LINKS, imgs.getThumbnail());
 
             values.put(COLUMN_DESCRIPTION, libro.getDescription());
         }
@@ -502,8 +542,6 @@ public class BookDetailActivity extends AppCompatActivity {
     }
 
     private void setReviewsRecyclerView() {
-        if (isNyt) revs_title.setVisibility(GONE);
-
         final Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://api.nytimes.com/svc/books/v3/")
                 .addConverterFactory(GsonConverterFactory.create())
@@ -520,9 +558,12 @@ public class BookDetailActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<Review> call, Response<Review> response) {
                 Review result = response.body();
-                if (result == null || result.getNumResults() == 0) revs_title.setVisibility(GONE);
+
                 reviewsAdapter = new ReviewsAdapter(BookDetailActivity.this, result);
                 reviewsRecyclerView.setAdapter(reviewsAdapter);
+                if (reviewsAdapter == null || reviewsAdapter.getItemCount() == 0) {
+                    revs_title.setVisibility(GONE);
+                } //else reviewsRecyclerView.setVisibility(View.VISIBLE);
             }
 
             @Override

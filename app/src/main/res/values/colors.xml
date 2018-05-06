@@ -7,5 +7,6 @@
     <color name="refresh_progress_1">@color/colorPrimary</color>
     <color name="refresh_progress_2">@color/colorPrimaryDark</color>
     <color name="refresh_progress_3">@color/colorAccent</color>
+    <color name="background_dark">#ff333333</color>
 
 </resources>
