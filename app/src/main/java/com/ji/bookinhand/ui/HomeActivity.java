@@ -131,12 +131,8 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
                         }
                     });
         }
-        Fragment fragment = null;
         fragmentManager = getSupportFragmentManager();
 
-
-        navigation.setSelectedItemId(R.id.navigation_home);
-        selectedFragment = fragment = new HomeFragment();
         /*switch (navigation.getSelectedItemId()) {
             case R.id.navigation_settings:
                 fragment = selectedFragment = new SettingsFragment();
@@ -149,9 +145,11 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
                 break;
         }*/
         if (savedInstanceState == null) {
+            navigation.setSelectedItemId(R.id.navigation_home);
+        /*    selectedFragment = new HomeFragment();
             fragmentManager.beginTransaction()
-                    .add(R.id.fragment_container, fragment)
-                    .commit();
+                    .add(R.id.fragment_container, selectedFragment)
+                    .commit();*/
         }
 
         if (isOnline()) {
@@ -387,7 +385,6 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
     };
 
     void loadFragment(Fragment fragment) {
-
         for (int i = 0; i < fragmentManager.getFragments().size(); i++) {
             fragmentManager
                     .beginTransaction()
@@ -402,7 +399,6 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
                     .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                     .addToBackStack("backstack")
                     .add(R.id.fragment_container, fragment)
-                    //    .replace(R.id.fragment_container, fragment)
                     .commit();
         }
         selectedFragment = fragment;

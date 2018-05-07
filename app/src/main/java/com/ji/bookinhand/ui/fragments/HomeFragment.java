@@ -37,7 +37,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import static android.content.Context.MODE_PRIVATE;
 
 public class HomeFragment extends Fragment {
-
     FloatingActionButton takePhoto;
     private String TAG = this.getClass().getSimpleName();
     private static final int RC_OCR_CAPTURE = 9003;
@@ -59,6 +58,8 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        setRetainInstance(true);
+
         View v = inflater.inflate(R.layout.fragment_home, container, false);
         ebookfictionRv = v.findViewById(R.id.ebookfictionRv);
         paperbacknonfictionRv = v.findViewById(R.id.paperbacknonfictionRv);
@@ -118,31 +119,59 @@ public class HomeFragment extends Fragment {
             hardnonfrvData = ((NytBooksList) savedInstanceState.getParcelable("hardnonfrvData"));
             paperrvData = ((NytBooksList) savedInstanceState.getParcelable("paperrvData"));
 
-            restoreRecyclerViews(); //todo: check it works
+            paperrvIndexY = savedInstanceState.getInt("paperrvIndexY");
+            ebrvIndexY = savedInstanceState.getInt("ebrvIndexY");
+            hardfrvIndexY = savedInstanceState.getInt("hardfrvIndexY");
+            hardnonfrvIndexY = savedInstanceState.getInt("hardnonfrvIndexY");
+            paperrvIndexX = savedInstanceState.getInt("paperrvIndexX");
+            ebrvIndexX = savedInstanceState.getInt("ebrvIndexX");
+            hardfrvIndexX = savedInstanceState.getInt("hardfrvIndexX");
+            hardnonfrvIndexX = savedInstanceState.getInt("hardnonfrvIndexX");
         }
     }
 
     NytBooksList paperrvData, hardnonfrvData, hardfrvData, ebrvData;
     PopularBooksAdapter paperbacknonfictionRvAdapter, hardcoverFictionRvAdapter, hardcovernonFictionRvAdapter, ebookfictionRvAdapter;
+    int paperrvIndexY, ebrvIndexY, hardfrvIndexY, hardnonfrvIndexY;
+    int paperrvIndexX, ebrvIndexX, hardfrvIndexX, hardnonfrvIndexX;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
+
+        paperrvIndexY = paperbacknonfictionRv.getScrollY();
+        ebrvIndexY = ebookfictionRv.getScrollY();
+        hardfrvIndexY = hardcoverFictionRv.getScrollY();
+        hardnonfrvIndexY = hardcovernonFictionRv.getScrollY();
+        paperrvIndexX = paperbacknonfictionRv.getScrollX();
+        ebrvIndexX = ebookfictionRv.getScrollX();
+        hardfrvIndexX = hardcoverFictionRv.getScrollX();
+        hardnonfrvIndexX = hardcovernonFictionRv.getScrollX();
+
         if (paperbacknonfictionRv.getLayoutManager() != null) {
             outState.putParcelable("paperrv", paperbacknonfictionRv.getLayoutManager().onSaveInstanceState());
             outState.putParcelable("paperrvData", paperrvData);
+            outState.putInt("paperrvIndexX", paperrvIndexX);
+            outState.putInt("paperrvIndexY", paperrvIndexY);
         }
         if (ebookfictionRv.getLayoutManager() != null) {
             outState.putParcelable("ebookrv", ebookfictionRv.getLayoutManager().onSaveInstanceState());
             outState.putParcelable("ebrvData", ebrvData);
+            outState.putInt("ebrvIndexX", ebrvIndexX);
+            outState.putInt("ebrvIndexY", ebrvIndexY);
+
         }
         if (hardcoverFictionRv.getLayoutManager() != null) {
             outState.putParcelable("hardcoverfiction", hardcoverFictionRv.getLayoutManager().onSaveInstanceState());
             outState.putParcelable("hardfrvData", hardfrvData);
+            outState.putInt("hardfrvIndexX", hardfrvIndexX);
+            outState.putInt("hardfrvIndexY", hardfrvIndexY);
         }
         if (hardcovernonFictionRv.getLayoutManager() != null) {
             outState.putParcelable("hardcovernonfiction", hardcovernonFictionRv.getLayoutManager().onSaveInstanceState());
             outState.putParcelable("hardnonfrvData", hardnonfrvData);
+            outState.putInt("hardnonfrvIndexX", hardnonfrvIndexX);
+            outState.putInt("hardnonfrvIndexY", hardnonfrvIndexY);
         }
     }
 
@@ -150,7 +179,7 @@ public class HomeFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-
+        restoreRecyclerViews();
     }
 
     private void restoreRecyclerViews() {
@@ -160,6 +189,7 @@ public class HomeFragment extends Fragment {
             if (paperrvData != null) {
                 ebookfictionRvAdapter = new PopularBooksAdapter(getContext(), ebrvData);
                 ebookfictionRv.setAdapter(ebookfictionRvAdapter);
+                ebookfictionRv.scrollTo(ebrvIndexX, ebrvIndexY);
             }
         } else loadPopularEBooks();
         if (hardfData != null) {
@@ -168,6 +198,7 @@ public class HomeFragment extends Fragment {
             if (paperrvData != null) {
                 hardcoverFictionRvAdapter = new PopularBooksAdapter(getContext(), hardfrvData);
                 hardcoverFictionRv.setAdapter(hardcoverFictionRvAdapter);
+                hardcoverFictionRv.scrollTo(hardfrvIndexX, hardfrvIndexY);
             }
         } else loadPopularHardCoverFiction();
         if (hardnonfData != null) {
@@ -176,6 +207,7 @@ public class HomeFragment extends Fragment {
             if (paperrvData != null) {
                 hardcovernonFictionRvAdapter = new PopularBooksAdapter(getContext(), hardnonfrvData);
                 hardcovernonFictionRv.setAdapter(hardcovernonFictionRvAdapter);
+                hardcovernonFictionRv.scrollTo(hardnonfrvIndexX, hardnonfrvIndexY);
             }
         } else loadPopularHardCoverNonFiction();
         if (paperData != null) {
@@ -184,6 +216,7 @@ public class HomeFragment extends Fragment {
             if (paperrvData != null) {
                 paperbacknonfictionRvAdapter = new PopularBooksAdapter(getContext(), paperrvData);
                 paperbacknonfictionRv.setAdapter(paperbacknonfictionRvAdapter);
+                paperbacknonfictionRv.scrollTo(paperrvIndexX, paperrvIndexY);
             }
         } else loadPopularPaperBackNonFiction();
     }
@@ -227,7 +260,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onFailure(Call<NytBooksList> call, Throwable t) {
-                Toast.makeText(getActivity(), "Error while fetching data for home", Toast.LENGTH_SHORT).show();
+
                 Log.d(TAG, "Error while fetching data for home: " + t.getMessage(), t);
             }
         });
@@ -261,8 +294,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onFailure(Call<NytBooksList> call, Throwable t) {
-                if (getActivity() != null)
-                    Toast.makeText(getActivity(), "Error while fetching data for home", Toast.LENGTH_SHORT).show();
+
                 Log.d(TAG, "Error while fetching data for home: " + t.getMessage(), t);
             }
         });
@@ -295,7 +327,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onFailure(Call<NytBooksList> call, Throwable t) {
-                Toast.makeText(getActivity(), "Error while fetching data for home", Toast.LENGTH_SHORT).show();
+
                 Log.d(TAG, "Error while fetching data for home: " + t.getMessage(), t);
             }
         });
@@ -328,7 +360,7 @@ public class HomeFragment extends Fragment {
 
             @Override
             public void onFailure(Call<NytBooksList> call, Throwable t) {
-                Toast.makeText(getActivity(), "Error while fetching data for home", Toast.LENGTH_SHORT).show();
+
                 Log.d(TAG, "Error while fetching data for home: " + t.getMessage(), t);
             }
         });
@@ -420,5 +452,6 @@ public class HomeFragment extends Fragment {
                     }
                 });
     }
+
 
 }

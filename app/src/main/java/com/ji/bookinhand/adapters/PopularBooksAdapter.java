@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -20,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
@@ -170,7 +168,7 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
                 if (data != null && data.getItems() != null && data.getItems().get(0) != null && data.getItems().get(0).getVolumeInfo() != null && data.getItems().get(0).getVolumeInfo().getImageLinks() != null) {
                     ImageLinks image = data.getItems().get(0).getVolumeInfo().getImageLinks();
                     if (image != null) {
-                        if (image.getExtraLarge() != null)
+                        if (image.getExtraLarge() != null && mContext != null)
                             Glide.with(mContext)
                                     .load(image.getExtraLarge())
                                     .apply(option)
@@ -207,9 +205,9 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
     public int getItemCount() {
         if (mBooksList != null && mBooksList.getNumResults() >= 20) return 20;
         else if (mBooksList == null || mBooksList.getNumResults() == 0)
-            Toast.makeText(mContext, "Sorry, no results found.", Toast.LENGTH_SHORT).show();
-        return (mBooksList == null) ? 0 : mBooksList.getNumResults();
-
+            //    Toast.makeText(mContext, "Sorry, no results found.", Toast.LENGTH_SHORT).show();
+            return (mBooksList == null) ? 0 : mBooksList.getNumResults();
+        return 0;
     }
 
 
@@ -217,6 +215,7 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
 
         TextView title, author, rating;
         ImageView thumbnail, menu;
+
         public BooksListAdapterViewHolder(View view) {
             super(view);
             title = view.findViewById(R.id.title);
