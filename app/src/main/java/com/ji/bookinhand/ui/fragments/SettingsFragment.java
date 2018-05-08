@@ -62,6 +62,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
         Preference versionPref = findPreference("version");
         Preference ratePref = findPreference("rate");
         Preference betaPref = findPreference("join_beta");
+        Preference upgradePref = findPreference("upgrade");
+        if (BuildConfig.FLAVOR.equals("paid")) {
+            upgradePref.setVisible(false);
+        }
         /*new Preference.OnPreferenceClickListener() {
             public boolean onPreferenceClick(Preference preference) {
                 //open browser or intent here
@@ -79,6 +83,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
         }
         accountPref.setOnPreferenceClickListener(this);
         libraryPref.setOnPreferenceClickListener(this);
+        upgradePref.setOnPreferenceClickListener(this);
         ratePref.setOnPreferenceClickListener(this);
         betaPref.setOnPreferenceClickListener(this);
         //     feedbackPref.setOnPreferenceClickListener(this);
@@ -111,6 +116,14 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
                 return true;
             case "library":
                 startActivity(new Intent(getContext(), LicensesActivity.class));
+                return true;
+            case "upgrade":
+                final String packageName = getContext().getPackageName().replace("free", "paid");
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + packageName)));
+                } catch (android.content.ActivityNotFoundException ex) {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + packageName)));
+                }
                 return true;
             case "join_beta":
                 Toast.makeText(getContext(), "Join beta not yet available.", Toast.LENGTH_SHORT).show();

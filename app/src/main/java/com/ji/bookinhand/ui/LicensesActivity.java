@@ -35,6 +35,28 @@ public class LicensesActivity extends AppCompatActivity {
                                 .build()
                 )
                 .addAttributions(
+                        new Attribution.Builder("PersistentSearchView")
+                                .addCopyrightNotice("Copyright 2015 Cryse Hillmes")
+                                .addLicense(License.APACHE)
+                                .setWebsite("https://github.com/crysehillmes/PersistentSearchView")
+                                .build()
+                )
+                .addAttributions(
+                        new Attribution.Builder("ElasticDragDismissLayout")
+                                .addCopyrightNotice("Copyright 2015 Google, Inc.\n" +
+                                        "Copyright 2017 Commit 451")
+                                .addLicense(License.APACHE)
+                                .setWebsite("https://github.com/Commit451/ElasticDragDismissLayout")
+                                .build()
+                )
+                .addAttributions(
+                        new Attribution.Builder("Android Vision API")
+                                .addCopyrightNotice("Copyright 2015 Google, Inc")
+                                .addLicense(License.APACHE)
+                                .setWebsite("https://github.com/googlesamples/android-vision")
+                                .build()
+                )
+                .addAttributions(
                         Library.RETROFIT,
                         Library.GLIDE,
                         Library.GSON)
@@ -49,7 +71,7 @@ public class LicensesActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == android.R.id.home){
+        if (item.getItemId() == android.R.id.home) {
             this.finish();
             return true;
         }

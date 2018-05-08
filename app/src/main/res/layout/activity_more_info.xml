@@ -1,88 +1,102 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<com.commit451.elasticdragdismisslayout.ElasticDragDismissFrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/draggable_frame"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    tools:context=".ui.MoreInfoActivity">
+    android:layout_height="match_parent"
+    android:background="@android:color/white"
+    android:orientation="vertical"
+    app:dragDismissDistance="112dp"
+    app:dragDismissScale="0.95">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/app_bar"
+
+    <android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/AppTheme.AppBarOverlay">
+        tools:context=".ui.MoreInfoActivity">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/mtoolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?actionBarSize"
-            android:background="?attr/colorPrimary"
-            app:layout_collapseMode="pin"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:title="Home"
-            app:titleTextColor="#fff">
-
-        </android.support.v7.widget.Toolbar>
-    </android.support.design.widget.AppBarLayout>
-
-    <ScrollView
-        android:id="@+id/scollLayout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/app_bar">
-
-        <android.support.constraint.ConstraintLayout
-            android:id="@+id/book_info"
-            android:layout_marginTop="20dp"
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/app_bar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="top">
+            android:theme="@style/AppTheme.AppBarOverlay">
 
-            <TextView
-                android:id="@+id/descriptionBook"
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/mtoolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?actionBarSize"
+                android:background="?attr/colorPrimary"
+                app:layout_collapseMode="pin"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                app:title="Home"
+                app:titleTextColor="#fff">
+
+            </android.support.v7.widget.Toolbar>
+        </android.support.design.widget.AppBarLayout>
+
+        <ScrollView
+            android:id="@+id/scollLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:nestedScrollingEnabled="true"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/app_bar">
+
+            <android.support.constraint.ConstraintLayout
+                android:id="@+id/book_info"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                tools:text="@string/lorem_ipsum" />
+                android:layout_gravity="top"
+                android:layout_marginTop="20dp">
 
-            <View
-                android:id="@+id/divider"
-                android:layout_width="match_parent"
-                android:layout_height="1dp"
-                android:layout_margin="16dp"
-                android:background="#9E9E9E"
-                app:layout_constraintTop_toBottomOf="@id/descriptionBook" />
+                <TextView
+                    android:id="@+id/descriptionBook"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    tools:text="@string/lorem_ipsum" />
 
-            <android.support.constraint.Guideline
-                android:id="@+id/veticalguide"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                app:layout_constraintGuide_percent="0.5" />
+                <View
+                    android:id="@+id/divider"
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_margin="16dp"
+                    android:background="#9E9E9E"
+                    app:layout_constraintTop_toBottomOf="@id/descriptionBook" />
 
-            <TextView
-                android:id="@+id/pages"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="16dp"
-                android:textSize="12sp"
-                app:layout_constraintLeft_toLeftOf="@id/descriptionBook"
-                app:layout_constraintTop_toBottomOf="@id/divider"
-                tools:text="220 pages" />
+                <android.support.constraint.Guideline
+                    android:id="@+id/veticalguide"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_percent="0.5" />
 
-            <TextView
-                android:id="@+id/isbn"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_margin="16dp"
-                android:textSize="12sp"
-                app:layout_constraintLeft_toRightOf="@id/veticalguide"
-                app:layout_constraintTop_toBottomOf="@id/divider"
-                tools:text="ISBN 1928371648291" />
+                <TextView
+                    android:id="@+id/pages"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:textSize="12sp"
+                    app:layout_constraintLeft_toLeftOf="@id/descriptionBook"
+                    app:layout_constraintTop_toBottomOf="@id/divider"
+                    tools:text="220 pages" />
 
-        </android.support.constraint.ConstraintLayout>
+                <TextView
+                    android:id="@+id/isbn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="16dp"
+                    android:textSize="12sp"
+                    app:layout_constraintLeft_toRightOf="@id/veticalguide"
+                    app:layout_constraintTop_toBottomOf="@id/divider"
+                    tools:text="ISBN 1928371648291" />
 
-    </ScrollView>
+            </android.support.constraint.ConstraintLayout>
 
-</android.support.constraint.ConstraintLayout>
+        </ScrollView>
+
+    </android.support.constraint.ConstraintLayout>
+
+</com.commit451.elasticdragdismisslayout.ElasticDragDismissFrameLayout>

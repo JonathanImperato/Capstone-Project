@@ -28,6 +28,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.commit451.elasticdragdismisslayout.ElasticDragDismissFrameLayout;
+import com.commit451.elasticdragdismisslayout.ElasticDragDismissLinearLayout;
+import com.commit451.elasticdragdismisslayout.ElasticDragDismissListener;
+import com.commit451.elasticdragdismisslayout.ElasticDragDismissRelativeLayout;
 import com.ji.bookinhand.BuildConfig;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.adapters.BooksListAdapter;
@@ -52,9 +56,8 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.view.View.GONE;
-import static com.ji.bookinhand.R.drawable;
+import static com.ji.bookinhand.R.*;
 import static com.ji.bookinhand.R.id;
-import static com.ji.bookinhand.R.layout;
 import static com.ji.bookinhand.database.ItemsContract.BASE_CONTENT_URI;
 import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_AUTHORS;
 import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_AVERAGE_RATING;
@@ -89,6 +92,7 @@ public class BookDetailActivity extends AppCompatActivity {
     String TAG = this.getClass().getSimpleName();
     ImageView img;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -102,7 +106,7 @@ public class BookDetailActivity extends AppCompatActivity {
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             getWindow().setSharedElementEnterTransition(TransitionInflater.from(this)
-                    .inflateTransition(R.transition.curve));
+                    .inflateTransition(transition.curve));
         }
 
         if (getIntent().getExtras() != null) {
@@ -227,12 +231,14 @@ public class BookDetailActivity extends AppCompatActivity {
                 String url = getIntent().getExtras().getString("amazonUrl");
                 Button prvBtn = findViewById(id.previewBtn);
                 if (url != null)
-                    prvBtn.setText("Buy on Amazon");
+                    prvBtn.setText(string.buy_on_amazon);
             }
 
             setMoreFromAuthorRecyclerView();
             setReviewsRecyclerView();
         }
+
+
     }
 
     void setCategoriesRecyclerView(List<String> cats) {
@@ -524,7 +530,7 @@ public class BookDetailActivity extends AppCompatActivity {
                     BooksListAdapter adapter = new BooksListAdapter(BookDetailActivity.this, result, true);
                     moreRecyclerView.setAdapter(adapter);
                     if (result == null || result.getTotalItems() == 0) {
-                        CardView cardView = findViewById(R.id.cardMore);
+                        CardView cardView = findViewById(id.cardMore);
                         cardView.setVisibility(GONE);
                     }
                 }
@@ -550,9 +556,9 @@ public class BookDetailActivity extends AppCompatActivity {
         BooksClient service = retrofit.create(BooksClient.class);
         Call<Review> books;
         if (!isNyt)
-            books = service.getBookReviewsByTitle(item.getTitle(), getString(R.string.nyt_api_key));
+            books = service.getBookReviewsByTitle(item.getTitle(), getString(string.nyt_api_key));
         else
-            books = service.getBookReviewsByTitle(libro.getTitle(), getString(R.string.nyt_api_key));
+            books = service.getBookReviewsByTitle(libro.getTitle(), getString(string.nyt_api_key));
 
         books.enqueue(new Callback<Review>() {
             @Override
@@ -581,19 +587,19 @@ public class BookDetailActivity extends AppCompatActivity {
             if (previewLink != null) {
                 CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
                 CustomTabsIntent customTabsIntent = builder.build();
-                builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
+                builder.setToolbarColor(getResources().getColor(color.colorPrimary));
                 customTabsIntent.launchUrl(this, Uri.parse(previewLink));
             } else
-                Snackbar.make(view, R.string.no_preview, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, string.no_preview, Snackbar.LENGTH_LONG).show();
         } else {
             String url = getIntent().getExtras().getString("amazonUrl");
             if (url != null) {
                 CustomTabsIntent.Builder builder = new CustomTabsIntent.Builder();
                 CustomTabsIntent customTabsIntent = builder.build();
-                builder.setToolbarColor(getResources().getColor(R.color.colorPrimary));
+                builder.setToolbarColor(getResources().getColor(color.colorPrimary));
                 customTabsIntent.launchUrl(this, Uri.parse(url));
             } else
-                Snackbar.make(view, R.string.no_preview, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, string.no_preview, Snackbar.LENGTH_LONG).show();
         }
     }
 

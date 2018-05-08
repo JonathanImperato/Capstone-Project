@@ -222,9 +222,11 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
         if (mSearchView.isSearching()) {
             mSearchView.closeSearch();
+        } else {
+            finish();
+            super.onBackPressed();
         }
     }
 

@@ -10,6 +10,10 @@
             android:key="@string/sett_beta_key"
             android:summary="@string/sett_beta_summary"
             android:title="@string/sett_beta_title" />
+        <Preference
+            android:key="@string/sett_upgr_key"
+            android:summary="@string/sett_upgr_sum"
+            android:title="@string/sett_upgr_title" />
     </PreferenceCategory>
 
     <PreferenceCategory android:title="LEGAL">

@@ -62,7 +62,7 @@
         </activity>
         <activity
             android:name=".ui.MoreInfoActivity"
-            android:theme="@style/AppTheme.NoActionBar" />
+            android:theme="@style/AppTheme.Translucent" />
 
         <activity
             android:name=".ui.HomeActivity"

@@ -37,6 +37,9 @@ import com.ji.bookinhand.ui.camera.OcrDetectorProcessor;
 import com.ji.bookinhand.ui.camera.OcrGraphic;
 
 import java.io.IOException;
+/**
+ * I followed this open source project to implement the Camera Vision API: https://github.com/googlesamples/android-vision
+ * */
 
 public class OcrCaptureActivity extends AppCompatActivity {
     private static final String TAG = "OcrCaptureActivity";
@@ -69,8 +72,8 @@ public class OcrCaptureActivity extends AppCompatActivity {
         super.onCreate(icicle);
         setContentView(R.layout.ocr_capture);
 
-        mPreview = (CameraSourcePreview) findViewById(R.id.preview);
-        mGraphicOverlay = (GraphicOverlay<OcrGraphic>) findViewById(R.id.graphicOverlay);
+        mPreview = findViewById(R.id.preview);
+        mGraphicOverlay = findViewById(R.id.graphicOverlay);
 
 
         // Check for the camera permission before accessing the camera.  If the
