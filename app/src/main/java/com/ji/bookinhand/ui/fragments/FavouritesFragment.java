@@ -13,6 +13,12 @@ import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationSet;
+import android.view.animation.AnimationUtils;
+import android.view.animation.RotateAnimation;
+import android.view.animation.ScaleAnimation;
+import android.widget.ImageView;
 
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.adapters.BooksListAdapter;
@@ -51,6 +57,7 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
         setHasOptionsMenu(true);
     }
 
+    ImageView heart;
     ConstraintLayout noFavLayout;
     SwipeRefreshLayout refreshLayout;
     ArrayList<Item> mFavList = new ArrayList<>();
@@ -80,6 +87,7 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_favourites, container, false);
         noFavLayout = v.findViewById(R.id.no_fav);
+        heart = v.findViewById(R.id.heart);
         recyclerView = v.findViewById(R.id.ebookfictionRv);
         refreshLayout = v.findViewById(R.id.recyclerview_swipe);
         refreshLayout.setOnRefreshListener(this);
@@ -318,6 +326,11 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
     public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
         if (recyclerView.getAdapter().getItemCount() == 0) {
             noFavLayout.setVisibility(View.VISIBLE);
+
+            Animation pulse = AnimationUtils.loadAnimation(getContext(), R.anim.pulse);
+            heart.startAnimation(pulse);
+
+
         } else noFavLayout.setVisibility(View.GONE);
     }
 

@@ -159,7 +159,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
         } else {
             animateNoConnection();
             frameLayout.setVisibility(View.GONE);
-            noConnectionImg.setVisibility(View.VISIBLE);
+        //    noConnectionImg.setVisibility(View.VISIBLE);
         }
 
     }
@@ -184,7 +184,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
 
                 @Override
                 public void run() {
-                    noConnectionImg.setVisibility(View.VISIBLE);
+                  // noConnectionImg.setVisibility(View.VISIBLE);
                     frameLayout.setVisibility(View.GONE);
                     animateNoConnection();
                 }
@@ -193,12 +193,15 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
     };
 
     void animateNoConnection() {
-        AnimatedVectorDrawable failed = null;
+        Toast.makeText(this, "Sorry there is no Internet Connection", Toast.LENGTH_SHORT).show();
+      /*  AnimatedVectorDrawable failed = null;
+
+
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             failed = (AnimatedVectorDrawable) getDrawable(R.drawable.avd_no_connection);
             noConnectionImg.setImageDrawable(failed);
             failed.start();
-        }
+        }*/
     }
 
     public void openSearch() {

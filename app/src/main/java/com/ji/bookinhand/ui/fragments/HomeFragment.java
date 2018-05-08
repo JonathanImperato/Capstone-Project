@@ -43,6 +43,14 @@ public class HomeFragment extends Fragment {
     RecyclerView ebookfictionRv, paperbacknonfictionRv, hardcovernonFictionRv, hardcoverFictionRv;
     ProgressBar ebookfictionProgressBar, paperbacknonfictionProgressBar, hardcoverFictionProgressBar, hardcovernonFictionProgressBar;
     static HomeFragment fragment;
+    Parcelable ebData;
+    Parcelable hardfData;
+    Parcelable hardnonfData;
+    Parcelable paperData;
+    NytBooksList paperrvData, hardnonfrvData, hardfrvData, ebrvData;
+    PopularBooksAdapter paperbacknonfictionRvAdapter, hardcoverFictionRvAdapter, hardcovernonFictionRvAdapter, ebookfictionRvAdapter;
+    int paperrvIndexY, ebrvIndexY, hardfrvIndexY, hardnonfrvIndexY;
+    int paperrvIndexX, ebrvIndexX, hardfrvIndexX, hardnonfrvIndexX;
 
     public static HomeFragment newInstance() {
         return getInstance();
@@ -106,10 +114,6 @@ public class HomeFragment extends Fragment {
         return v;
     }
 
-    Parcelable ebData;
-    Parcelable hardfData;
-    Parcelable hardnonfData;
-    Parcelable paperData;
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -135,10 +139,6 @@ public class HomeFragment extends Fragment {
         }
     }
 
-    NytBooksList paperrvData, hardnonfrvData, hardfrvData, ebrvData;
-    PopularBooksAdapter paperbacknonfictionRvAdapter, hardcoverFictionRvAdapter, hardcovernonFictionRvAdapter, ebookfictionRvAdapter;
-    int paperrvIndexY, ebrvIndexY, hardfrvIndexY, hardnonfrvIndexY;
-    int paperrvIndexX, ebrvIndexX, hardfrvIndexX, hardnonfrvIndexX;
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -194,7 +194,6 @@ public class HomeFragment extends Fragment {
             hardfData = ((PopularBooksAdapter) hardcoverFictionRv.getAdapter()).getmBooksList();
 
     }
-
 
     @Override
     public void onResume() {
