@@ -25,6 +25,7 @@
             app:title="Home"
             app:titleTextColor="#fff">
 
+
         </android.support.v7.widget.Toolbar>
 
     </android.support.design.widget.AppBarLayout>
