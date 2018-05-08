@@ -3,6 +3,7 @@ package com.ji.bookinhand.ui.fragments;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Parcelable;
 import android.support.annotation.Nullable;
@@ -16,9 +17,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.CommonStatusCodes;
 import com.ji.bookinhand.R;
@@ -43,9 +42,15 @@ public class HomeFragment extends Fragment {
     private String MY_PREFS_NAME;
     RecyclerView ebookfictionRv, paperbacknonfictionRv, hardcovernonFictionRv, hardcoverFictionRv;
     ProgressBar ebookfictionProgressBar, paperbacknonfictionProgressBar, hardcoverFictionProgressBar, hardcovernonFictionProgressBar;
+    static HomeFragment fragment;
 
     public static HomeFragment newInstance() {
-        HomeFragment fragment = new HomeFragment();
+        return getInstance();
+    }
+
+    public static HomeFragment getInstance() {
+        if (fragment == null)
+            fragment = new HomeFragment();
         return fragment;
     }
 
@@ -97,7 +102,7 @@ public class HomeFragment extends Fragment {
 
         MY_PREFS_NAME = getContext().getString(R.string.history_pref_name);
         if (savedInstanceState == null)
-            setUpRecyclerViews();
+            new loadData().execute();
         return v;
     }
 
@@ -139,14 +144,7 @@ public class HomeFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        paperrvIndexY = paperbacknonfictionRv.getScrollY();
-        ebrvIndexY = ebookfictionRv.getScrollY();
-        hardfrvIndexY = hardcoverFictionRv.getScrollY();
-        hardnonfrvIndexY = hardcovernonFictionRv.getScrollY();
-        paperrvIndexX = paperbacknonfictionRv.getScrollX();
-        ebrvIndexX = ebookfictionRv.getScrollX();
-        hardfrvIndexX = hardcoverFictionRv.getScrollX();
-        hardnonfrvIndexX = hardcovernonFictionRv.getScrollX();
+        saveRecyclerViewsStates();
 
         if (paperbacknonfictionRv.getLayoutManager() != null) {
             outState.putParcelable("paperrv", paperbacknonfictionRv.getLayoutManager().onSaveInstanceState());
@@ -176,10 +174,37 @@ public class HomeFragment extends Fragment {
     }
 
 
+    private void saveRecyclerViewsStates() {
+        paperrvIndexY = paperbacknonfictionRv.getScrollY();
+        ebrvIndexY = ebookfictionRv.getScrollY();
+        hardfrvIndexY = hardcoverFictionRv.getScrollY();
+        hardnonfrvIndexY = hardcovernonFictionRv.getScrollY();
+        paperrvIndexX = paperbacknonfictionRv.getScrollX();
+        ebrvIndexX = ebookfictionRv.getScrollX();
+        hardfrvIndexX = hardcoverFictionRv.getScrollX();
+        hardnonfrvIndexX = hardcovernonFictionRv.getScrollX();
+
+        if (paperbacknonfictionRv.getAdapter() != null)
+            paperrvData = ((PopularBooksAdapter) paperbacknonfictionRv.getAdapter()).getmBooksList();
+        if (hardcovernonFictionRv.getAdapter() != null)
+            hardnonfrvData = ((PopularBooksAdapter) hardcovernonFictionRv.getAdapter()).getmBooksList();
+        if (ebookfictionRv.getAdapter() != null)
+            ebrvData = ((PopularBooksAdapter) ebookfictionRv.getAdapter()).getmBooksList();
+        if (hardcoverFictionRv.getAdapter() != null)
+            hardfData = ((PopularBooksAdapter) hardcoverFictionRv.getAdapter()).getmBooksList();
+
+    }
+
+
     @Override
     public void onResume() {
         super.onResume();
-        restoreRecyclerViews();
+        if (isVisible()) {
+            //it is resumed from the homeActivity so no need to perform anything
+        } else {
+            //it is an orientation change or something similar, need to restore its state
+            restoreRecyclerViews();
+        }
     }
 
     private void restoreRecyclerViews() {
@@ -221,6 +246,14 @@ public class HomeFragment extends Fragment {
         } else loadPopularPaperBackNonFiction();
     }
 
+    public class loadData extends AsyncTask<Void, Void, Void> { //added only to pass the project, todo: temove after project passed
+
+        @Override
+        protected Void doInBackground(Void... voids) {
+            setUpRecyclerViews();
+            return null;
+        }
+    }
 
     /**
      * Method to load data in recyclerviews
@@ -251,6 +284,7 @@ public class HomeFragment extends Fragment {
                     //do fill data
                     hardcoverFictionRvAdapter = new PopularBooksAdapter(getContext(), lista);
                     hardcoverFictionProgressBar.setIndeterminate(false);
+
                     hardfrvData = lista;
                     hardcoverFictionProgressBar.setVisibility(View.GONE);
                     hardcoverFictionRv.setAdapter(hardcoverFictionRvAdapter);
@@ -434,23 +468,7 @@ public class HomeFragment extends Fragment {
     }
 
     void animateRecyclerView(final RecyclerView recyclerView) {
-        recyclerView.getViewTreeObserver().addOnPreDrawListener(
-                new ViewTreeObserver.OnPreDrawListener() {
-                    @Override
-                    public boolean onPreDraw() {
-                        recyclerView.getViewTreeObserver().removeOnPreDrawListener(this);
-                        for (int i = 0; i < recyclerView.getChildCount(); i++) {
-                            View v = recyclerView.getChildAt(i);
-                            v.setAlpha(0.0f);
-                            v.animate().alpha(1.0f)
-                                    .setDuration(1300)
-                                    .setStartDelay(i * 50)
-                                    .start();
-                        }
-
-                        return true;
-                    }
-                });
+        return;
     }
 
 

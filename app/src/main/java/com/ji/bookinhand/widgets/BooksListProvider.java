@@ -34,8 +34,6 @@ public class BooksListProvider extends AppWidgetProvider {
         // The empty view is displayed when the collection has no items.
         // It should be in the same layout used to instantiate the RemoteViews
         // object above.
-        //todo: check if it works
-
         // Set the GridWidgetService intent to act as the adapter for the GridView
         Intent intent = new Intent(context, BookGridService.class);
         views.setRemoteAdapter(R.id.widget_grid_view, intent);

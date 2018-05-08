@@ -358,7 +358,7 @@ public class BookDetailActivity extends AppCompatActivity {
 
     void animateVectorDrawable(boolean isBooked) {
   /*       if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
-            //todo: must have a similar path, same length
+            // must have a similar path, same length
             AnimatedVectorDrawable drawable = null;
             if (isBooked) {
                 drawable = (AnimatedVectorDrawable) getDrawable(R.drawable.avd_bookmark_full_to_border);

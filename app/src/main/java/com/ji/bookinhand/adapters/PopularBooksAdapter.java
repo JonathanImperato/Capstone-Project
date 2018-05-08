@@ -22,6 +22,7 @@ import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.api.BooksClient;
@@ -66,6 +67,10 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
         imgs.clear();
     }
 
+    public NytBooksList getmBooksList() {
+        return mBooksList;
+    }
+
     @Override
     public BooksListAdapterViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         int layoutId = R.layout.book_item;
@@ -74,6 +79,7 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
         BooksListAdapterViewHolder holder = new BooksListAdapterViewHolder(view);
         return holder;
     }
+
 
     @Override
     public void onBindViewHolder(BooksListAdapterViewHolder holder, int position) {
@@ -116,40 +122,6 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
         }
     }
 
-/*
-    void loadImage() {
-        imgs.clear();
-        for (int i = 0; i < mBooksList.getNumResults(); i++) {
-            final int position = i;
-            final Retrofit retrofit = new Retrofit.Builder()
-                    .baseUrl("https://www.googleapis.com/books/v1/")
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build();
-
-            BooksClient service = retrofit.create(BooksClient.class);
-            Call<BooksListProvider> data = service.getBookWithQuery("intitle:"+mBooksList.getResults().get(position).getBookDetails().get(0).getTitle());
-            data.enqueue(new Callback<BooksListProvider>() {
-                @Override
-                public void onResponse(Call<BooksListProvider> call, Response<BooksListProvider> response) {
-                    BooksListProvider data = response.body();
-                    if (data != null && data.getItems() != null && data.getItems().get(0) != null && data.getItems().get(0).getVolumeInfo() != null && data.getItems().get(0).getVolumeInfo().getImageLinks() != null) {
-                        ImageLinks img = data.getItems().get(0).getVolumeInfo().getImageLinks();
-                        imgs.add(img);
-
-                    } else {
-                        imgs.add(null);
-                    }
-
-                }
-
-                @Override
-                public void onFailure(Call<BooksListProvider> call, Throwable t) {
-
-                }
-            });
-        }
-        notifyDataSetChanged();
-    }*/
 
     void loadSingleImage(final int position, final ImageView imageView) {
         final Retrofit retrofit = new Retrofit.Builder()
@@ -164,6 +136,7 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
             public void onResponse(Call<BooksList> call, Response<BooksList> response) {
                 BooksList data = response.body();
                 RequestOptions option = new RequestOptions()
+                        .placeholder(R.drawable.ic_sync_black_24dp)
                         .diskCacheStrategy(DiskCacheStrategy.ALL);
                 if (data != null && data.getItems() != null && data.getItems().get(0) != null && data.getItems().get(0).getVolumeInfo() != null && data.getItems().get(0).getVolumeInfo().getImageLinks() != null) {
                     ImageLinks image = data.getItems().get(0).getVolumeInfo().getImageLinks();
@@ -172,21 +145,25 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
                             Glide.with(mContext)
                                     .load(image.getExtraLarge())
                                     .apply(option)
+                                    .transition(DrawableTransitionOptions.withCrossFade())
                                     .into(imageView);
                         else if (image.getLarge() != null)
                             Glide.with(mContext)
                                     .load(image.getLarge())
                                     .apply(option)
+                                    .transition(DrawableTransitionOptions.withCrossFade())
                                     .into(imageView);
                         else if (image.getMedium() != null)
                             Glide.with(mContext)
                                     .load(image.getMedium())
                                     .apply(option)
+                                    .transition(DrawableTransitionOptions.withCrossFade())
                                     .into(imageView);
-                        else if (image.getThumbnail() != null)
+                        else if (image.getThumbnail() != null && mContext != null)
                             Glide.with(mContext)
                                     .load(image.getThumbnail())
                                     .apply(option)
+                                    .transition(DrawableTransitionOptions.withCrossFade())
                                     .into(imageView);
                         imgs.put(position, image);
                     }
@@ -207,7 +184,7 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
         else if (mBooksList == null || mBooksList.getNumResults() == 0)
             //    Toast.makeText(mContext, "Sorry, no results found.", Toast.LENGTH_SHORT).show();
             return (mBooksList == null) ? 0 : mBooksList.getNumResults();
-        return 0;
+        return mBooksList.getNumResults();
     }
 
 

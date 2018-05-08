@@ -112,7 +112,6 @@ public class ResultsActivity extends AppCompatActivity {
             @Override
             public void onResponse(Call<BooksList> call, Response<BooksList> response) {
                 BooksList result = response.body();
-                Log.d(TAG, "Numero di libri: " + result.getTotalItems());
                 BooksListAdapter adapter = new BooksListAdapter(ResultsActivity.this, result);
                 pbar.setVisibility(View.GONE);
                 recyclerView.setAdapter(adapter);

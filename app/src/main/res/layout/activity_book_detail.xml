@@ -53,7 +53,7 @@
 
                 <ImageView
                     android:id="@+id/img"
-                    android:layout_width="@dimen/poster_width"
+                    android:layout_width="100dp"
                     android:layout_height="@dimen/poster_height"
                     android:adjustViewBounds="true"
                     android:contentDescription="thumbnail"

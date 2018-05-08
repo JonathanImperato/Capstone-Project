@@ -22,6 +22,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.api.models.BooksList;
@@ -139,6 +140,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                 String title = mBooksList.getItems().get(position).getVolumeInfo().getTitle();
                 ImageLinks image = mBooksList.getItems().get(position).getVolumeInfo().getImageLinks();
                 RequestOptions options = new RequestOptions()
+                        .placeholder(R.drawable.ic_sync_black_24dp)
                         .diskCacheStrategy(DiskCacheStrategy.ALL);
                 holder.title.setText(title);
                 if (image != null)
@@ -146,21 +148,25 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                         Glide.with(mContext)
                                 .load(image.getExtraLarge())
                                 .apply(options)
+                                .transition(DrawableTransitionOptions.withCrossFade())
                                 .into(holder.thumbnail);
                     else if (image.getLarge() != null)
                         Glide.with(mContext)
                                 .load(image.getLarge())
                                 .apply(options)
+                                .transition(DrawableTransitionOptions.withCrossFade())
                                 .into(holder.thumbnail);
                     else if (image.getMedium() != null)
                         Glide.with(mContext)
                                 .load(image.getMedium())
                                 .apply(options)
+                                .transition(DrawableTransitionOptions.withCrossFade())
                                 .into(holder.thumbnail);
                     else if (image.getThumbnail() != null)
                         Glide.with(mContext)
                                 .load(image.getThumbnail())
                                 .apply(options)
+                                .transition(DrawableTransitionOptions.withCrossFade())
                                 .into(holder.thumbnail);
 
             }
@@ -172,6 +178,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                 Double rating = mBooksList.getItems().get(position).getVolumeInfo().getAverageRating();
                 ImageLinks image = mBooksList.getItems().get(position).getVolumeInfo().getImageLinks();
                 RequestOptions options = new RequestOptions()
+                        .placeholder(R.drawable.ic_sync_black_24dp)
                         .diskCacheStrategy(DiskCacheStrategy.ALL);
                 holder.title.setText(title);
                 if (author != null)
@@ -187,21 +194,25 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                         Glide.with(mContext)
                                 .load(image.getExtraLarge())
                                 .apply(options)
+                                .transition(DrawableTransitionOptions.withCrossFade())
                                 .into(holder.thumbnail);
                     else if (image.getLarge() != null)
                         Glide.with(mContext)
                                 .load(image.getLarge())
                                 .apply(options)
+                                .transition(DrawableTransitionOptions.withCrossFade())
                                 .into(holder.thumbnail);
                     else if (image.getMedium() != null)
                         Glide.with(mContext)
                                 .load(image.getMedium())
                                 .apply(options)
+                                .transition(DrawableTransitionOptions.withCrossFade())
                                 .into(holder.thumbnail);
                     else if (image.getThumbnail() != null)
                         Glide.with(mContext)
                                 .load(image.getThumbnail())
                                 .apply(options)
+                                .transition(DrawableTransitionOptions.withCrossFade())
                                 .into(holder.thumbnail);
             }
         }
@@ -266,7 +277,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                             transitionName    // The String
                     );
 
-            switch (view.getId()) { //todo: fix snackbar showint above bottomnav bar
+            switch (view.getId()) {
 
                 case R.id.more:
                     inflater.inflate(R.menu.actions, popup.getMenu());

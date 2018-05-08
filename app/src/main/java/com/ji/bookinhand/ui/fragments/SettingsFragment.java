@@ -135,7 +135,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
                 .setPositiveButton("Logout", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         if (account != null) {
-                            revokeAccess(); //todo: check if it logs out successfully
+                            revokeAccess();
                             account = null;
                         }
                     }

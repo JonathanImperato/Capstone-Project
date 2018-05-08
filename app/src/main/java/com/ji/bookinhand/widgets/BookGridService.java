@@ -113,8 +113,8 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         try {
             RequestOptions options = new RequestOptions()
                     .diskCacheStrategy(DiskCacheStrategy.ALL)
-                    .placeholder(R.drawable.ic_book_black_24dp)//TODO: REPLACE WITH PLACEHOLDER DRAWABLE
-                    .error(R.drawable.ic_book_black_24dp); //TODO: REPLACE WITH ERROR DRAWABLE
+                    .placeholder(R.drawable.ic_sync_black_24dp)
+                    .error(R.drawable.ic_error_outline_black_24dp);
 
             Bitmap bitmap = Glide.with(mContext)
                     .applyDefaultRequestOptions(options)

@@ -385,6 +385,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
     };
 
     void loadFragment(Fragment fragment) {
+
         for (int i = 0; i < fragmentManager.getFragments().size(); i++) {
             fragmentManager
                     .beginTransaction()
@@ -392,7 +393,11 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
                     .commit();
         }
         if (fragmentManager.getFragments().contains(fragment)) {
-            fragmentManager.beginTransaction().show(fragment).commit();
+            fragmentManager
+                    .beginTransaction()
+                    .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .show(fragment)
+                    .commit();
         } else {
             fragmentManager
                     .beginTransaction()
