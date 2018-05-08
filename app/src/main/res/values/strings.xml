@@ -132,9 +132,9 @@
     </string>
 
     <!-- TODO: REPLACE WITH YOUR KEYS -->
-    <string name="admob_app_id">PUT_YOUR_ADMOB_APP_ID_HERE</string>
-    <string name="admob_interstitial_id">PUT_YOUR_ADMOB_INTERSTETIAL_ID_HERE</string>
-    <string name="nyt_api_key">PUT_YUR_NEWYORKTIMES_KEY_HERE</string>
+    <string name="admob_app_id">ca-app-pub-7591558785282957~2079968391</string>
+    <string name="admob_interstitial_id">ca-app-pub-7591558785282957/1561093645</string>
+    <string name="nyt_api_key">0a8904327c624e03b1dbbb713449e4ac</string>
     <!-- KEYS ENDED -->
 
     <string name="favourite_books">Favourite Books</string>
@@ -168,4 +168,8 @@
     <string name="sett_beta_summary">Join beta testing and get a preview of new coming features.</string>
     <string name="sett_beta_title">Join beta testing</string>
     <string name="sett_beta_key">join_beta</string>
+    <string name="sett_upgr_key">upgrade</string>
+    <string name="sett_upgr_sum">Upgrade to Paid version</string>
+    <string name="sett_upgr_title">Buy the app</string>
+    <string name="buy_on_amazon">Buy on Amazon</string>
 </resources>
