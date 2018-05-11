@@ -115,7 +115,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                 RequestOptions options = new RequestOptions()
                         .diskCacheStrategy(DiskCacheStrategy.ALL);
 
-                if (image != null)
+                if (image != null && !((Activity) mContext).isFinishing())
                     if (image.getExtraLarge() != null)
                         Glide.with(mContext)
                                 .load(image.getExtraLarge())

@@ -50,19 +50,6 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
     public FavouritesFragment() {
         // Required empty public constructor
     }
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        Transition move = null;
-        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
-            move = TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move);
-        }
-        setEnterTransition(move);
-        setSharedElementReturnTransition(move);
-        setSharedElementEnterTransition(move);
-    }
-
 
     public static FavouritesFragment newInstance() {
         return getInstance();
@@ -121,13 +108,13 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
             list.addAll(items);
         }
     }
-*/
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("data", ((BooksListAdapter) recyclerView.getAdapter()).getmFavList());
     }
+*/
 
     @Override
     public void onRefresh() {
@@ -188,7 +175,7 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
         if (recyclerView != null) {
             mAdapter = new BooksListAdapter(getContext());
             mAdapter.swapCursor(data);
-            list = mAdapter.getmFavList();
+            //      list = mAdapter.getmFavList();
             int count = data.getCount();
             if (count != 0)
                 showData();
