@@ -193,7 +193,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
     };
 
     /**
-     * FOLLOWER NICK BUTCHER'S TUTORIAL WITH PLAID
+     * FOLLOWED NICK BUTCHER'S TUTORIAL WITH PLAID
      * https://github.com/nickbutcher/plaid
      */
     void animateNoConnection() {
