@@ -12,6 +12,9 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.view.animation.AnimationUtils;
+import android.view.animation.Interpolator;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
@@ -31,6 +34,9 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 import static com.ji.bookinhand.R.id;
 import static com.ji.bookinhand.R.layout;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
+import android.support.v4.app.LoaderManager;
 
 public class ResultsActivity extends AppCompatActivity {
     private String TAG = this.getClass().getSimpleName();
@@ -51,6 +57,7 @@ public class ResultsActivity extends AppCompatActivity {
         pbar.setIndeterminate(true);
         pbar.setVisibility(View.VISIBLE);
 
+
         //recyclerview stuff
         recyclerView = findViewById(id.RecyclerView);
         recyclerView.setHasFixedSize(true);
@@ -70,7 +77,6 @@ public class ResultsActivity extends AppCompatActivity {
         }
 
     }
-
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -120,7 +126,7 @@ public class ResultsActivity extends AppCompatActivity {
             @Override
             public void onFailure(Call<BooksList> call, Throwable t) {
                 pbar.setVisibility(View.GONE);
-                Toast.makeText(ResultsActivity.this, "Error while fetching data :(", Toast.LENGTH_SHORT).show();
+                Toast.makeText(ResultsActivity.this, R.string.error_while_fetching_Data, Toast.LENGTH_SHORT).show();
                 Log.d(TAG, t.getMessage(), t);
             }
         });

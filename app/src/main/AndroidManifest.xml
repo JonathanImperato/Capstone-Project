@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.ji.bookinhand">
+    xmlns:tools="http://schemas.android.com/tools"
+    package="com.ji.bookinhand"
+    tools:ignore="MissingLeanbackLauncher">
 
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -12,6 +14,9 @@
         android:required="false" />
     <uses-feature
         android:name="android.hardware.touchscreen"
+        android:required="false" />
+    <uses-feature
+        android:name="android.hardware.camera"
         android:required="false" />
 
     <application
@@ -69,7 +74,8 @@
             android:label="@string/title_activity_bottom_nav"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity android:name=".ui.LicensesActivity"
-            android:parentActivityName=".ui.HomeActivity"></activity>
+            android:parentActivityName=".ui.HomeActivity"
+            tools:targetApi="jelly_bean"></activity>
     </application>
 
 </manifest>

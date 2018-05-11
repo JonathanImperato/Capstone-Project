@@ -22,12 +22,13 @@
                 android:layout_width="80dp"
                 android:layout_height="120dp"
                 android:adjustViewBounds="true"
-                android:contentDescription="thumbnail"
+                android:contentDescription="@string/thumbnail"
                 android:foreground="?selectableItemBackground"
                 android:minWidth="120dp"
                 android:scaleType="matrix"
                 android:transitionName="@string/transition_string"
-                app:layout_constraintLeft_toLeftOf="parent" />
+                app:layout_constraintLeft_toLeftOf="parent"
+                tools:targetApi="lollipop" />
 
             <ImageButton
                 android:id="@+id/more_fav"
@@ -35,7 +36,7 @@
                 android:layout_width="20dp"
                 android:layout_height="30dp"
                 android:layout_gravity="bottom|right"
-                android:contentDescription="Option Menu"
+                android:contentDescription="@string/option_menu"
                 android:tint="#fff" />
         </android.support.constraint.ConstraintLayout>
 

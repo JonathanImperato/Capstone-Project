@@ -89,6 +89,6 @@
         android:pathData="@string/phone_button"
         android:strokeWidth="4"
         android:strokeLineCap="round"
-        android:strokeColor="@color/background_dark"/>
+        android:strokeColor="#fff"/>
 
 </vector>

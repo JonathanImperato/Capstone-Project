@@ -59,9 +59,6 @@
                                       <entry key="backgroundAssetType" value="COLOR" />
                                       <entry key="backgroundColor" value="ffffff" />
                                       <entry key="foregroundImage" value="$PROJECT_DIR$/AppIcon.png" />
-                                      <entry key="generateLegacyIcon" value="false" />
-                                      <entry key="generateRoundIcon" value="false" />
-                                      <entry key="generateWebIcon" value="false" />
                                       <entry key="legacyIconShape" value="VRECT" />
                                       <entry key="showGrid" value="true" />
                                       <entry key="showSafeZone" value="false" />
@@ -80,7 +77,7 @@
                                           <PersistentState>
                                             <option name="values">
                                               <map>
-                                                <entry key="paddingPercent" value="-10" />
+                                                <entry key="paddingPercent" value="-5" />
                                               </map>
                                             </option>
                                           </PersistentState>
@@ -92,7 +89,7 @@
                                     <map>
                                       <entry key="assetType" value="IMAGE" />
                                       <entry key="cropped" value="true" />
-                                      <entry key="iconShape" value="VRECT" />
+                                      <entry key="iconShape" value="NONE" />
                                       <entry key="imageAsset" value="$PROJECT_DIR$/AppIcon.png" />
                                     </map>
                                   </option>

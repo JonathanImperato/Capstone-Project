@@ -1,12 +1,9 @@
 package com.ji.bookinhand.ui;
 
-import android.app.Activity;
-import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
-import android.support.v4.graphics.ColorUtils;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.transition.TransitionInflater;
@@ -15,7 +12,6 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.commit451.elasticdragdismisslayout.ElasticDragDismissFrameLayout;
-import com.commit451.elasticdragdismisslayout.ElasticDragDismissLinearLayout;
 import com.commit451.elasticdragdismisslayout.ElasticDragDismissListener;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.api.models.VolumeInfo;
@@ -43,7 +39,9 @@ public class MoreInfoActivity extends AppCompatActivity {
         String data = getIntent().getExtras().getString("isbn");
         if (item != null) {
             description.setText(item.getDescription());
-            pages.setText(item.getPageCount() + " " + getString(R.string.pages));
+            if (item.getPageCount() != null && item.getPageCount() > 0)
+                pages.setText(item.getPageCount() + " " + getString(R.string.pages));
+            else pages.setVisibility(View.INVISIBLE);
             if (data != null && data.length() > 1)
                 ISBN.setText("ISBN " + data);
             else ISBN.setVisibility(View.GONE);

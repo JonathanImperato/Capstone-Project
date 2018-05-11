@@ -112,7 +112,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
         }
 
         if (account != null) {
-            Toast.makeText(this, "Welcome " + account.getDisplayName() + "!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.welcome) + account.getDisplayName() + "!", Toast.LENGTH_SHORT).show();
         }
 
         mSearchView = (PersistentSearchView) findViewById(R.id.searchview);
@@ -159,7 +159,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
         } else {
             animateNoConnection();
             frameLayout.setVisibility(View.GONE);
-        //    noConnectionImg.setVisibility(View.VISIBLE);
+            noConnectionImg.setVisibility(View.VISIBLE);
         }
 
     }
@@ -184,7 +184,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
 
                 @Override
                 public void run() {
-                  // noConnectionImg.setVisibility(View.VISIBLE);
+                    noConnectionImg.setVisibility(View.VISIBLE);
                     frameLayout.setVisibility(View.GONE);
                     animateNoConnection();
                 }
@@ -192,16 +192,17 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
         }
     };
 
+    /**
+     * FOLLOWER NICK BUTCHER'S TUTORIAL WITH PLAID
+     * https://github.com/nickbutcher/plaid
+     */
     void animateNoConnection() {
-        Toast.makeText(this, "Sorry there is no Internet Connection", Toast.LENGTH_SHORT).show();
-      /*  AnimatedVectorDrawable failed = null;
-
-
+        AnimatedVectorDrawable failed = null;
         if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
             failed = (AnimatedVectorDrawable) getDrawable(R.drawable.avd_no_connection);
             noConnectionImg.setImageDrawable(failed);
             failed.start();
-        }*/
+        }
     }
 
     public void openSearch() {
@@ -359,12 +360,11 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             if (item.getItemId() == R.id.navigation_home) {
-
-                if (homeFragment == null)
-                    homeFragment = HomeFragment.newInstance();
-                loadFragment(homeFragment);
-
-
+                if (isOnline()) {
+                    if (homeFragment == null)
+                        homeFragment = HomeFragment.newInstance();
+                    loadFragment(homeFragment);
+                }
             } else if (item.getItemId() == R.id.navigation_settings) {
 
                 if (settingsFragment == null)
@@ -390,7 +390,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
     };
 
     void loadFragment(Fragment fragment) {
-
+        fragment.setRetainInstance(true);
         for (int i = 0; i < fragmentManager.getFragments().size(); i++) {
             fragmentManager
                     .beginTransaction()

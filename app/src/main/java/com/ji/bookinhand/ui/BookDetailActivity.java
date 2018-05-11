@@ -1,5 +1,6 @@
 package com.ji.bookinhand.ui;
 
+import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -28,10 +29,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
-import com.commit451.elasticdragdismisslayout.ElasticDragDismissFrameLayout;
-import com.commit451.elasticdragdismisslayout.ElasticDragDismissLinearLayout;
-import com.commit451.elasticdragdismisslayout.ElasticDragDismissListener;
-import com.commit451.elasticdragdismisslayout.ElasticDragDismissRelativeLayout;
 import com.ji.bookinhand.BuildConfig;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.adapters.BooksListAdapter;
@@ -48,6 +45,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 import retrofit2.Call;
 import retrofit2.Callback;
@@ -56,8 +54,12 @@ import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
 import static android.view.View.GONE;
-import static com.ji.bookinhand.R.*;
+import static com.ji.bookinhand.R.color;
+import static com.ji.bookinhand.R.drawable;
 import static com.ji.bookinhand.R.id;
+import static com.ji.bookinhand.R.layout;
+import static com.ji.bookinhand.R.string;
+import static com.ji.bookinhand.R.transition;
 import static com.ji.bookinhand.database.ItemsContract.BASE_CONTENT_URI;
 import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_AUTHORS;
 import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_AVERAGE_RATING;
@@ -133,7 +135,7 @@ public class BookDetailActivity extends AppCompatActivity {
                 }
 
                 if (rating != null && rating > -1)
-                    ratingTextView.setText("Rating " + rating);
+                    ratingTextView.setText(this.getString(string.rating) + rating);
                 titleTextView.setText(title_book);
                 if (description != null && description.length() > 15)
                     descriptionBook.setText(description);
@@ -156,9 +158,9 @@ public class BookDetailActivity extends AppCompatActivity {
                             if (authors.size() == 1)
                                 authorTextView.setText(author);
                             else
-                                authorTextView.setText(author + ",");
+                                authorTextView.setText(author + getString(string.comma));
                         } else if (i < authors.size() - 1)
-                            authorTextView.setText(authorTextView.getText() + " " + author + ",");
+                            authorTextView.setText(authorTextView.getText() + " " + author + getString(R.string.comma));
                         else
                             authorTextView.setText(authorTextView.getText() + " " + author);
 
@@ -249,7 +251,6 @@ public class BookDetailActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            // Respond to the action bar's Up/Home button
             case android.R.id.home:
                 this.finish();
                 return true;
@@ -269,8 +270,6 @@ public class BookDetailActivity extends AppCompatActivity {
 
         img = findViewById(id.img);
         catRecyclerView = findViewById(id.categoriesRecyclerView);
-        Guideline divider = findViewById(id.guideline);
-        TextView addFav = findViewById(id.addToFav2);
 
         catRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         reviewsRecyclerView = findViewById(id.reviewsRecyclerView);
@@ -317,23 +316,23 @@ public class BookDetailActivity extends AppCompatActivity {
                 final String bookTitle = item.getTitle();
                 if (isFavourite(bookTitle)) { //remove fav
                     animateVectorDrawable(true);
-                    Snackbar.make(view, bookTitle + " has been removed from favourites", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(view, bookTitle + " " + string.removed_fav, Snackbar.LENGTH_LONG).show();
                     removeFromFav();
                 } else { //add fav
                     animateVectorDrawable(false);
                     addToFavourite();
-                    Snackbar.make(view, bookTitle + " has been added to favourites.", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(view, bookTitle + " " + string.added_fav, Snackbar.LENGTH_LONG).show();
                 }
             } else {
                 final String bookTitle = libro.getTitle();
                 if (isFavourite(bookTitle)) { //remove fav
                     animateVectorDrawable(true);
-                    Snackbar.make(view, bookTitle + " has been removed from favourites", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(view, bookTitle + " " + string.removed_fav, Snackbar.LENGTH_LONG).show();
                     removeFromFav();
                 } else { //add fav
                     animateVectorDrawable(false);
                     addToFavourite();
-                    Snackbar.make(view, bookTitle + " has been added to favourites.", Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(view, bookTitle + " " + string.added_fav, Snackbar.LENGTH_LONG).show();
                 }
             }
         }
@@ -343,21 +342,19 @@ public class BookDetailActivity extends AppCompatActivity {
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage("This feature can be used only from paid users. " +
-                "Would you like to get the paid version of the app? " +
-                "It includes many additional features.")
-                .setTitle("Paid Feature")
+        builder.setMessage(string.paid_feature)
+                .setTitle(R.string.paid_feature_title)
                 .setPositiveButton("Learn more", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         final String appPackageName = getPackageName();
                         try {
                             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
-                        } catch (android.content.ActivityNotFoundException ex) {
+                        } catch (ActivityNotFoundException ex) {
                             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + appPackageName)));
                         }
                     }
                 })
-                .setNegativeButton("No thanks", null);
+                .setNegativeButton(R.string.no_thanks, null);
 
         builder.create().show();
     }
@@ -391,16 +388,24 @@ public class BookDetailActivity extends AppCompatActivity {
     }
 
     boolean isFavourite(String title) {
-        String newName = title;
-        String[] selections = {newName};
-        Cursor c = this.getContentResolver().query(
-                BASE_CONTENT_URI,
-                null,
-                COLUMN_TITLE + " =? ",
-                selections,
-                null);
+        if (BuildConfig.FLAVOR.equals("paid")) {
+            String newName = title;
+            String[] selections = {newName};
+            Cursor c = this.getContentResolver().query(
+                    BASE_CONTENT_URI,
+                    null,
+                    COLUMN_TITLE + " =? ",
+                    selections,
+                    null);
 
-        return c.getCount() > 0;
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                return Objects.requireNonNull(c.getCount() > 0);
+            } else {
+                if (c != null)
+                    return c.getCount() > 0;
+            }
+        } else return false; //always false for free flavour
+        return false;
     }
 
     void addToFavourite() {
@@ -537,7 +542,7 @@ public class BookDetailActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<BooksList> call, Throwable t) {
-                    Toast.makeText(BookDetailActivity.this, "Error while fetching data :(", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BookDetailActivity.this, string.error_while_fetching_Data, Toast.LENGTH_SHORT).show();
                     Log.d(TAG, t.getMessage(), t);
                 }
             });
@@ -574,7 +579,7 @@ public class BookDetailActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<Review> call, Throwable t) {
-                Toast.makeText(BookDetailActivity.this, "Error while fetching data :(", Toast.LENGTH_SHORT).show();
+                Toast.makeText(BookDetailActivity.this, string.error_while_fetching_Data, Toast.LENGTH_SHORT).show();
                 Log.d(TAG, t.getMessage(), t);
             }
         });
@@ -609,10 +614,10 @@ public class BookDetailActivity extends AppCompatActivity {
         if (url != null) {
             Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
             sharingIntent.setType("text/plain");
-            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Sharing " + title);
+            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(string.sharing) + title);
             sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, url);
-            startActivity(Intent.createChooser(sharingIntent, "Share via"));
-        } else Snackbar.make(view, "Sorry, could not share", Snackbar.LENGTH_LONG).show();
+            startActivity(Intent.createChooser(sharingIntent, getString(string.sharing_via)));
+        } else Snackbar.make(view, string.couldnt_shre, Snackbar.LENGTH_LONG).show();
     }
 
     public void onMoreInfo(View view) {
@@ -636,4 +641,13 @@ public class BookDetailActivity extends AppCompatActivity {
         }
         startActivity(intent);
     }
+
+    @Override
+    public void onBackPressed() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            this.finishAfterTransition();
+        }else finish();
+    }
+
+
 }

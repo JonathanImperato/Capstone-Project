@@ -22,6 +22,10 @@
             android:key="@string/sett_library_key"
             android:summary="@string/sett_library_summary"
             android:title="@string/sett_library_title" />
+        <Preference
+            android:key="@string/sett_about_key"
+            android:summary="@string/sett_about_summary"
+            android:title="@string/sett_about_title" />
     </PreferenceCategory>
 
 

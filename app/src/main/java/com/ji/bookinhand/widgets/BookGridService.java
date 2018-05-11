@@ -5,13 +5,10 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.os.Bundle;
-import android.view.View;
-import android.widget.RelativeLayout;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.Priority;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.request.RequestOptions;
 import com.ji.bookinhand.R;
@@ -39,6 +36,7 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     public GridRemoteViewsFactory(Context applicationContext) {
         mContext = applicationContext;
+
     }
 
     @Override
@@ -159,7 +157,6 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     }
 
 
-
     @Override
     public RemoteViews getLoadingView() {
         return null;
@@ -179,4 +176,5 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public boolean hasStableIds() {
         return true;
     }
+
 }

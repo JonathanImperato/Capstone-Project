@@ -50,6 +50,7 @@ public class OcrCaptureActivity extends AppCompatActivity {
     // Permission request codes need to be < 256
     private static final int RC_HANDLE_CAMERA_PERM = 2;
 
+
     // Constants used to pass extra data in the intent
     public static final String AutoFocus = "AutoFocus";
     public static final String UseFlash = "UseFlash";
@@ -89,7 +90,7 @@ public class OcrCaptureActivity extends AppCompatActivity {
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
-        Snackbar.make(mGraphicOverlay, "Tap to capture. Pinch/Stretch to zoom",
+        Snackbar.make(mGraphicOverlay, R.string.zoom,
                 Snackbar.LENGTH_LONG)
                 .show();
         ImageView flashBtn = findViewById(R.id.flashBtn);

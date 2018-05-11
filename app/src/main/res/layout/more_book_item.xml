@@ -10,6 +10,7 @@
         android:id="@+id/thumbnail"
         android:layout_width="64dp"
         android:layout_height="64dp"
+        android:contentDescription="@string/book_cover"
         android:adjustViewBounds="true"
         tools:src="@drawable/common_full_open_on_phone" />
 

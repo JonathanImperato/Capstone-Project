@@ -9,6 +9,7 @@ import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
@@ -62,11 +63,6 @@ public class HomeFragment extends Fragment {
         return fragment;
     }
 
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -104,7 +100,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(getContext(), OcrCaptureActivity.class);
-                startActivityForResult(intent, RC_OCR_CAPTURE);
+                ActivityCompat.startActivityForResult(getActivity(), intent, RC_OCR_CAPTURE,null);
             }
         });
 
@@ -113,7 +109,6 @@ public class HomeFragment extends Fragment {
             new loadData().execute();
         return v;
     }
-
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -452,7 +447,7 @@ public class HomeFragment extends Fragment {
                 /* statusMessage.setText(String.format(getString(R.string.ocr_error),
                         CommonStatusCodes.getStatusCodeString(resultCode)));
                 */
-                Snackbar.make(takePhoto, "Something went wrong.", Snackbar.LENGTH_LONG).setAction("Try again", new View.OnClickListener() {
+                Snackbar.make(takePhoto, R.string.something_wrong, Snackbar.LENGTH_LONG).setAction(R.string.try_again, new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
                         Intent intent = new Intent(getContext(), OcrCaptureActivity.class);

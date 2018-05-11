@@ -5,6 +5,7 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Camera;
@@ -14,6 +15,7 @@ import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresPermission;
 import android.support.annotation.StringDef;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.Surface;
 import android.view.SurfaceHolder;
@@ -87,7 +89,8 @@ public class CameraSource {
             Camera.Parameters.FOCUS_MODE_MACRO
     })
     @Retention(RetentionPolicy.SOURCE)
-    private @interface FocusMode {}
+    private @interface FocusMode {
+    }
 
     @StringDef({
             Camera.Parameters.FLASH_MODE_ON,
@@ -97,7 +100,8 @@ public class CameraSource {
             Camera.Parameters.FLASH_MODE_TORCH
     })
     @Retention(RetentionPolicy.SOURCE)
-    private @interface FlashMode {}
+    private @interface FlashMode {
+    }
 
     private Context mContext;
 
@@ -318,6 +322,7 @@ public class CameraSource {
      *
      * @throws IOException if the camera's preview texture or display could not be initialized
      */
+    @SuppressLint("MissingPermission")
     @RequiresPermission(Manifest.permission.CAMERA)
     public CameraSource start() throws IOException {
         synchronized (mCameraLock) {
@@ -352,6 +357,7 @@ public class CameraSource {
      * @param surfaceHolder the surface holder to use for the preview frames
      * @throws IOException if the supplied surface holder could not be used as the preview display
      */
+    @SuppressLint("MissingPermission")
     @RequiresPermission(Manifest.permission.CAMERA)
     public CameraSource start(SurfaceHolder surfaceHolder) throws IOException {
         synchronized (mCameraLock) {

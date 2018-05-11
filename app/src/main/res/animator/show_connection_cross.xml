@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <set xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:ordering="together">
 
     <objectAnimator
@@ -8,7 +9,8 @@
         android:valueTo="1"
         android:startOffset="500"
         android:duration="@android:integer/config_shortAnimTime"
-        android:interpolator="@android:interpolator/linear_out_slow_in" />
+        android:interpolator="@android:interpolator/linear_out_slow_in"
+        tools:targetApi="lollipop" />
 
     <objectAnimator
         android:propertyName="scaleY"
@@ -16,6 +18,7 @@
         android:valueTo="1"
         android:startOffset="500"
         android:duration="@android:integer/config_shortAnimTime"
-        android:interpolator="@android:interpolator/linear_out_slow_in" />
+        android:interpolator="@android:interpolator/linear_out_slow_in"
+        tools:targetApi="lollipop" />
 
 </set>

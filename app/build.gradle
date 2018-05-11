@@ -5,7 +5,7 @@ android {
         BookInHandKey {
             keyAlias 'Keystore'
             keyPassword 'myPassword'
-            storeFile file('/Users/jonathanimperato/Desktop/NANODEGREE/BookInHand/Keystore')
+            storeFile file("$rootDir/Keystore") // /Users/jonathanimperato/Desktop/NANODEGREE/BookInHand/Keystore
             storePassword 'myPassword'
         }
     }
@@ -53,6 +53,7 @@ dependencies {
     implementation 'com.google.android.gms:play-services-vision:15.0.0'
     implementation 'com.android.support:customtabs:27.1.1'
     implementation 'com.google.android.gms:play-services-ads:15.0.0'
+    //noinspection GradleDependency
     implementation 'com.google.android.gms:play-services-auth:15.0.0'
     implementation 'com.android.support:preference-v7:27.1.1'
     //Used licenses activity

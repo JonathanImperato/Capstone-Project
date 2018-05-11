@@ -34,6 +34,8 @@ android:clipToPadding="false">
         android:drawableLeft="@drawable/book_bar"
         android:drawablePadding="16dp"
         android:gravity="left"
+        android:maxLines="1"
+        android:maxWidth="150dp"
         android:text="@string/favourite_books"
         android:textColor="#fff"
         android:textSize="14sp"
@@ -43,11 +45,12 @@ android:clipToPadding="false">
         android:id="@+id/takeWidgetPhoto"
         android:layout_width="20dp"
         android:layout_height="20dp"
+        android:contentDescription="@string/camera_image"
         android:layout_alignParentRight="true"
         android:layout_marginRight="16dp"
         android:clickable="true"
-        android:src="@drawable/ic_photo_camera_black_24dp"
-        app:srcCompat="@drawable/ic_photo_camera_black_24dp" />
+        app:srcCompat="@drawable/ic_photo_camera_black_24dp"
+        android:focusable="true" />
 </RelativeLayout>
 
 
@@ -57,10 +60,11 @@ android:clipToPadding="false">
     android:layout_height="wrap_content"
     android:layout_centerInParent="true"
     android:layout_gravity="center"
+    android:textColor="#000"
     android:gravity="center"
     android:text="@string/no_fav_to_display"
     android:textAlignment="center"
-    android:textSize="20sp"
+    android:textSize="14sp"
     android:textStyle="bold" />
 
 </FrameLayout>

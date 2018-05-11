@@ -58,6 +58,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
 
         Preference accountPref = findPreference("account");
         Preference libraryPref = findPreference("library");
+        Preference aboutPref = findPreference("about");
         //      Preference feedbackPref = findPreference("feedback");
         Preference versionPref = findPreference("version");
         Preference ratePref = findPreference("rate");
@@ -82,6 +83,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
             versionPref.setSummary(version + " " + versionFlav);
         }
         accountPref.setOnPreferenceClickListener(this);
+        aboutPref.setOnPreferenceClickListener(this);
         libraryPref.setOnPreferenceClickListener(this);
         upgradePref.setOnPreferenceClickListener(this);
         ratePref.setOnPreferenceClickListener(this);
@@ -126,7 +128,10 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
                 }
                 return true;
             case "join_beta":
-                Toast.makeText(getContext(), "Join beta not yet available.", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.join_beta, Toast.LENGTH_SHORT).show();
+                return true;
+            case "about":
+                Toast.makeText(getContext(), R.string.author_info, Toast.LENGTH_SHORT).show(); //todo: complete about info
                 return true;
             case "feedback":
                 if (isPackageInstalled("com.google.android.feedback")) {
@@ -143,9 +148,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
 
     private void createLogoutDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("Are you sure?")
-                .setTitle("Logout")
-                .setPositiveButton("Logout", new DialogInterface.OnClickListener() {
+        builder.setMessage(R.string.are_you_sure)
+                .setTitle(R.string.logout)
+                .setPositiveButton(R.string.logout, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         if (account != null) {
                             revokeAccess();
@@ -153,7 +158,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
                         }
                     }
                 })
-                .setNegativeButton("Cancel", null);
+                .setNegativeButton(R.string.cancel, null);
 
         builder.create().show();
     }
@@ -163,7 +168,7 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
                 .addOnCompleteListener(getActivity(), new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
-                        Toast.makeText(getContext(), "Successfully signed out.", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getContext(), R.string.success_signedout, Toast.LENGTH_SHORT).show();
                     }
                 });
     }

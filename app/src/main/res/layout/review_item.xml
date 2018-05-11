@@ -11,6 +11,7 @@
         android:layout_width="36dp"
         android:layout_height="36dp"
         android:tint="#000"
+        android:contentDescription="@string/reviewer_profile_picture"
         android:visibility="gone"
         tools:src="@drawable/ic_photo_camera_black_24dp" />
 

@@ -84,14 +84,16 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
     @Override
     public void onBindViewHolder(BooksListAdapterViewHolder holder, int position) {
         if (mBooksList != null) { //every page contains 10
+            String title = "";
+            if (mBooksList.getResults().get(position) != null && mBooksList.getResults().get(position).getBookDetails() != null && mBooksList.getResults().get(position).getBookDetails().get(0) != null)
+                title = mBooksList.getResults().get(position).getBookDetails().get(0).getTitle();
 
-            String title = mBooksList.getResults().get(position).getBookDetails().get(0).getTitle();
             String author = mBooksList.getResults().get(position).getBookDetails().get(0).getAuthor();
 
             holder.title.setText(title);
             if (author != null)
                 if (author != null)
-                    holder.author.setText(author + "...");
+                    holder.author.setText(author + mContext.getString(R.string.more_on));
                 else holder.author.setVisibility(View.GONE);
 
             holder.rating.setVisibility(View.GONE);
@@ -140,7 +142,7 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
                         .diskCacheStrategy(DiskCacheStrategy.ALL);
                 if (data != null && data.getItems() != null && data.getItems().get(0) != null && data.getItems().get(0).getVolumeInfo() != null && data.getItems().get(0).getVolumeInfo().getImageLinks() != null) {
                     ImageLinks image = data.getItems().get(0).getVolumeInfo().getImageLinks();
-                    if (image != null) {
+                    if (image != null && !((Activity) mContext).isFinishing()) {
                         if (image.getExtraLarge() != null && mContext != null)
                             Glide.with(mContext)
                                     .load(image.getExtraLarge())
@@ -233,14 +235,14 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
                             //    Toast.makeText(mContext, "Position is " + position, Toast.LENGTH_SHORT).show();
                             if (!isFavourite(bookTitle)) {
                                 addFavourite(position);
-                                Snackbar.make(view, bookTitle + " has been added to favourite", Snackbar.LENGTH_LONG).setAction("Cancel", new View.OnClickListener() {
+                                Snackbar.make(view, bookTitle + " " + mContext.getString(R.string.added_fav), Snackbar.LENGTH_LONG).setAction(mContext.getString(R.string.cancel), new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         removeFromFav(bookTitle);
                                     }
                                 }).show();
                             } else
-                                Snackbar.make(view, bookTitle + " is already a favourite", Snackbar.LENGTH_LONG).setAction("Cancel", null).show();
+                                Snackbar.make(view, bookTitle + " " + mContext.getString(R.string.already_fav), Snackbar.LENGTH_LONG).setAction(mContext.getString(R.string.cancel), null).show();
                             return true;
                         }
                     });
