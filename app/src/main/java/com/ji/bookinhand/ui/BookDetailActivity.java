@@ -103,7 +103,7 @@ public class BookDetailActivity extends AppCompatActivity {
         try {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
-        }catch (NullPointerException ex){
+        } catch (NullPointerException ex) {
             Toast.makeText(this, string.exception, Toast.LENGTH_SHORT).show();
         }
 
@@ -319,23 +319,23 @@ public class BookDetailActivity extends AppCompatActivity {
                 final String bookTitle = item.getTitle();
                 if (isFavourite(bookTitle)) { //remove fav
                     animateVectorDrawable(true);
-                    Snackbar.make(view, bookTitle + " " + string.removed_fav, Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(view, bookTitle + " " + R.string.removed_fav, Snackbar.LENGTH_LONG).show();
                     removeFromFav();
                 } else { //add fav
                     animateVectorDrawable(false);
                     addToFavourite();
-                    Snackbar.make(view, bookTitle + " " + string.added_fav, Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(view, bookTitle + " " + R.string.added_fav, Snackbar.LENGTH_LONG).show();
                 }
             } else {
                 final String bookTitle = libro.getTitle();
                 if (isFavourite(bookTitle)) { //remove fav
                     animateVectorDrawable(true);
-                    Snackbar.make(view, bookTitle + " " + string.removed_fav, Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(view, bookTitle + " " + R.string.removed_fav, Snackbar.LENGTH_LONG).show();
                     removeFromFav();
                 } else { //add fav
                     animateVectorDrawable(false);
                     addToFavourite();
-                    Snackbar.make(view, bookTitle + " " + string.added_fav, Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(view, bookTitle + " " + R.string.added_fav, Snackbar.LENGTH_LONG).show();
                 }
             }
         }
@@ -643,13 +643,6 @@ public class BookDetailActivity extends AppCompatActivity {
             intent.putExtra("result", "inauthor:" + libro.getAuthor());
         }
         startActivity(intent);
-    }
-
-    @Override
-    public void onBackPressed() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            this.finishAfterTransition();
-        } else finish();
     }
 
 

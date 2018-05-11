@@ -13,11 +13,14 @@ import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.transition.Transition;
+import android.transition.TransitionInflater;
 import android.util.DisplayMetrics;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.ji.bookinhand.R;
@@ -47,6 +50,19 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
     public FavouritesFragment() {
         // Required empty public constructor
     }
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+        Transition move = null;
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.KITKAT) {
+            move = TransitionInflater.from(getContext()).inflateTransition(android.R.transition.move);
+        }
+        setEnterTransition(move);
+        setSharedElementReturnTransition(move);
+        setSharedElementEnterTransition(move);
+    }
+
 
     public static FavouritesFragment newInstance() {
         return getInstance();
@@ -73,13 +89,12 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
                 R.color.refresh_progress_2,
                 R.color.refresh_progress_1);
 
-        mAdapter = new BooksListAdapter(getContext());
         recyclerView = v.findViewById(R.id.ebookfictionRv);
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), getNumberOfColumns()));
         recyclerView.addOnLayoutChangeListener(this);
         recyclerView.setAdapter(mAdapter);
 
-        getLoaderManager().initLoader(ID_FAVOURITE_LOADER, null, this);
+        getActivity().getSupportLoaderManager().initLoader(ID_FAVOURITE_LOADER, null, this);
 
         return v;
     }
@@ -89,7 +104,6 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
     public void onResume() {
         super.onResume();
         if (isVisible()) {
-
             //restore recyclerview's data
         } else
             updateData();
@@ -113,7 +127,6 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList("data", ((BooksListAdapter) recyclerView.getAdapter()).getmFavList());
-
     }
 
     @Override
@@ -136,7 +149,6 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
 
     void updateData() {
         getLoaderManager().restartLoader(ID_FAVOURITE_LOADER, null, this);
-        recyclerView.setAdapter(mAdapter);
     }
 
 
@@ -152,12 +164,12 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
      */
     @Override
     public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-      /*  if (recyclerView.getAdapter() != null && recyclerView.getAdapter().getItemCount() == 0 && !getLoaderManager().hasRunningLoaders()) {
+        if (recyclerView.getAdapter() != null && recyclerView.getAdapter().getItemCount() == 0 && !getLoaderManager().hasRunningLoaders()) {
             noFavLayout.setVisibility(View.VISIBLE);
             Animation pulse = AnimationUtils.loadAnimation(getContext(), R.anim.pulse);
             heart.startAnimation(pulse);
         } else
-            noFavLayout.setVisibility(View.GONE);*/
+            noFavLayout.setVisibility(View.GONE);
     }
 
     @NonNull
@@ -171,16 +183,12 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
                 null);
     }
 
-
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
         if (recyclerView != null) {
             mAdapter = new BooksListAdapter(getContext());
-
             mAdapter.swapCursor(data);
-            if (list != null)
-                Log.d("LIST SIZE", "IS = " + list.size());
-            recyclerView.setAdapter(mAdapter);
+            list = mAdapter.getmFavList();
             int count = data.getCount();
             if (count != 0)
                 showData();
@@ -188,6 +196,7 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
     }
 
     private void showData() {
+        recyclerView.setAdapter(mAdapter);
         noFavLayout.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
         recyclerView.addOnLayoutChangeListener(this);
