@@ -401,6 +401,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
             fragmentManager
                     .beginTransaction()
                     .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                    .addToBackStack("backstack")
                     .show(fragment)
                     .commit();
         } else {

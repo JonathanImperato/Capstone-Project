@@ -234,12 +234,12 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
     public void swapCursor(Cursor newCursor) {
         mCursor = newCursor;
         reloadCursorDataForFavourites();
-        notifyDataSetChanged();
     }
 
     void reloadCursorDataForFavourites() {
         mFavList.clear();
         Cursor itemCurso = mCursor;
+        itemCurso.moveToFirst();
         while (mCursor.moveToNext()) {
             Item item = new Item();
 
@@ -303,6 +303,8 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
             item.setVolumeInfo(volumeInfo);
             mFavList.add(item);
         }
+
+        notifyDataSetChanged();
     }
 
     @Override

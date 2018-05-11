@@ -8,7 +8,6 @@ import android.database.Cursor;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.constraint.Guideline;
 import android.support.customtabs.CustomTabsIntent;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -101,8 +100,12 @@ public class BookDetailActivity extends AppCompatActivity {
         setContentView(layout.activity_book_detail);
         Toolbar toolbar = findViewById(id.dtoolbar);
         setSupportActionBar(toolbar);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        try {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }catch (NullPointerException ex){
+            Toast.makeText(this, string.exception, Toast.LENGTH_SHORT).show();
+        }
 
         bindViews();
 
@@ -160,7 +163,7 @@ public class BookDetailActivity extends AppCompatActivity {
                             else
                                 authorTextView.setText(author + getString(string.comma));
                         } else if (i < authors.size() - 1)
-                            authorTextView.setText(authorTextView.getText() + " " + author + getString(R.string.comma));
+                            authorTextView.setText(authorTextView.getText() + " " + author + getString(string.comma));
                         else
                             authorTextView.setText(authorTextView.getText() + " " + author);
 
@@ -646,7 +649,7 @@ public class BookDetailActivity extends AppCompatActivity {
     public void onBackPressed() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             this.finishAfterTransition();
-        }else finish();
+        } else finish();
     }
 
 

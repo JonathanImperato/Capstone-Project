@@ -14,11 +14,10 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.DisplayMetrics;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import com.ji.bookinhand.R;
@@ -36,11 +35,13 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
     private int ID_FAVOURITE_LOADER = 32;
     ConstraintLayout noFavLayout;
     SwipeRefreshLayout refreshLayout;
-    private int mPosition = RecyclerView.NO_POSITION;
     RecyclerView recyclerView;
     BooksListAdapter mAdapter;
     ArrayList<Item> list;
     static FavouritesFragment fragment;
+    private int milliseconds = 1000;
+    private int numberOfSeconds = 3;
+    private int seconds = milliseconds * numberOfSeconds;
 
 
     public FavouritesFragment() {
@@ -87,31 +88,26 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
     @Override
     public void onResume() {
         super.onResume();
-        getLoaderManager().initLoader(ID_FAVOURITE_LOADER, null, this);
+        if (isVisible()) {
 
-/*
-        if (list != null) {
-            if (recyclerView != null) {
-                if (recyclerView.getAdapter() != null)
-                    ((BooksListAdapter) recyclerView.getAdapter()).setmFavList(list);
-                else {
-                    mAdapter = new BooksListAdapter(getContext());
-                    mAdapter.setmFavList(list);
-                    recyclerView.setAdapter(mAdapter);
-                }
-            }
-        }
-        updateData();*/
+            //restore recyclerview's data
+        } else
+            updateData();
+
+
     }
+
 /*
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         if (savedInstanceState != null) {
-            list = savedInstanceState.getParcelableArrayList("data");
+            list = new ArrayList<>();
+            ArrayList<Item> items = savedInstanceState.getParcelableArrayList("data");
+            list.addAll(items);
         }
     }
-
+*/
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
@@ -119,7 +115,6 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
         outState.putParcelableArrayList("data", ((BooksListAdapter) recyclerView.getAdapter()).getmFavList());
 
     }
-*/
 
     @Override
     public void onRefresh() {
@@ -134,14 +129,13 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
                         }
                         refreshLayout.setRefreshing(false);
                     }
-                }, 3000
+                }, seconds
         );
 
     }
 
     void updateData() {
         getLoaderManager().restartLoader(ID_FAVOURITE_LOADER, null, this);
-        mAdapter.notifyDataSetChanged();
         recyclerView.setAdapter(mAdapter);
     }
 
@@ -180,12 +174,17 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
 
     @Override
     public void onLoadFinished(@NonNull Loader<Cursor> loader, Cursor data) {
-        recyclerView.setLayoutManager(new GridLayoutManager(getContext(), getNumberOfColumns()));
-        mAdapter.swapCursor(data);
-        if (mPosition == RecyclerView.NO_POSITION) mPosition = 0;
-        recyclerView.smoothScrollToPosition(mPosition);
-        recyclerView.setAdapter(mAdapter);
-        if (data.getCount() != 0) showData();
+        if (recyclerView != null) {
+            mAdapter = new BooksListAdapter(getContext());
+
+            mAdapter.swapCursor(data);
+            if (list != null)
+                Log.d("LIST SIZE", "IS = " + list.size());
+            recyclerView.setAdapter(mAdapter);
+            int count = data.getCount();
+            if (count != 0)
+                showData();
+        }
     }
 
     private void showData() {
