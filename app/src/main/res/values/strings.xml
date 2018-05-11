@@ -132,8 +132,8 @@
     </string>
 
     <!-- TODO: REPLACE WITH YOUR KEYS -->
-    <string name="admob_app_id">ca-app-pub-7591558785282957~2079968391</string>
-    <string name="admob_interstitial_id">ca-app-pub-7591558785282957/1561093645</string>
+    <string name="admob_app_id">ca-app-pub-as~2079968391</string>
+    <string name="admob_interstitial_id">ca-app-pub-as/1561093645</string>
     <string name="nyt_api_key">0a8904327c624e03b1dbbb713449e4ac</string>
     <!-- KEYS ENDED -->
 

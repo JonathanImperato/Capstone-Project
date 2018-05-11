@@ -31,10 +31,6 @@ import static com.ji.bookinhand.database.ItemsContract.BASE_CONTENT_URI;
 
 public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, View.OnLayoutChangeListener, LoaderManager.LoaderCallbacks<Cursor> {
 
-    public FavouritesFragment() {
-        // Required empty public constructor
-
-    }
 
     ImageView heart;
     private int ID_FAVOURITE_LOADER = 32;
@@ -46,6 +42,10 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
     ArrayList<Item> list;
     static FavouritesFragment fragment;
 
+
+    public FavouritesFragment() {
+        // Required empty public constructor
+    }
 
     public static FavouritesFragment newInstance() {
         return getInstance();
@@ -158,13 +158,12 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
      */
     @Override
     public void onLayoutChange(View v, int left, int top, int right, int bottom, int oldLeft, int oldTop, int oldRight, int oldBottom) {
-
-        if (recyclerView.getAdapter() != null && recyclerView.getAdapter().getItemCount() == 0 && !getLoaderManager().hasRunningLoaders()) {
+      /*  if (recyclerView.getAdapter() != null && recyclerView.getAdapter().getItemCount() == 0 && !getLoaderManager().hasRunningLoaders()) {
             noFavLayout.setVisibility(View.VISIBLE);
             Animation pulse = AnimationUtils.loadAnimation(getContext(), R.anim.pulse);
             heart.startAnimation(pulse);
         } else
-            noFavLayout.setVisibility(View.GONE);
+            noFavLayout.setVisibility(View.GONE);*/
     }
 
     @NonNull
