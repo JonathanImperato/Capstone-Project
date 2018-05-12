@@ -174,6 +174,11 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
                 public void run() {
                     noConnectionImg.setVisibility(View.GONE);
                     frameLayout.setVisibility(View.VISIBLE);
+                    getSupportFragmentManager().beginTransaction()
+                            .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                            .addToBackStack("backstack")
+                            .replace(R.id.fragment_container,  HomeFragment.newInstance())
+                            .commit();
                 }
             });
         }

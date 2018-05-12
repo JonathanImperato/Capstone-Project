@@ -257,6 +257,11 @@ public class BookDetailActivity extends AppCompatActivity {
 
             setMoreFromAuthorRecyclerView();
             setReviewsRecyclerView();
+            if (!isOnline()) {
+                revs_title.setVisibility(GONE);
+                CardView cardView = findViewById(R.id.cardMore);
+                cardView.setVisibility(GONE);
+            }
         }
 
 
@@ -562,7 +567,7 @@ public class BookDetailActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<BooksList> call, Throwable t) {
-                    Toast.makeText(BookDetailActivity.this, R.string.error_while_fetching_Data, Toast.LENGTH_SHORT).show();
+
                     Log.d(TAG, t.getMessage(), t);
                 }
             });
@@ -600,7 +605,7 @@ public class BookDetailActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<Review> call, Throwable t) {
-                    Toast.makeText(BookDetailActivity.this, R.string.error_while_fetching_Data, Toast.LENGTH_SHORT).show();
+
                     Log.d(TAG, t.getMessage(), t);
                 }
             });
