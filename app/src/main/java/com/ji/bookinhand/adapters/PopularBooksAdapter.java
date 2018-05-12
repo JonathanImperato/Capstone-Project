@@ -235,7 +235,7 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
                             //    Toast.makeText(mContext, "Position is " + position, Toast.LENGTH_SHORT).show();
                             if (!isFavourite(bookTitle)) {
                                 addFavourite(position);
-                                Snackbar.make(view, bookTitle + " " + mContext.getString(R.string.added_fav), Snackbar.LENGTH_LONG).setAction(mContext.getString(R.string.cancel), new View.OnClickListener() {
+                                Snackbar.make(view, bookTitle + " " + mContext.getString(R.string.book_added_fav), Snackbar.LENGTH_LONG).setAction(mContext.getString(R.string.cancel), new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         removeFromFav(bookTitle);

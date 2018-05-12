@@ -200,9 +200,9 @@
     <string name="couldnt_shre">Sorry, could not share</string>
     <string name="success_signedout">Successfully signed out.</string>
     <string name="cancel">Cancel</string>
-    <string name="added_fav">has been added to favourite</string>
-    <string name="already_fav">is already a favourite</string>
-    <string name="removed_fav">has been removed from favourites</string>
+    <string name="book_added_fav">has been added to favourite</string>
+    <string name="book_removed_fav">has been removed from favourites</string>
+    <string name="already_fav">is already a favourite</string>>
     <string name="paid_feature">This feature can be used only from paid users. Would you like to get the paid version of the app? It includes many additional features.</string>
     <string name="something_wrong">Something went wrong.</string>
     <string name="retry">Try again</string>
@@ -211,4 +211,10 @@
     <string name="no_thanks">No thanks</string>
     <string name="paid_feature_title">Paid Feature</string>
     <string name="exception">An Exception came! Please report this to the developer!</string>
+    <string name="fab_contentdesc">Take Photo image</string>
+    <string name="isbn">ISBN</string>
+    <string name="category_name">category name</string>
+    <string name="added_to_favs">has been added from favourites</string>
+    <string name="removed_from_favs">has been removed from favourites</string>
+    <string name="no_reviews_offline">Reviews are not available offline</string>
 </resources>

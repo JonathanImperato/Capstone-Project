@@ -34,7 +34,7 @@
         android:id="@+id/searchview"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         android:elevation="6dp"
         android:visibility="gone"
@@ -46,7 +46,8 @@
         app:persistentSV_editTextColor="#61000000"
         app:persistentSV_searchCardElevation="4dp"
         app:persistentSV_searchTextColor="#61000000"
-        tools:targetApi="lollipop" />
+        tools:targetApi="lollipop"
+        android:layout_alignParentLeft="true" />
 
     <FrameLayout
         android:id="@+id/fragment_container"

@@ -43,12 +43,12 @@ public class MoreInfoActivity extends AppCompatActivity {
                 pages.setText(item.getPageCount() + " " + getString(R.string.pages));
             else pages.setVisibility(View.INVISIBLE);
             if (data != null && data.length() > 1)
-                ISBN.setText("ISBN " + data);
+                ISBN.setText(getString(R.string.isbn) + " " + data);
             else ISBN.setVisibility(View.GONE);
         } else {
             description.setText(libro.getDescription());
             if (data != null && data.length() > 1)
-                ISBN.setText("ISBN " + data);
+                ISBN.setText(getString(R.string.isbn) + " " + data);
             else ISBN.setVisibility(View.GONE);
         }
         mDraggableFrame.addListener(new ElasticDragDismissListener() {

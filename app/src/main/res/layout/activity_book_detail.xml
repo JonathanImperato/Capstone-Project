@@ -44,14 +44,15 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginLeft="16dp"
+                android:layout_marginStart="16dp"
                 android:layout_marginTop="16dp"
-                android:focusable="true"
                 android:clickable="true"
+                android:focusable="true"
                 android:foreground="?selectableItemBackground"
                 app:cardUseCompatPadding="true"
                 app:layout_constraintLeft_toLeftOf="parent"
-                app:layout_constraintTop_toTopOf="parent">
+                app:layout_constraintTop_toTopOf="parent"
+                android:layout_marginLeft="16dp">
 
                 <ImageView
                     android:id="@+id/img"
@@ -71,15 +72,15 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="16dp"
                 android:clickable="true"
-                android:foreground="?selectableItemBackground"
                 android:contentDescription="@string/add_to_fav_img"
+                android:focusable="true"
+                android:foreground="?selectableItemBackground"
                 android:onClick="onAddBookmark"
                 android:tint="@color/colorAccent"
                 android:tooltipText="@string/add_to_favourite"
                 android:visibility="invisible"
                 app:layout_constraintRight_toRightOf="parent"
                 app:srcCompat="@drawable/ic_bookmark_border_black_24dp"
-                android:focusable="true"
                 tools:targetApi="o" />
 
             <TextView
@@ -87,6 +88,15 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:textSize="12sp"
+                app:layout_constraintLeft_toRightOf="@id/ratingBar"
+                app:layout_constraintTop_toBottomOf="@id/pubblish_date"
+                tools:text="5.0" />
+
+            <RatingBar
+                android:id="@+id/ratingBar"
+                style="@style/Widget.AppCompat.RatingBar.Small"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 app:layout_constraintLeft_toLeftOf="@id/book_title"
                 app:layout_constraintTop_toBottomOf="@id/pubblish_date" />
 
@@ -94,7 +104,7 @@
                 android:id="@+id/book_title"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="8dp"
+                android:layout_marginStart="8dp"
                 android:ellipsize="end"
                 android:maxLines="4"
                 android:textSize="20sp"
@@ -102,7 +112,8 @@
                 app:layout_constraintLeft_toRightOf="@id/card"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toTopOf="@id/card"
-                tools:text="TEST" />
+                tools:text="TEST"
+                android:layout_marginLeft="8dp" />
 
             <TextView
                 android:id="@+id/author"
@@ -140,8 +151,8 @@
                 style="@style/Widget.AppCompat.Button.Colored"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginLeft="16dp"
-                android:layout_marginRight="16dp"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:onClick="onPreview"
                 android:text="@string/preview"
                 app:layout_constraintStart_toStartOf="parent"
@@ -165,6 +176,7 @@
                 android:clickable="true"
                 android:drawableTint="#000"
                 android:drawableTop="@drawable/ic_bookmark_border_black_24dp"
+                android:focusable="true"
                 android:foreground="?selectableItemBackground"
                 android:onClick="onAddBookmark"
                 android:text="@string/add_to_favourite"
@@ -172,7 +184,6 @@
                 app:layout_constraintLeft_toLeftOf="parent"
                 app:layout_constraintRight_toLeftOf="@id/guideline"
                 app:layout_constraintTop_toBottomOf="@id/divider"
-                android:focusable="true"
                 tools:targetApi="m" />
 
             <TextView
@@ -183,6 +194,7 @@
                 android:clickable="true"
                 android:drawableTint="#000"
                 android:drawableTop="@drawable/ic_share_black_24dp"
+                android:focusable="true"
                 android:foreground="?selectableItemBackground"
                 android:onClick="onShare"
                 android:text="@string/share"
@@ -190,7 +202,6 @@
                 app:layout_constraintLeft_toRightOf="@id/guideline"
                 app:layout_constraintRight_toRightOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/divider"
-                android:focusable="true"
                 tools:targetApi="m" />
 
             <View

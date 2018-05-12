@@ -2,7 +2,6 @@ package com.ji.bookinhand.adapters;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,9 +35,10 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
     @Override
     public void onBindViewHolder(CategoriesAdapter.CategoriesAdapterViewHolder holder, int position) {
-
-            String name = categories.get(position);
+        String name = categories.get(position);
+        if (name.length() > 1)
             holder.name.setText(name);
+        else holder.itemView.setVisibility(View.GONE);
 
     }
 
@@ -53,9 +53,9 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
 
         public CategoriesAdapterViewHolder(View itemView) {
             super(itemView);
-                name = itemView.findViewById(R.id.category_name);
-                name.setOnClickListener(this);
-                itemView.setOnClickListener(this);
+            name = itemView.findViewById(R.id.category_name);
+            name.setOnClickListener(this);
+            itemView.setOnClickListener(this);
 
         }
 

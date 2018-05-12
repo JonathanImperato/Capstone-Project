@@ -375,7 +375,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                             //    Toast.makeText(mContext, "Position is " + position, Toast.LENGTH_SHORT).show();
                             if (!isFavourite(bookTitle)) {
                                 addFavourite(position);
-                                Snackbar.make(view, bookTitle + " " + mContext.getString(R.string.added_fav), Snackbar.LENGTH_LONG).setAction("Cancel", new View.OnClickListener() {
+                                Snackbar.make(view, bookTitle + " " + mContext.getString(R.string.book_added_fav), Snackbar.LENGTH_LONG).setAction("Cancel", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         removeFromFav(bookTitle);
@@ -398,7 +398,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                             notifyItemRemoved(position);
                             final Item justRemovedItem = mFavList.get(position);
                             mFavList.remove(position);
-                            Snackbar snack = Snackbar.make(view, bookTitle + " " + mContext.getString(R.string.removed_fav), Snackbar.LENGTH_LONG).setAction("Cancel", new View.OnClickListener() {
+                            Snackbar snack = Snackbar.make(view, bookTitle + " " + mContext.getString(R.string.book_removed_fav), Snackbar.LENGTH_LONG).setAction("Cancel", new View.OnClickListener() {
                                 @Override
                                 public void onClick(View view) {
                                     if (position != -1) {

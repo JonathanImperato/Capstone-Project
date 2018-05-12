@@ -2,9 +2,12 @@ package com.ji.bookinhand.ui;
 
 import android.content.ActivityNotFoundException;
 import android.content.ContentValues;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -24,6 +27,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -57,7 +61,6 @@ import static com.ji.bookinhand.R.color;
 import static com.ji.bookinhand.R.drawable;
 import static com.ji.bookinhand.R.id;
 import static com.ji.bookinhand.R.layout;
-import static com.ji.bookinhand.R.string;
 import static com.ji.bookinhand.R.transition;
 import static com.ji.bookinhand.database.ItemsContract.BASE_CONTENT_URI;
 import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_AUTHORS;
@@ -92,6 +95,7 @@ public class BookDetailActivity extends AppCompatActivity {
     BookDetail libro;
     String TAG = this.getClass().getSimpleName();
     ImageView img;
+    RatingBar ratingBar;
 
 
     @Override
@@ -104,7 +108,7 @@ public class BookDetailActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
             getSupportActionBar().setHomeButtonEnabled(true);
         } catch (NullPointerException ex) {
-            Toast.makeText(this, string.exception, Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, R.string.exception, Toast.LENGTH_SHORT).show();
         }
 
         bindViews();
@@ -137,8 +141,19 @@ public class BookDetailActivity extends AppCompatActivity {
                         authors = Arrays.asList(item.getAuthors().get(0).split(","));
                 }
 
-                if (rating != null && rating > -1)
-                    ratingTextView.setText(this.getString(string.rating) + rating);
+                if (rating != null && !rating.isNaN() && rating > -1) {
+                    ratingTextView.setText(String.valueOf(rating));
+                    if (rating.floatValue() <= 5)
+                        ratingBar.setRating(rating.floatValue()); //5 mark vote
+                    else if (rating.floatValue() <= 10)
+                        ratingBar.setRating(rating.floatValue() / 2); //10 mark vote
+                    else
+                        ratingBar.setRating(rating.floatValue() / 3); //15 mark vote
+
+                } else {
+                    ratingBar.setVisibility(GONE);
+                    ratingTextView.setVisibility(GONE);
+                }
                 titleTextView.setText(title_book);
                 if (description != null && description.length() > 15)
                     descriptionBook.setText(description);
@@ -161,9 +176,9 @@ public class BookDetailActivity extends AppCompatActivity {
                             if (authors.size() == 1)
                                 authorTextView.setText(author);
                             else
-                                authorTextView.setText(author + getString(string.comma));
+                                authorTextView.setText(author + getString(R.string.comma));
                         } else if (i < authors.size() - 1)
-                            authorTextView.setText(authorTextView.getText() + " " + author + getString(string.comma));
+                            authorTextView.setText(authorTextView.getText() + " " + author + getString(R.string.comma));
                         else
                             authorTextView.setText(authorTextView.getText() + " " + author);
 
@@ -217,6 +232,7 @@ public class BookDetailActivity extends AppCompatActivity {
                     moreInfo.setVisibility(GONE);
                 }
 
+                ratingBar.setVisibility(GONE);
                 ratingTextView.setVisibility(GONE);
 
                 toolbar.setTitle(title_book);
@@ -236,7 +252,7 @@ public class BookDetailActivity extends AppCompatActivity {
                 String url = getIntent().getExtras().getString("amazonUrl");
                 Button prvBtn = findViewById(id.previewBtn);
                 if (url != null)
-                    prvBtn.setText(string.buy_on_amazon);
+                    prvBtn.setText(R.string.buy_on_amazon);
             }
 
             setMoreFromAuthorRecyclerView();
@@ -270,6 +286,7 @@ public class BookDetailActivity extends AppCompatActivity {
         descriptionBook = findViewById(id.description);
         bookmark = findViewById(id.addToFav);
         revs_title = findViewById(id.review_title);
+        ratingBar = findViewById(id.ratingBar);
 
         img = findViewById(id.img);
         catRecyclerView = findViewById(id.categoriesRecyclerView);
@@ -319,23 +336,23 @@ public class BookDetailActivity extends AppCompatActivity {
                 final String bookTitle = item.getTitle();
                 if (isFavourite(bookTitle)) { //remove fav
                     animateVectorDrawable(true);
-                    Snackbar.make(view, bookTitle + " " + R.string.removed_fav, Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(view, bookTitle + " " + getString(R.string.removed_from_favs), Snackbar.LENGTH_LONG).show();
                     removeFromFav();
                 } else { //add fav
                     animateVectorDrawable(false);
                     addToFavourite();
-                    Snackbar.make(view, bookTitle + " " + R.string.added_fav, Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(view, bookTitle + " " + getString(R.string.added_to_favs), Snackbar.LENGTH_LONG).show();
                 }
             } else {
                 final String bookTitle = libro.getTitle();
                 if (isFavourite(bookTitle)) { //remove fav
                     animateVectorDrawable(true);
-                    Snackbar.make(view, bookTitle + " " + R.string.removed_fav, Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(view, bookTitle + " " + getString(R.string.removed_from_favs), Snackbar.LENGTH_LONG).show();
                     removeFromFav();
                 } else { //add fav
                     animateVectorDrawable(false);
                     addToFavourite();
-                    Snackbar.make(view, bookTitle + " " + R.string.added_fav, Snackbar.LENGTH_LONG).show();
+                    Snackbar.make(view, bookTitle + " " + getString(R.string.added_to_favs), Snackbar.LENGTH_LONG).show();
                 }
             }
         }
@@ -345,7 +362,7 @@ public class BookDetailActivity extends AppCompatActivity {
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(string.paid_feature)
+        builder.setMessage(R.string.paid_feature)
                 .setTitle(R.string.paid_feature_title)
                 .setPositiveButton("Learn more", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
@@ -545,7 +562,7 @@ public class BookDetailActivity extends AppCompatActivity {
 
                 @Override
                 public void onFailure(Call<BooksList> call, Throwable t) {
-                    Toast.makeText(BookDetailActivity.this, string.error_while_fetching_Data, Toast.LENGTH_SHORT).show();
+                    Toast.makeText(BookDetailActivity.this, R.string.error_while_fetching_Data, Toast.LENGTH_SHORT).show();
                     Log.d(TAG, t.getMessage(), t);
                 }
             });
@@ -556,37 +573,47 @@ public class BookDetailActivity extends AppCompatActivity {
     }
 
     private void setReviewsRecyclerView() {
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://api.nytimes.com/svc/books/v3/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        if (isOnline()) {
+            final Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("https://api.nytimes.com/svc/books/v3/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
 
-        BooksClient service = retrofit.create(BooksClient.class);
-        Call<Review> books;
-        if (!isNyt)
-            books = service.getBookReviewsByTitle(item.getTitle(), getString(string.nyt_api_key));
-        else
-            books = service.getBookReviewsByTitle(libro.getTitle(), getString(string.nyt_api_key));
+            BooksClient service = retrofit.create(BooksClient.class);
+            Call<Review> books;
+            if (!isNyt)
+                books = service.getBookReviewsByTitle(item.getTitle(), getString(R.string.nyt_api_key));
+            else
+                books = service.getBookReviewsByTitle(libro.getTitle(), getString(R.string.nyt_api_key));
 
-        books.enqueue(new Callback<Review>() {
-            @Override
-            public void onResponse(Call<Review> call, Response<Review> response) {
-                Review result = response.body();
+            books.enqueue(new Callback<Review>() {
+                @Override
+                public void onResponse(Call<Review> call, Response<Review> response) {
+                    Review result = response.body();
 
-                reviewsAdapter = new ReviewsAdapter(BookDetailActivity.this, result);
-                reviewsRecyclerView.setAdapter(reviewsAdapter);
-                if (reviewsAdapter == null || reviewsAdapter.getItemCount() == 0) {
-                    revs_title.setVisibility(GONE);
-                } //else reviewsRecyclerView.setVisibility(View.VISIBLE);
-            }
+                    reviewsAdapter = new ReviewsAdapter(BookDetailActivity.this, result);
+                    reviewsRecyclerView.setAdapter(reviewsAdapter);
+                    if (reviewsAdapter == null || reviewsAdapter.getItemCount() == 0) {
+                        revs_title.setVisibility(GONE);
+                    } //else reviewsRecyclerView.setVisibility(View.VISIBLE);
+                }
 
-            @Override
-            public void onFailure(Call<Review> call, Throwable t) {
-                Toast.makeText(BookDetailActivity.this, string.error_while_fetching_Data, Toast.LENGTH_SHORT).show();
-                Log.d(TAG, t.getMessage(), t);
-            }
-        });
+                @Override
+                public void onFailure(Call<Review> call, Throwable t) {
+                    Toast.makeText(BookDetailActivity.this, R.string.error_while_fetching_Data, Toast.LENGTH_SHORT).show();
+                    Log.d(TAG, t.getMessage(), t);
+                }
+            });
+        } else {
+            Snackbar.make(authorTextView, getString(R.string.no_reviews_offline), Snackbar.LENGTH_LONG).show();
+        }
+    }
 
+    public boolean isOnline() {
+        ConnectivityManager cm =
+                (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo netInfo = cm.getActiveNetworkInfo();
+        return netInfo != null && netInfo.isConnectedOrConnecting();
     }
 
     public void onPreview(View view) {
@@ -598,7 +625,7 @@ public class BookDetailActivity extends AppCompatActivity {
                 builder.setToolbarColor(getResources().getColor(color.colorPrimary));
                 customTabsIntent.launchUrl(this, Uri.parse(previewLink));
             } else
-                Snackbar.make(view, string.no_preview, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, R.string.no_preview, Snackbar.LENGTH_LONG).show();
         } else {
             String url = getIntent().getExtras().getString("amazonUrl");
             if (url != null) {
@@ -607,7 +634,7 @@ public class BookDetailActivity extends AppCompatActivity {
                 builder.setToolbarColor(getResources().getColor(color.colorPrimary));
                 customTabsIntent.launchUrl(this, Uri.parse(url));
             } else
-                Snackbar.make(view, string.no_preview, Snackbar.LENGTH_LONG).show();
+                Snackbar.make(view, R.string.no_preview, Snackbar.LENGTH_LONG).show();
         }
     }
 
@@ -617,10 +644,10 @@ public class BookDetailActivity extends AppCompatActivity {
         if (url != null) {
             Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
             sharingIntent.setType("text/plain");
-            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(string.sharing) + title);
+            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.sharing) + title);
             sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, url);
-            startActivity(Intent.createChooser(sharingIntent, getString(string.sharing_via)));
-        } else Snackbar.make(view, string.couldnt_shre, Snackbar.LENGTH_LONG).show();
+            startActivity(Intent.createChooser(sharingIntent, getString(R.string.sharing_via)));
+        } else Snackbar.make(view, R.string.couldnt_shre, Snackbar.LENGTH_LONG).show();
     }
 
     public void onMoreInfo(View view) {

@@ -72,21 +72,6 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     }
 
 
-    private String[] getUserInfo() {
-        String[] userInfo = null;
-        GoogleSignInAccount acct = GoogleSignIn.getLastSignedInAccount(this);
-        if (acct != null) {
-            String personName = acct.getDisplayName();
-            String personGivenName = acct.getGivenName();
-            String personFamilyName = acct.getFamilyName();
-            String personEmail = acct.getEmail();
-            String personId = acct.getId();
-            Uri personPhoto = acct.getPhotoUrl();
-            userInfo = new String[]{personName, personGivenName, personFamilyName, personEmail, personId, personPhoto.toString()};
-        }
-        return userInfo;
-    }
-
     private void signIn() {
         Intent signInIntent = mGoogleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);

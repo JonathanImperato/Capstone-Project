@@ -1,70 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-xmlns:app="http://schemas.android.com/apk/res-auto"
-xmlns:tools="http://schemas.android.com/tools"
-android:layout_width="match_parent"
-android:layout_height="match_parent"
-android:background="#ffffff"
-android:clipToPadding="false">
-
-<GridView
-    android:id="@+id/widget_grid_view"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="48dp"
-    android:gravity="center"
-    android:numColumns="1"
-    tools:listitem="@layout/books_list" />
+    android:background="#ffffff"
+    android:clipToPadding="false">
 
-<RelativeLayout
-    android:id="@+id/widget_toolbar"
-    android:layout_width="match_parent"
-    android:layout_height="48dp"
-    android:layout_gravity="top"
-    android:background="@color/colorPrimary"
-    android:clipToPadding="false"
-    android:elevation="2dp"
-    android:gravity="center_vertical"
-    tools:targetApi="lollipop">
+    <GridView
+        android:id="@+id/widget_grid_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="48dp"
+        android:gravity="center"
+        android:numColumns="1"
+        tools:listitem="@layout/books_list" />
+
+    <RelativeLayout
+        android:id="@+id/widget_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="48dp"
+        android:layout_gravity="top"
+        android:background="@color/colorPrimary"
+        android:clipToPadding="false"
+        android:elevation="2dp"
+        android:gravity="center_vertical"
+        tools:targetApi="lollipop">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:contentDescription="@string/fab_contentdesc"
+            android:drawableLeft="@drawable/book_bar"
+            android:drawablePadding="16dp"
+            android:drawableStart="@drawable/book_bar"
+            android:gravity="start"
+            android:maxLines="1"
+            android:maxWidth="150dp"
+            android:text="@string/favourite_books"
+            android:textColor="#fff"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+
+        <ImageView
+            android:id="@+id/takeWidgetPhoto"
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:clickable="true"
+            android:contentDescription="@string/camera_image"
+            android:focusable="true"
+            android:src="@drawable/ic_photo_camera_black_24dp"
+            app:srcCompat="@drawable/ic_photo_camera_black_24dp"
+            tools:ignore="VectorDrawableCompat" />
+    </RelativeLayout>
+
 
     <TextView
+        android:id="@+id/empty_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="16dp"
-        android:drawableLeft="@drawable/book_bar"
-        android:drawablePadding="16dp"
-        android:gravity="left"
-        android:maxLines="1"
-        android:maxWidth="150dp"
-        android:text="@string/favourite_books"
-        android:textColor="#fff"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:text="@string/no_fav_to_display"
+        android:textAlignment="center"
+        android:textColor="#000"
         android:textSize="14sp"
         android:textStyle="bold" />
-
-    <ImageView
-        android:id="@+id/takeWidgetPhoto"
-        android:layout_width="20dp"
-        android:layout_height="20dp"
-        android:contentDescription="@string/camera_image"
-        android:layout_alignParentRight="true"
-        android:layout_marginRight="16dp"
-        android:clickable="true"
-        app:srcCompat="@drawable/ic_photo_camera_black_24dp"
-        android:focusable="true" />
-</RelativeLayout>
-
-
-<TextView
-    android:id="@+id/empty_view"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_centerInParent="true"
-    android:layout_gravity="center"
-    android:textColor="#000"
-    android:gravity="center"
-    android:text="@string/no_fav_to_display"
-    android:textAlignment="center"
-    android:textSize="14sp"
-    android:textStyle="bold" />
 
 </FrameLayout>
