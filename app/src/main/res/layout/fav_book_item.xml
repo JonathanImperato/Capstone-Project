@@ -34,7 +34,6 @@
                 android:transitionName="@string/transition_string"
                 android:adjustViewBounds="true"
                 android:contentDescription="@string/thumbnail"
-                android:minWidth="120dp"
                 android:foreground="?selectableItemBackground"
                 android:scaleType="centerCrop"
                 tools:targetApi="lollipop" />
