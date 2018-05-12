@@ -169,19 +169,10 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
         @Override
         public void onAvailable(Network network) {
             runOnUiThread(new Runnable() {
-
                 @Override
                 public void run() {
                     noConnectionImg.setVisibility(View.GONE);
                     frameLayout.setVisibility(View.VISIBLE);
-                    if (homeFragment == null) {
-                        getSupportFragmentManager().beginTransaction()
-                                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
-                                .addToBackStack("backstack")
-                                .replace(R.id.fragment_container, HomeFragment.newInstance())
-                                .commit();
-                        homeFragment = HomeFragment.newInstance();
-                    }
                 }
             });
         }
@@ -189,12 +180,13 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
         @Override
         public void onLost(Network network) {
             runOnUiThread(new Runnable() {
-
                 @Override
                 public void run() {
-                    noConnectionImg.setVisibility(View.VISIBLE);
-                    frameLayout.setVisibility(View.GONE);
-                    animateNoConnection();
+                    if (selectedFragment.equals(homeFragment)) {
+                        noConnectionImg.setVisibility(View.VISIBLE);
+                        frameLayout.setVisibility(View.GONE);
+                        animateNoConnection();
+                    }
                 }
             });
         }

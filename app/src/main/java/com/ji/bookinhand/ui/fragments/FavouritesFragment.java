@@ -80,6 +80,7 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), getNumberOfColumns()));
         recyclerView.addOnLayoutChangeListener(this);
         recyclerView.setAdapter(mAdapter);
+        recyclerView.addOnLayoutChangeListener(this);
 
         getActivity().getSupportLoaderManager().initLoader(ID_FAVOURITE_LOADER, null, this);
 
@@ -186,7 +187,6 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
         recyclerView.setAdapter(mAdapter);
         noFavLayout.setVisibility(View.GONE);
         recyclerView.setVisibility(View.VISIBLE);
-        recyclerView.addOnLayoutChangeListener(this);
 
     }
 
