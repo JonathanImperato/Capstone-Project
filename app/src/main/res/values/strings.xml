@@ -132,9 +132,9 @@
     </string>
 
     <!-- TODO: REPLACE WITH YOUR KEYS -->
-    <string name="admob_app_id">ca-app-pub- ~ </string>
-    <string name="admob_interstitial_id">ca-app-pub- / </string>
-    <string name="nyt_api_key"> </string>
+    <string name="admob_app_id">aaaa</string>
+    <string name="admob_interstitial_id">bbbb</string>
+    <string name="nyt_api_key">cccc</string>
     <!-- KEYS ENDED -->
 
     <string name="favourite_books">Favourite Books</string>
@@ -217,4 +217,5 @@
     <string name="added_to_favs">has been added from favourites</string>
     <string name="removed_from_favs">has been removed from favourites</string>
     <string name="no_reviews_offline">Reviews are not available offline</string>
+    <string name="refresh_widget">Refresh widget</string>
 </resources>
