@@ -155,7 +155,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
         if (isOnline()) {
             frameLayout.setVisibility(View.VISIBLE);
             noConnectionImg.setVisibility(View.GONE);
-
+            isFirstLoad = false;
         } else {
             animateNoConnection();
             frameLayout.setVisibility(View.GONE);
@@ -164,7 +164,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
 
     }
 
-
+    boolean isFirstLoad = true;
     private ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
         @Override
         public void onAvailable(Network network) {
@@ -173,6 +173,14 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
                 public void run() {
                     noConnectionImg.setVisibility(View.GONE);
                     frameLayout.setVisibility(View.VISIBLE);
+                    if (isFirstLoad) {//need to load the home data the first time
+                        getSupportFragmentManager().beginTransaction()
+                                .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
+                                .addToBackStack("backstack")
+                                .replace(R.id.fragment_container, HomeFragment.newInstance())
+                                .commit();
+                        isFirstLoad = false;
+                    }
                 }
             });
         }
