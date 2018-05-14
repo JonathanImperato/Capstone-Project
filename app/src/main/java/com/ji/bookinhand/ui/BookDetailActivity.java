@@ -644,14 +644,16 @@ public class BookDetailActivity extends AppCompatActivity {
     }
 
     public void onShare(View view) {
-        String url = item.getInfoLink();
-        String title = item.getTitle();
-        if (url != null) {
-            Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
-            sharingIntent.setType("text/plain");
-            sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.sharing) + title);
-            sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, url);
-            startActivity(Intent.createChooser(sharingIntent, getString(R.string.sharing_via)));
+        if (item != null) {
+            String url = item.getInfoLink();
+            String title = item.getTitle();
+            if (url != null) {
+                Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+                sharingIntent.setType("text/plain");
+                sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, getString(R.string.sharing) + title);
+                sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, url);
+                startActivity(Intent.createChooser(sharingIntent, getString(R.string.sharing_via)));
+            }
         } else Snackbar.make(view, R.string.couldnt_shre, Snackbar.LENGTH_LONG).show();
     }
 
