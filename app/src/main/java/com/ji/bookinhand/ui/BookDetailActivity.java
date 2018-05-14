@@ -141,7 +141,7 @@ public class BookDetailActivity extends AppCompatActivity {
                         authors = Arrays.asList(item.getAuthors().get(0).split(","));
                 }
 
-                if (rating != null && !rating.isNaN() && rating > -1) {
+                if (rating != null && !rating.isNaN() && rating > -1 && rating.floatValue() != 0.0) {
                     ratingTextView.setText(String.valueOf(rating));
                     if (rating.floatValue() <= 5)
                         ratingBar.setRating(rating.floatValue()); //5 mark vote

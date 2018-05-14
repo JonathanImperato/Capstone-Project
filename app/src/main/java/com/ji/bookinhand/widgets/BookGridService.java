@@ -41,6 +41,7 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
     @Override
     public void onCreate() {
+        if (mCursor != null) mCursor.close();
         mCursor = mContext.getContentResolver().query(
                 BASE_CONTENT_URI,
                 null,
@@ -61,6 +62,7 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
                 null,
                 null
         );
+        mCursor.moveToFirst();
 
     }
 
