@@ -401,9 +401,9 @@ public class HomeFragment extends Fragment {
         final SharedPreferences.Editor editor = prefs.edit();
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        builder.setMessage("You selected \"" + text + "\". Are you sure?")
-                .setTitle("Confirm your choice")
-                .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+        builder.setMessage(getString(R.string.you_selected) + text + getString(R.string.are_you_sure))
+                .setTitle(getString(R.string.confirm_choice) )
+                .setPositiveButton(getString(R.string.go_on) , new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
                         if (prefs.getString(MY_PREFS_NAME, null) == null || !prefs.getString(MY_PREFS_NAME, null).contains(text)) {
@@ -416,7 +416,7 @@ public class HomeFragment extends Fragment {
                                 .putExtra("isCat", false)); //is a category search (here is false since it is not)
                     }
                 })
-                .setNegativeButton("Try again", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.try_again) , new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // User cancelled the dialog
                         Intent intent = new Intent(getContext(), OcrCaptureActivity.class);

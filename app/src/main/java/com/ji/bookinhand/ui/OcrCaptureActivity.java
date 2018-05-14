@@ -294,7 +294,7 @@ public class OcrCaptureActivity extends AppCompatActivity {
         };
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Multitracker sample")
+        builder.setTitle(R.string.ocr_dialog_title)
                 .setMessage(R.string.no_camera_permission)
                 .setPositiveButton(R.string.ok, listener)
                 .show();
@@ -359,9 +359,9 @@ public class OcrCaptureActivity extends AppCompatActivity {
 
     void createConfirmDialog(final String text) {
         android.support.v7.app.AlertDialog.Builder builder = new android.support.v7.app.AlertDialog.Builder(this);
-        builder.setMessage("You selected \"" + text + "\". Are you sure?")
-                .setTitle("Confirm your choice")
-                .setPositiveButton("Continue", new DialogInterface.OnClickListener() {
+        builder.setMessage(getString(R.string.you_selected) + text + getString(R.string.sure))
+                .setTitle(R.string.confirm_choice)
+                .setPositiveButton(getString(R.string.go_on), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         Intent data = new Intent(OcrCaptureActivity.this, ResultsActivity.class);
                         data.putExtra("result", text);
@@ -370,7 +370,7 @@ public class OcrCaptureActivity extends AppCompatActivity {
                         finish();
                     }
                 })
-                .setNegativeButton("Try again", new DialogInterface.OnClickListener() {
+                .setNegativeButton(getString(R.string.try_again), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
 
                     }

@@ -367,9 +367,9 @@ public class BookDetailActivity extends AppCompatActivity {
 
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setMessage(R.string.paid_feature)
-                .setTitle(R.string.paid_feature_title)
-                .setPositiveButton("Learn more", new DialogInterface.OnClickListener() {
+        builder.setMessage(getString(R.string.paid_feature))
+                .setTitle(getString(R.string.paid_feature_title))
+                .setPositiveButton(getString(R.string.learn_more), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         final String appPackageName = getPackageName();
                         try {

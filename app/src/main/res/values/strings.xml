@@ -218,4 +218,10 @@
     <string name="removed_from_favs">has been removed from favourites</string>
     <string name="no_reviews_offline">Reviews are not available offline</string>
     <string name="refresh_widget">Refresh widget</string>
+    <string name="ocr_dialog_title">Multitracker sample</string>
+    <string name="confirm_choice">Confirm your choice</string>
+    <string name="you_selected">You selected \"</string>
+    <string name="sure">\". Are you sure?</string>
+    <string name="go_on">Continue</string>
+    <string name="learn_more">Learn More</string>
 </resources>
