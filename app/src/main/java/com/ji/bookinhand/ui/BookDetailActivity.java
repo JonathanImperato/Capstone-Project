@@ -134,6 +134,7 @@ public class BookDetailActivity extends AppCompatActivity {
                     if (item.getPublishedDate().length() == 25)
                         date = item.getPublishedDate().substring(0, item.getPublishedDate().length() - 15);
                     else date = item.getPublishedDate();
+
                 if (!isFav) {
                     authors = item.getAuthors();
                 } else {
@@ -476,6 +477,7 @@ public class BookDetailActivity extends AppCompatActivity {
         if (!isNyt) bookTitle = item.getTitle();
         else bookTitle = libro.getTitle();
         ContentValues values;
+
         if (!isNyt) {
             values = new ContentValues();
             VolumeInfo info = item;
@@ -541,6 +543,8 @@ public class BookDetailActivity extends AppCompatActivity {
 
             values.put(COLUMN_DESCRIPTION, libro.getDescription());
         }
+
+        isFav = true;
         new addToFav().execute(values);
     }
 
@@ -549,7 +553,6 @@ public class BookDetailActivity extends AppCompatActivity {
 
         @Override
         protected Void doInBackground(ContentValues... contentValues) {
-
             getContentResolver().insert(URI_Book, contentValues[0]);
             return null;
         }
@@ -573,6 +576,7 @@ public class BookDetailActivity extends AppCompatActivity {
         if (!isNyt) bookTitle = item.getTitle();
         else bookTitle = libro.getTitle();
         new removeFromFav().execute(bookTitle);
+        isFav = false;
     }
 
     private void setMoreFromAuthorRecyclerView() {

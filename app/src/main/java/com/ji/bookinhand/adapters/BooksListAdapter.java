@@ -5,6 +5,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -24,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
+import com.ji.bookinhand.BuildConfig;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.api.models.BooksList;
 import com.ji.bookinhand.api.models.ImageLinks;
@@ -286,7 +288,13 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                             transitionName    // The String
                     );
 
+            if (mBooksList != null && mBooksList.getTotalItems() > 0) {
+                new isFavouriteAs().execute(mBooksList.getItems().get(position).getVolumeInfo().getTitle());
+            } else {
+                new isFavouriteAs().execute(mFavList.get(position).getVolumeInfo().getTitle());
+            }
             switch (view.getId()) {
+
 
                 case R.id.more:
                     inflater.inflate(R.menu.actions, popup.getMenu());
@@ -295,8 +303,10 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
                             final String bookTitle = mBooksList.getItems().get(position).getVolumeInfo().getTitle();
+
                             //    Toast.makeText(mContext, "Position is " + position, Toast.LENGTH_SHORT).show();
-                            if (!isFavourite(bookTitle)) {
+                            //if (!isFavourite(bookTitle)) {
+                            if (!isFav) {
                                 addFavourite(position);
                                 Snackbar.make(view, bookTitle + " has been added to favourite", Snackbar.LENGTH_LONG).setAction("Cancel", new View.OnClickListener() {
                                     @Override
@@ -378,6 +388,33 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
             }
         }
 
+        public class isFavouriteAs extends AsyncTask<String, Void, Boolean> {
+            @Override
+            protected Boolean doInBackground(String... strings) {
+                if (BuildConfig.FLAVOR.equals("paid")) {
+
+                    String newName = strings[0];
+                    String[] selections = {newName};
+                    Cursor c = mContext.getContentResolver().query(
+                            URI_Book,
+                            null,
+                            COLUMN_TITLE + " =? ",
+                            selections,
+                            null);
+
+                    return c.getCount() > 0;
+                }
+                return false; //always false for free flavour
+            }
+
+            @Override
+            protected void onPostExecute(Boolean aBoolean) {
+                super.onPostExecute(aBoolean);
+                isFav = aBoolean;
+            }
+
+        }
+
         void addFavourite(int position) {
             if (mBooksList != null && position > -1) {
                 Item libro = mBooksList.getItems().get(position);
@@ -430,22 +467,42 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                 values.put(COLUMN_DESCRIPTION, info.getDescription());
                 values.put(COLUMN_SUBTITLE, info.getSubtitle());
 
-                mContext.getContentResolver().insert(URI_Book, values);
-
+                new addToFav().equals(values);
+                isFav = true;
             } else
                 Log.d(mContext.getClass().getSimpleName(), "Position is -1!");
 
         }
 
-        void removeFromFav(String title) {
-            mContext.getContentResolver().delete(
-                    URI_Book,
-                    COLUMN_TITLE + " =? ",
-                    new String[]{title}
-            );
+        public class addToFav extends AsyncTask<ContentValues, Void, Void> {
+
+            @Override
+            protected Void doInBackground(ContentValues... contentValues) {
+                mContext.getContentResolver().insert(URI_Book, contentValues[0]);
+                return null;
+            }
         }
 
-        boolean isFavourite(String title) {
+
+        void removeFromFav(String title) {
+            new removeFromFav().execute(title);
+            isFav = false;
+        }
+
+        public class removeFromFav extends AsyncTask<String, Void, Void> {
+
+            @Override
+            protected Void doInBackground(String... strings) {
+                mContext.getContentResolver().delete(
+                        URI_Book,
+                        COLUMN_TITLE + " =? ",
+                        new String[]{strings[0].replace("_", " ")}
+                );
+                return null;
+            }
+        }
+
+   /*     boolean isFavourite(String title) {
             String newName = title;
             String[] selections = {newName};
             Cursor c = mContext.getContentResolver().query(
@@ -457,6 +514,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
 
             return c.getCount() > 0;
         }
+ */
     }
 
 }

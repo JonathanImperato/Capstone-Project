@@ -32,7 +32,7 @@ public class Book {
     public static final String COLUMN_DESCRIPTION = "description";
     public static final String COLUMN_SUBTITLE = "subtitle";
 
-    @PrimaryKey
+    @PrimaryKey (autoGenerate = true)
     @ColumnInfo(index = true, name = COLUMN_ID)
     int _ID;
 
