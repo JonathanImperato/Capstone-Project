@@ -74,9 +74,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
                 return true;
             }
         }*/
-        if (account != null)
+        if (account != null && account.getDisplayName().length() > 1) {
             accountPref.setTitle(account.getDisplayName());
-
+        }
         if (versionPref != null) {
             String version = BuildConfig.VERSION_NAME;
             String versionFlav = BuildConfig.FLAVOR;
@@ -100,7 +100,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
 
     @Override
     public boolean onPreferenceClick(Preference preference) {
-        switch (preference.getKey().toString()) {
+        final String appPackageName = getContext().getPackageName();
+
+        switch (preference.getKey()) {
             case "account":
                 if (account == null) {
                     startActivity(new Intent(getContext(), LoginActivity.class));
@@ -109,7 +111,6 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
                 }
                 return true;
             case "rate":
-                final String appPackageName = getContext().getPackageName();
                 try {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
                 } catch (android.content.ActivityNotFoundException ex) {
@@ -128,10 +129,13 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Prefer
                 }
                 return true;
             case "join_beta":
-                Toast.makeText(getContext(), R.string.join_beta, Toast.LENGTH_SHORT).show();
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/apps/testing/" + appPackageName)));
                 return true;
             case "about":
-                Toast.makeText(getContext(), R.string.author_info, Toast.LENGTH_SHORT).show(); //todo: complete about info
+                String url = "https://profiles.udacity.com/p/10708558542";
+                Intent i = new Intent(Intent.ACTION_VIEW);
+                i.setData(Uri.parse(url));
+                startActivity(i);
                 return true;
             case "feedback":
                 if (isPackageInstalled("com.google.android.feedback")) {

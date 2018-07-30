@@ -7,7 +7,9 @@
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.INTERNET" />
 
-    <permission android:name="com.ji.bookinhand.database.provider.READ_WRITE" />
+    <permission
+        android:name="com.ji.bookinhand.database.provider.READ_WRITE"
+        android:protectionLevel="signature" />
 
     <uses-feature
         android:name="android.software.leanback"
@@ -38,10 +40,11 @@
             android:label="Read Text"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <provider
-            android:name=".database.FoodProvider"
-            android:authorities="com.ji.bakingapp.database.FoodProvider"
-            android:exported="true" />
+        <!--    BASIC CONTENT PROVIDER
+         <provider
+             android:name=".database.OldCP.FoodProvider"
+             android:authorities="com.ji.bakingapp.database.FoodProvider"
+             android:exported="true" /> -->
         <!--
        SCHEMATIC CONTENT PROVIDER
        - CANNOT BE USED IN CAPSTONE -
@@ -53,13 +56,13 @@
         -->
         <!--
        ROOM CONTENT PROVIDER
-       - CANNOT BE USED IN CAPSTONE -
-         <provider
-              android:name=".database.Room.BookContentProvider"
-              android:authorities="com.ji.bookinhand.database.provider"
-              android:exported="true"
-              android:permission="com.ji.bookinhand.database.provider.READ_WRITE"/>
-        -->
+       - CANNOT BE USED IN CAPSTONE -  -->
+        <provider
+            android:name=".database.BookContentProvider"
+            android:authorities="com.ji.bookinhand.database.provider"
+            android:exported="true"
+            android:permission="com.ji.bookinhand.database.provider.READ_WRITE" />
+
 
         <activity
             android:name=".ui.LoginActivity"
@@ -76,16 +79,17 @@
             android:theme="@style/AppTheme.Translucent" />
         <activity
             android:name=".ui.HomeActivity"
+            android:configChanges="orientation"
             android:label="@string/title_activity_bottom_nav"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <receiver android:name=".widgets.BooksListProvider"
+        <receiver
+            android:name=".widgets.BooksListProvider"
             android:description="@string/fav_list"
             android:label="@string/fav_list">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
-
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/booklist_app_widget" />
@@ -108,9 +112,10 @@
                 android:resource="@xml/camera_app_widget_info" />
         </receiver>
 
-        <activity android:name=".ui.LicensesActivity"
+        <activity
+            android:name=".ui.LicensesActivity"
             android:parentActivityName=".ui.HomeActivity"
-            tools:targetApi="jelly_bean"></activity>
+            tools:targetApi="jelly_bean" />
     </application>
 
 </manifest>

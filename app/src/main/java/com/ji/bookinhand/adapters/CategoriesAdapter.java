@@ -36,7 +36,7 @@ public class CategoriesAdapter extends RecyclerView.Adapter<CategoriesAdapter.Ca
     @Override
     public void onBindViewHolder(CategoriesAdapter.CategoriesAdapterViewHolder holder, int position) {
         String name = categories.get(position);
-        if (name.length() > 1)
+        if (name != null && name.length() > 1)
             holder.name.setText(name);
         else holder.itemView.setVisibility(View.GONE);
 

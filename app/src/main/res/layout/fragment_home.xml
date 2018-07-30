@@ -30,6 +30,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="8dp"
+                    android:padding="16dp"
                     android:layout_marginStart="8dp"
                     android:text="@string/e_book_fiction"
                     android:textColor="@color/colorAccent"
@@ -55,6 +56,7 @@
                     tools:listitem="@layout/book_item" />
 
                 <TextView
+                    android:padding="16dp"
                     android:id="@+id/paperbacknonfiction"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -87,6 +89,7 @@
 
                 <TextView
                     android:id="@+id/hardcoverFiction"
+                    android:padding="16dp"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
@@ -118,6 +121,7 @@
                 <TextView
                     android:id="@+id/hardcovernonFiction"
                     android:layout_width="wrap_content"
+                    android:padding="16dp"
                     android:layout_height="wrap_content"
                     android:layout_margin="8dp"
                     android:layout_marginLeft="8dp"

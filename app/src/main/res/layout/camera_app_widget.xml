@@ -27,8 +27,9 @@
             android:layout_gravity="center"
             android:gravity="center"
             android:tint="#fff"
-            app:srcCompat="@drawable/ic_photo_camera_black_24dp"
-            android:contentDescription="@string/camera_image" />
+            android:src="@drawable/ic_photo_camera_black_24dp"
+            android:contentDescription="@string/camera_image"
+            tools:ignore="VectorDrawableCompat" />
     </RelativeLayout>
 
     <TextView

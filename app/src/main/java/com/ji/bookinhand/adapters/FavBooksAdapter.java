@@ -1,26 +1,5 @@
 package com.ji.bookinhand.adapters;
 
-import android.content.Context;
-import android.support.v7.widget.RecyclerView;
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
-import com.bumptech.glide.Glide;
-import com.ji.bookinhand.R;
-import com.ji.bookinhand.api.models.ImageLinks;
-import com.ji.bookinhand.api.models.Item;
-import com.ji.bookinhand.ui.fragments.FavouritesFragment;
-
-import java.util.List;
-
-import static com.ji.bookinhand.database.ItemsContract.BASE_CONTENT_URI;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_TITLE;
-
 /**
  * WORKS ONLY IF A VERTICAL LINEAR LAYOUT MANAGER IS USED
  * CURRENTLY NOT USED

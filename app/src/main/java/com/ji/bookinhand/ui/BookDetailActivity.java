@@ -9,6 +9,7 @@ import android.database.Cursor;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.customtabs.CustomTabsIntent;
@@ -62,30 +63,30 @@ import static com.ji.bookinhand.R.drawable;
 import static com.ji.bookinhand.R.id;
 import static com.ji.bookinhand.R.layout;
 import static com.ji.bookinhand.R.transition;
-import static com.ji.bookinhand.database.ItemsContract.BASE_CONTENT_URI;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_AUTHORS;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_AVERAGE_RATING;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_CANONICAL_VOLUME_LINK;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_CATEGORIES;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_DESCRIPTION;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_IMAGE_LINKS;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_INFO_LINK;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_LANGUAGE;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_MATURITY_RATING;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PAGE_COUNT;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PREVIEW_LINK;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PRINT_TYPE;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PUBLISHER;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PUBLISH_DATE;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_RATING_COUNT;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_SUBTITLE;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_TITLE;
+import static com.ji.bookinhand.database.Book.COLUMN_AUTHORS;
+import static com.ji.bookinhand.database.Book.COLUMN_AVERAGE_RATING;
+import static com.ji.bookinhand.database.Book.COLUMN_CANONICAL_VOLUME_LINK;
+import static com.ji.bookinhand.database.Book.COLUMN_CATEGORIES;
+import static com.ji.bookinhand.database.Book.COLUMN_DESCRIPTION;
+import static com.ji.bookinhand.database.Book.COLUMN_IMAGE_LINKS;
+import static com.ji.bookinhand.database.Book.COLUMN_INFO_LINK;
+import static com.ji.bookinhand.database.Book.COLUMN_LANGUAGE;
+import static com.ji.bookinhand.database.Book.COLUMN_MATURITY_RATING;
+import static com.ji.bookinhand.database.Book.COLUMN_PAGE_COUNT;
+import static com.ji.bookinhand.database.Book.COLUMN_PREVIEW_LINK;
+import static com.ji.bookinhand.database.Book.COLUMN_PRINT_TYPE;
+import static com.ji.bookinhand.database.Book.COLUMN_PUBLISHER;
+import static com.ji.bookinhand.database.Book.COLUMN_PUBLISH_DATE;
+import static com.ji.bookinhand.database.Book.COLUMN_RATING_COUNT;
+import static com.ji.bookinhand.database.Book.COLUMN_SUBTITLE;
+import static com.ji.bookinhand.database.Book.COLUMN_TITLE;
+import static com.ji.bookinhand.database.BookContentProvider.URI_Book;
 
 public class BookDetailActivity extends AppCompatActivity {
     TextView titleTextView, authorTextView, pubblishdateTextView, addBookMark, descriptionBook, ratingTextView, revs_title;
     List<String> authors;
     ImageView bookmark;
-    Boolean isFav, isNyt;
+    Boolean isFav = false, isNyt;
     String date, isbn = "";
     ReviewsAdapter reviewsAdapter;
     VolumeInfo item;
@@ -122,7 +123,8 @@ public class BookDetailActivity extends AppCompatActivity {
             isNyt = getIntent().getExtras().getBoolean("isNyt");
             if (!isNyt) {
                 item = getIntent().getExtras().getParcelable("volume");
-                isFav = isFavourite(item.getTitle());
+                new isFavouriteAs().execute(item.getTitle());
+
                 isbn = getIntent().getExtras().getString("isbn");
                 imgs = getIntent().getExtras().getParcelable("imgs");
                 String title_book = item.getTitle();
@@ -207,7 +209,8 @@ public class BookDetailActivity extends AppCompatActivity {
                 setCategoriesRecyclerView(cats);
             } else {
                 libro = getIntent().getExtras().getParcelable("volume");
-                isFav = isFavourite(libro.getTitle());
+
+                new isFavouriteAs().execute(libro.getTitle());
                 imgs = getIntent().getExtras().getParcelable("imgs");
                 String title_book = libro.getTitle();
                 String description = libro.getDescription();
@@ -311,7 +314,7 @@ public class BookDetailActivity extends AppCompatActivity {
         String newName = item.getTitle();
         String[] selectionArgs = {newName};
         String sortOrder = null;
-        Cursor cursor = getContentResolver().query(BASE_CONTENT_URI, projection, selection, selectionArgs,
+        Cursor cursor = getContentResolver().query(URI_Book, projection, selection, selectionArgs,
                 sortOrder);
 
         if (cursor != null) {
@@ -339,7 +342,7 @@ public class BookDetailActivity extends AppCompatActivity {
         } else {
             if (!isNyt) {
                 final String bookTitle = item.getTitle();
-                if (isFavourite(bookTitle)) { //remove fav
+                if (isFav) { //remove fav
                     animateVectorDrawable(true);
                     Snackbar.make(view, bookTitle + " " + getString(R.string.removed_from_favs), Snackbar.LENGTH_LONG).show();
                     removeFromFav();
@@ -350,7 +353,7 @@ public class BookDetailActivity extends AppCompatActivity {
                 }
             } else {
                 final String bookTitle = libro.getTitle();
-                if (isFavourite(bookTitle)) { //remove fav
+                if (isFav) { //remove fav
                     animateVectorDrawable(true);
                     Snackbar.make(view, bookTitle + " " + getString(R.string.removed_from_favs), Snackbar.LENGTH_LONG).show();
                     removeFromFav();
@@ -365,13 +368,12 @@ public class BookDetailActivity extends AppCompatActivity {
 
     private void createUpgradeDialog() {
 
-
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setMessage(getString(R.string.paid_feature))
                 .setTitle(getString(R.string.paid_feature_title))
                 .setPositiveButton(getString(R.string.learn_more), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        final String appPackageName = getPackageName();
+                        final String appPackageName = "com.ji.bookinhand.paid";
                         try {
                             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("market://details?id=" + appPackageName)));
                         } catch (ActivityNotFoundException ex) {
@@ -412,27 +414,63 @@ public class BookDetailActivity extends AppCompatActivity {
         }
     }
 
-    boolean isFavourite(String title) {
-        if (BuildConfig.FLAVOR.equals("paid")) {
-            String newName = title;
-            String[] selections = {newName};
-            Cursor c = this.getContentResolver().query(
-                    BASE_CONTENT_URI,
-                    null,
-                    COLUMN_TITLE + " =? ",
-                    selections,
-                    null);
+    public class isFavouriteAs extends AsyncTask<String, Void, Boolean> {
+        @Override
+        protected Boolean doInBackground(String... strings) {
+            if (BuildConfig.FLAVOR.equals("paid")) {
+                String newName = strings[0];
+                String[] selections = {newName};
+                Cursor c = getApplicationContext().getContentResolver().query(
+                        URI_Book,
+                        null,
+                        COLUMN_TITLE + " =? ",
+                        selections,
+                        null);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                return Objects.requireNonNull(c.getCount() > 0);
-            } else {
-                if (c != null)
-                    return c.getCount() > 0;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    return Objects.requireNonNull(c.getCount() > 0);
+                } else {
+                    if (c != null)
+                        return c.getCount() > 0;
+                }
             }
-        } else return false; //always false for free flavour
-        return false;
+            return false; //always false for free flavour
+        }
+
+        @Override
+        protected void onPostExecute(Boolean aBoolean) {
+            super.onPostExecute(aBoolean);
+            isFav = aBoolean;
+            if (isFav == true) {
+                bookmark.setImageResource(drawable.ic_bookmark_black_24dp);
+                addBookMark.setCompoundDrawablesWithIntrinsicBounds(null, getResources().getDrawable(drawable.ic_bookmark_black_24dp), null, null);
+            }
+        }
+
     }
 
+    /*
+        boolean isFavourite(String title) {
+            if (BuildConfig.FLAVOR.equals("paid")) {
+                String newName = title;
+                String[] selections = {newName};
+                Cursor c = this.getContentResolver().query(
+                        URI_Book,
+                        null,
+                        COLUMN_TITLE + " =? ",
+                        selections,
+                        null);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                    return Objects.requireNonNull(c.getCount() > 0);
+                } else {
+                    if (c != null)
+                        return c.getCount() > 0;
+                }
+            } else return false; //always false for free flavour
+            return false;
+        }
+    */
     void addToFavourite() {
         String bookTitle = "";
         if (!isNyt) bookTitle = item.getTitle();
@@ -489,7 +527,7 @@ public class BookDetailActivity extends AppCompatActivity {
             values = new ContentValues();
             values.put(COLUMN_AUTHORS, libro.getAuthor());
             values.put(COLUMN_PAGE_COUNT, 0);
-            values.put(COLUMN_AUTHORS, libro.getAuthor().toString());
+            values.put(COLUMN_AUTHORS, libro.getAuthor());
             values.put(COLUMN_TITLE, bookTitle);
             if (imgs != null)
                 if (imgs.getExtraLarge() != null)
@@ -503,19 +541,38 @@ public class BookDetailActivity extends AppCompatActivity {
 
             values.put(COLUMN_DESCRIPTION, libro.getDescription());
         }
+        new addToFav().execute(values);
+    }
 
-        this.getContentResolver().insert(BASE_CONTENT_URI, values);
+    public class addToFav extends AsyncTask<ContentValues, Void, Void> {
+
+
+        @Override
+        protected Void doInBackground(ContentValues... contentValues) {
+
+            getContentResolver().insert(URI_Book, contentValues[0]);
+            return null;
+        }
+    }
+
+    public class removeFromFav extends AsyncTask<String, Void, Void> {
+
+        @Override
+        protected Void doInBackground(String... strings) {
+            getContentResolver().delete(
+                    URI_Book,
+                    COLUMN_TITLE + " =? ",
+                    new String[]{strings[0].replace("_", " ")}
+            );
+            return null;
+        }
     }
 
     void removeFromFav() {
         String bookTitle = null;
         if (!isNyt) bookTitle = item.getTitle();
         else bookTitle = libro.getTitle();
-        this.getContentResolver().delete(
-                BASE_CONTENT_URI,
-                COLUMN_TITLE + " =? ",
-                new String[]{bookTitle.replace("_", " ")}
-        );
+        new removeFromFav().execute(bookTitle);
     }
 
     private void setMoreFromAuthorRecyclerView() {

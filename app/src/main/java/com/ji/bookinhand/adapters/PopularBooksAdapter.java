@@ -39,15 +39,15 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.ji.bookinhand.database.ItemsContract.BASE_CONTENT_URI;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_AUTHORS;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_AVERAGE_RATING;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_DESCRIPTION;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_IMAGE_LINKS;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PAGE_COUNT;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PUBLISHER;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_PUBLISH_DATE;
-import static com.ji.bookinhand.database.ItemsContract.BookEntry.COLUMN_TITLE;
+import static com.ji.bookinhand.database.Book.COLUMN_AUTHORS;
+import static com.ji.bookinhand.database.Book.COLUMN_AVERAGE_RATING;
+import static com.ji.bookinhand.database.Book.COLUMN_DESCRIPTION;
+import static com.ji.bookinhand.database.Book.COLUMN_IMAGE_LINKS;
+import static com.ji.bookinhand.database.Book.COLUMN_PAGE_COUNT;
+import static com.ji.bookinhand.database.Book.COLUMN_PUBLISHER;
+import static com.ji.bookinhand.database.Book.COLUMN_PUBLISH_DATE;
+import static com.ji.bookinhand.database.Book.COLUMN_TITLE;
+import static com.ji.bookinhand.database.BookContentProvider.URI_Book;
 
 /**
  * WORKS ONLY IF A VERTICAL LINEAR LAYOUT MANAGER IS USED
@@ -126,58 +126,60 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
 
 
     void loadSingleImage(final int position, final ImageView imageView) {
-        final Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://www.googleapis.com/books/v1/")
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        if (!((Activity) mContext).isFinishing()) {
+            final Retrofit retrofit = new Retrofit.Builder()
+                    .baseUrl("https://www.googleapis.com/books/v1/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build();
 
-        BooksClient service = retrofit.create(BooksClient.class);
-        Call<BooksList> data = service.getBookWithQuery(mBooksList.getResults().get(position).getBookDetails().get(0).getTitle());
-        data.enqueue(new Callback<BooksList>() {
-            @Override
-            public void onResponse(Call<BooksList> call, Response<BooksList> response) {
-                BooksList data = response.body();
-                RequestOptions option = new RequestOptions()
-                        .placeholder(R.drawable.ic_sync_black_24dp)
-                        .diskCacheStrategy(DiskCacheStrategy.ALL);
-                if (data != null && data.getItems() != null && data.getItems().get(0) != null && data.getItems().get(0).getVolumeInfo() != null && data.getItems().get(0).getVolumeInfo().getImageLinks() != null) {
-                    ImageLinks image = data.getItems().get(0).getVolumeInfo().getImageLinks();
-                    if (image != null && !((Activity) mContext).isFinishing()) {
-                        if (image.getExtraLarge() != null && mContext != null)
-                            Glide.with(mContext)
-                                    .load(image.getExtraLarge())
-                                    .apply(option)
-                                    .transition(DrawableTransitionOptions.withCrossFade())
-                                    .into(imageView);
-                        else if (image.getLarge() != null)
-                            Glide.with(mContext)
-                                    .load(image.getLarge())
-                                    .apply(option)
-                                    .transition(DrawableTransitionOptions.withCrossFade())
-                                    .into(imageView);
-                        else if (image.getMedium() != null)
-                            Glide.with(mContext)
-                                    .load(image.getMedium())
-                                    .apply(option)
-                                    .transition(DrawableTransitionOptions.withCrossFade())
-                                    .into(imageView);
-                        else if (image.getThumbnail() != null && mContext != null)
-                            Glide.with(mContext)
-                                    .load(image.getThumbnail())
-                                    .apply(option)
-                                    .transition(DrawableTransitionOptions.withCrossFade())
-                                    .into(imageView);
-                        imgs.put(position, image);
+            BooksClient service = retrofit.create(BooksClient.class);
+            Call<BooksList> data = service.getBookWithQuery(mBooksList.getResults().get(position).getBookDetails().get(0).getTitle());
+            data.enqueue(new Callback<BooksList>() {
+                @Override
+                public void onResponse(Call<BooksList> call, Response<BooksList> response) {
+                    BooksList data = response.body();
+                    RequestOptions option = new RequestOptions()
+                            .placeholder(R.drawable.ic_sync_black_24dp)
+                            .diskCacheStrategy(DiskCacheStrategy.ALL);
+                    if (data != null && data.getItems() != null && data.getItems().get(0) != null && data.getItems().get(0).getVolumeInfo() != null && data.getItems().get(0).getVolumeInfo().getImageLinks() != null) {
+                        ImageLinks image = data.getItems().get(0).getVolumeInfo().getImageLinks();
+                        if (image != null && !((Activity) mContext).isFinishing()) {
+                            if (image.getExtraLarge() != null && mContext != null && !((Activity) mContext).isFinishing())
+                                Glide.with(mContext)
+                                        .load(image.getExtraLarge())
+                                        .apply(option)
+                                        .transition(DrawableTransitionOptions.withCrossFade())
+                                        .into(imageView);
+                            else if (image.getLarge() != null && !((Activity) mContext).isFinishing())
+                                Glide.with(mContext)
+                                        .load(image.getLarge())
+                                        .apply(option)
+                                        .transition(DrawableTransitionOptions.withCrossFade())
+                                        .into(imageView);
+                            else if (image.getMedium() != null && !((Activity) mContext).isFinishing())
+                                Glide.with(mContext)
+                                        .load(image.getMedium())
+                                        .apply(option)
+                                        .transition(DrawableTransitionOptions.withCrossFade())
+                                        .into(imageView);
+                            else if (image.getThumbnail() != null && mContext != null && !((Activity) mContext).isFinishing())
+                                Glide.with(mContext)
+                                        .load(image.getThumbnail())
+                                        .apply(option)
+                                        .transition(DrawableTransitionOptions.withCrossFade())
+                                        .into(imageView);
+                            imgs.put(position, image);
+                        }
                     }
+
                 }
 
-            }
-
-            @Override
-            public void onFailure(Call<BooksList> call, Throwable t) {
-                Log.e(TAG, "Error while loading Popular Books Posters" + t.getMessage(), t);
-            }
-        });
+                @Override
+                public void onFailure(Call<BooksList> call, Throwable t) {
+                    Log.e(TAG, "Error while loading Popular Book Posters" + t.getMessage(), t);
+                }
+            });
+        }
     }
 
     @Override
@@ -228,6 +230,7 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
                 case R.id.more:
                     inflater.inflate(R.menu.actions, popup.getMenu());
                     popup.show();
+
                     popup.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
@@ -235,14 +238,14 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
                             //    Toast.makeText(mContext, "Position is " + position, Toast.LENGTH_SHORT).show();
                             if (!isFavourite(bookTitle)) {
                                 addFavourite(position);
-                                Snackbar.make(view, bookTitle + " " + mContext.getString(R.string.book_added_fav), Snackbar.LENGTH_LONG).setAction(mContext.getString(R.string.cancel), new View.OnClickListener() {
+                                Snackbar.make(view, bookTitle + " " + mContext.getString(R.string.book_added_fav), Snackbar.LENGTH_LONG).setAction("Cancel", new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         removeFromFav(bookTitle);
                                     }
                                 }).show();
                             } else
-                                Snackbar.make(view, bookTitle + " " + mContext.getString(R.string.already_fav), Snackbar.LENGTH_LONG).setAction(mContext.getString(R.string.cancel), null).show();
+                                Snackbar.make(view, bookTitle + " " + mContext.getString(R.string.already_fav), Snackbar.LENGTH_LONG).setAction("Cancel", null).show();
                             return true;
                         }
                     });
@@ -265,6 +268,19 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
 
                     break;
             }
+        }
+
+        boolean isFavourite(String title) {
+            String newName = title;
+            String[] selections = {newName};
+            Cursor c = mContext.getContentResolver().query(
+                    URI_Book,
+                    null,
+                    COLUMN_TITLE + " =? ",
+                    selections,
+                    null);
+
+            return c.getCount() > 0;
         }
 
         void addFavourite(int position) {
@@ -303,7 +319,7 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
                 values.put(COLUMN_DESCRIPTION, info.getDescription());
                 //    values.put(COLUMN_SUBTITLE, info.getSubtitle());
 
-                mContext.getContentResolver().insert(BASE_CONTENT_URI, values);
+                mContext.getContentResolver().insert(URI_Book, values);
 
             } else
                 Log.d(mContext.getClass().getSimpleName(), "Position is -1!");
@@ -312,24 +328,25 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
 
         void removeFromFav(String title) {
             mContext.getContentResolver().delete(
-                    BASE_CONTENT_URI,
+                    URI_Book,
                     COLUMN_TITLE + " =? ",
                     new String[]{title}
             );
         }
 
-        boolean isFavourite(String title) {
+        /*boolean isFavourite(String title) {
             String newName = title;
             String[] selections = {newName};
             Cursor c = mContext.getContentResolver().query(
-                    BASE_CONTENT_URI,
+                    URI_Book,
                     null,
                     COLUMN_TITLE + " =? ",
                     selections,
                     null);
 
             return c.getCount() > 0;
-        }
+        }*/
+
     }
 
 }

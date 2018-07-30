@@ -22,7 +22,6 @@
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
-
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
@@ -58,7 +57,6 @@
         -->
         <activity
             android:name=".ui.LoginActivity"
-            android:label="@string/app_name"
             android:theme="@style/AppTheme.NoActionBar">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -71,11 +69,13 @@
             android:theme="@style/AppTheme.Translucent" />
         <activity
             android:name=".ui.HomeActivity"
+            android:configChanges="orientation"
             android:label="@string/title_activity_bottom_nav"
             android:theme="@style/AppTheme.NoActionBar" />
-        <activity android:name=".ui.LicensesActivity"
+        <activity
+            android:name=".ui.LicensesActivity"
             android:parentActivityName=".ui.HomeActivity"
-            tools:targetApi="jelly_bean"></activity>
+            tools:targetApi="jelly_bean" />
     </application>
 
 </manifest>

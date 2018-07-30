@@ -17,7 +17,7 @@ import static android.content.Context.MODE_PRIVATE;
 public class SuggestionBuilder implements SearchSuggestionsBuilder {
     private Context mContext;
     private String MY_PREFS_NAME;
-    private List<SearchItem> mHistorySuggestions = new ArrayList<SearchItem>();
+    private List<SearchItem> mHistorySuggestions = new ArrayList<>();
 
 
     public SuggestionBuilder(Context context) {
@@ -45,14 +45,14 @@ public class SuggestionBuilder implements SearchSuggestionsBuilder {
 
     @Override
     public Collection<SearchItem> buildEmptySearchSuggestion(int maxCount) {
-        List<SearchItem> items = new ArrayList<SearchItem>();
+        List<SearchItem> items = new ArrayList<>();
         items.addAll(mHistorySuggestions);
         return items;
     }
 
     @Override
     public Collection<SearchItem> buildSearchSuggestion(int maxCount, String query) {
-        List<SearchItem> items = new ArrayList<SearchItem>();
+        List<SearchItem> items = new ArrayList<>();
         for (SearchItem item : mHistorySuggestions) {
             if (item.getValue().startsWith(query) || item.getValue().contains(query) || item.getValue().endsWith(query)) {
                 items.add(item);

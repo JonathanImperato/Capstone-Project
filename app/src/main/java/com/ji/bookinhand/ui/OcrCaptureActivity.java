@@ -37,9 +37,10 @@ import com.ji.bookinhand.ui.camera.OcrDetectorProcessor;
 import com.ji.bookinhand.ui.camera.OcrGraphic;
 
 import java.io.IOException;
+
 /**
  * I followed this open source project to implement the Camera Vision API: https://github.com/googlesamples/android-vision
- * */
+ */
 
 public class OcrCaptureActivity extends AppCompatActivity {
     private static final String TAG = "OcrCaptureActivity";
@@ -86,7 +87,8 @@ public class OcrCaptureActivity extends AppCompatActivity {
             requestCameraPermission();
         }
 
-        if (getIntent().getExtras() != null) isWidget = getIntent().getExtras().getBoolean("iswidget");
+        if (getIntent().getExtras() != null)
+            isWidget = getIntent().getExtras().getBoolean("iswidget");
         gestureDetector = new GestureDetector(this, new CaptureGestureListener());
         scaleGestureDetector = new ScaleGestureDetector(this, new ScaleListener());
 
@@ -99,10 +101,11 @@ public class OcrCaptureActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if (mCameraSource != null) {
                     String mode = mCameraSource.getFlashMode();
-                    if (mode.equals(Camera.Parameters.FLASH_MODE_TORCH))
-                        mCameraSource.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
-                    else
-                        mCameraSource.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                    if (mode != null)
+                        if (mode.equals(Camera.Parameters.FLASH_MODE_TORCH))
+                            mCameraSource.setFlashMode(Camera.Parameters.FLASH_MODE_OFF);
+                        else
+                            mCameraSource.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
                 }
             }
         });
@@ -245,7 +248,7 @@ public class OcrCaptureActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        if (isWidget){
+        if (isWidget) {
             System.exit(0);
         }
         super.onBackPressed();

@@ -14,12 +14,14 @@ import com.bumptech.glide.request.RequestOptions;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.api.models.ImageLinks;
 import com.ji.bookinhand.api.models.VolumeInfo;
-import com.ji.bookinhand.database.ItemsContract;
+import com.ji.bookinhand.database.Book;
+
 
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
-import static com.ji.bookinhand.database.ItemsContract.BASE_CONTENT_URI;
+import static com.ji.bookinhand.database.BookContentProvider.URI_Book;
+
 
 public class BookGridService extends RemoteViewsService {
     @Override
@@ -43,7 +45,7 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public void onCreate() {
         if (mCursor != null) mCursor.close();
         mCursor = mContext.getContentResolver().query(
-                BASE_CONTENT_URI,
+                URI_Book,
                 null,
                 null,
                 null,
@@ -56,7 +58,7 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
     public void onDataSetChanged() {
         if (mCursor != null) mCursor.close();
         mCursor = mContext.getContentResolver().query(
-                BASE_CONTENT_URI,
+                URI_Book,
                 null,
                 null,
                 null,
@@ -82,15 +84,15 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
         if (mCursor == null || mCursor.getCount() == 0) return null;
         mCursor.moveToPosition(position);
 
-        int titleIndex = mCursor.getColumnIndex(ItemsContract.BookEntry.COLUMN_TITLE);
-        int authorsIndex = mCursor.getColumnIndex(ItemsContract.BookEntry.COLUMN_AUTHORS);
-        int ratingIndex = mCursor.getColumnIndex(ItemsContract.BookEntry.COLUMN_AVERAGE_RATING);
-        int catIndex = mCursor.getColumnIndex(ItemsContract.BookEntry.COLUMN_CATEGORIES);
-        int descrIndex = mCursor.getColumnIndex(ItemsContract.BookEntry.COLUMN_DESCRIPTION);
-        int imagesIndex = mCursor.getColumnIndex(ItemsContract.BookEntry.COLUMN_IMAGE_LINKS);
-        int infoIndex = mCursor.getColumnIndex(ItemsContract.BookEntry.COLUMN_INFO_LINK);
-        int pagecountIndex = mCursor.getColumnIndex(ItemsContract.BookEntry.COLUMN_PAGE_COUNT);
-        int previewIndex = mCursor.getColumnIndex(ItemsContract.BookEntry.COLUMN_PREVIEW_LINK);
+        int titleIndex = mCursor.getColumnIndex(Book.COLUMN_TITLE);
+        int authorsIndex = mCursor.getColumnIndex(Book.COLUMN_AUTHORS);
+        int ratingIndex = mCursor.getColumnIndex(Book.COLUMN_AVERAGE_RATING);
+        int catIndex = mCursor.getColumnIndex(Book.COLUMN_CATEGORIES);
+        int descrIndex = mCursor.getColumnIndex(Book.COLUMN_DESCRIPTION);
+        int imagesIndex = mCursor.getColumnIndex(Book.COLUMN_IMAGE_LINKS);
+        int infoIndex = mCursor.getColumnIndex(Book.COLUMN_INFO_LINK);
+        int pagecountIndex = mCursor.getColumnIndex(Book.COLUMN_PAGE_COUNT);
+        int previewIndex = mCursor.getColumnIndex(Book.COLUMN_PREVIEW_LINK);
 
         String title = mCursor.getString(titleIndex);
         String authors = mCursor.getString(authorsIndex);
@@ -106,8 +108,8 @@ class GridRemoteViewsFactory implements RemoteViewsService.RemoteViewsFactory {
 
         //  views.setImageViewResource(R.id.widget_plant_image, imgRes);
 
-        views.setTextViewText(R.id.b_title, title.toString());
-        views.setTextViewText(R.id.b_authors, authors.toString());
+        views.setTextViewText(R.id.b_title, title);
+        views.setTextViewText(R.id.b_authors, authors);
         //load Posters for books
 
         try {

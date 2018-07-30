@@ -69,8 +69,9 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
     SharedPreferences.Editor editor;
     SharedPreferences prefs;
     BottomNavigationView navigation;
-    String TEST_DEVICE = "69A744B1C87D5CA7268C31E20AC93CCA";
+    String TEST_DEVICE = "69A744B1C87D5CA7268C31E20AC93CCA"; //my personal device
     Fragment selectedFragment;
+    boolean isFirstLoad = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,10 +93,9 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
             MobileAds.initialize(this,
                     getString(R.string.admob_app_id));
             mInterstitialAd = new InterstitialAd(this);
-            //TODO: REMOVE TEST DEVICE BEFORE PUBLISHING
-            //TODO: AFTER PUBLISHED, ADD THE APP TO THE ADMOB CONSOLE
+
             final AdRequest request = new AdRequest.Builder()
-                    .addTestDevice(new String(AdRequest.DEVICE_ID_EMULATOR))  // An example device ID
+                    .addTestDevice(AdRequest.DEVICE_ID_EMULATOR)  // An example device ID
                     .addTestDevice(TEST_DEVICE)
                     .build();
 
@@ -145,11 +145,12 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
                 break;
         }*/
         if (savedInstanceState == null) {
-            navigation.setSelectedItemId(R.id.navigation_home);
+           navigation.setSelectedItemId(R.id.navigation_home);
         /*    selectedFragment = new HomeFragment();
             fragmentManager.beginTransaction()
                     .add(R.id.fragment_container, selectedFragment)
                     .commit();*/
+        //loadFragment(selectedFragment);
         }
 
         if (isOnline()) {
@@ -160,11 +161,11 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
             animateNoConnection();
             frameLayout.setVisibility(View.GONE);
             noConnectionImg.setVisibility(View.VISIBLE);
+            isFirstLoad = true;
         }
 
     }
 
-    boolean isFirstLoad = true;
     private ConnectivityManager.NetworkCallback networkCallback = new ConnectivityManager.NetworkCallback() {
         @Override
         public void onAvailable(Network network) {
@@ -173,12 +174,14 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
                 public void run() {
                     noConnectionImg.setVisibility(View.GONE);
                     frameLayout.setVisibility(View.VISIBLE);
-                    if (isFirstLoad) {//need to load the home data the first time
+                    if (isFirstLoad) {
+                        //need to load the home data for the first time
                         getSupportFragmentManager().beginTransaction()
                                 .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
                                 .addToBackStack("backstack")
                                 .replace(R.id.fragment_container, HomeFragment.newInstance())
                                 .commit();
+                       // loadFragment(HomeFragment.newInstance());
                         isFirstLoad = false;
                     }
                 }
@@ -199,6 +202,16 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
             });
         }
     };
+
+    void showAd() {
+        if (BuildConfig.FLAVOR.equals("free") && mInterstitialAd != null) {
+            if (mInterstitialAd.isLoaded()) {
+                mInterstitialAd.show();
+            } else {
+                Log.d("HomeActivity", "The interstitial wasn't loaded yet.");
+            }
+        }
+    }
 
     /**
      * FOLLOWED NICK BUTCHER'S TUTORIAL WITH PLAID
@@ -226,6 +239,12 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
     }
 
     @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        showAd();
+    }
+
+    @Override
     protected void onResume() {
         super.onResume();
         SuggestionBuilder mSuggestionBuilder = new SuggestionBuilder(this);
@@ -246,13 +265,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
     protected void onPause() {
         Log.d("Home", "onPause called");
         super.onPause();
-        if (BuildConfig.FLAVOR.equals("free") && mInterstitialAd != null) {
-            if (mInterstitialAd.isLoaded()) {
-                mInterstitialAd.show();
-            } else {
-                Log.d("HomeActivity", "The interstitial wasn't loaded yet.");
-            }
-        }
+
         Log.d("Home", "onPause finished");
     }
 
@@ -368,11 +381,11 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
         @Override
         public boolean onNavigationItemSelected(@NonNull MenuItem item) {
             if (item.getItemId() == R.id.navigation_home) {
-                if (isOnline()) {
-                    if (homeFragment == null)
-                        homeFragment = HomeFragment.newInstance();
-                    loadFragment(homeFragment);
-                }
+
+                if (homeFragment == null)
+                    homeFragment = HomeFragment.newInstance();
+                loadFragment(homeFragment);
+
             } else if (item.getItemId() == R.id.navigation_settings) {
 
                 if (settingsFragment == null)
@@ -388,10 +401,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
 
 
             }
-            if (!isOnline()) {
-                frameLayout.setVisibility(View.VISIBLE);
-                noConnectionImg.setVisibility(View.GONE);
-            }
+
             return true; //this highlight the selected item with primary color
         }
 
@@ -399,13 +409,14 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
 
     void loadFragment(Fragment fragment) {
         fragment.setRetainInstance(true);
+
         for (int i = 0; i < fragmentManager.getFragments().size(); i++) {
             fragmentManager
                     .beginTransaction()
                     .hide(fragmentManager.getFragments().get(i))
                     .commit();
         }
-        if (fragmentManager.getFragments().contains(fragment)) {
+        if (fragmentManager.getFragments().contains(fragment) ) {
             fragmentManager
                     .beginTransaction()
                     .setCustomAnimations(android.R.anim.fade_in, android.R.anim.fade_out)
@@ -421,6 +432,7 @@ public class HomeActivity extends AppCompatActivity implements PersistentSearchV
                     .commit();
         }
         selectedFragment = fragment;
+
     }
 
     public boolean isOnline() {
