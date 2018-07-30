@@ -19,7 +19,7 @@ public class OcrDetectorProcessor implements Detector.Processor<TextBlock> {
 
     /**
      * Called by the detector to deliver detection results.
-     * If your application called for it, this could be a place to check for
+     * If your application called for it, this could be FoodDBHelper place to check for
      * equivalent detections by tracking TextBlocks that are similar in location and content from
      * previous frames, or reduce noise by eliminating TextBlocks that have not persisted through
      * multiple detections.

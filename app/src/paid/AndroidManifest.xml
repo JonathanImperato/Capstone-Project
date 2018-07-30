@@ -40,11 +40,11 @@
             android:label="Read Text"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <!--    BASIC CONTENT PROVIDER
+        <!--    BASIC CONTENT PROVIDER-->
          <provider
-             android:name=".database.OldCP.FoodProvider"
+             android:name=".database.FoodProvider"
              android:authorities="com.ji.bakingapp.database.FoodProvider"
-             android:exported="true" /> -->
+             android:exported="true" />
         <!--
        SCHEMATIC CONTENT PROVIDER
        - CANNOT BE USED IN CAPSTONE -
@@ -56,12 +56,12 @@
         -->
         <!--
        ROOM CONTENT PROVIDER
-       - CANNOT BE USED IN CAPSTONE -  -->
+       - CANNOT BE USED IN CAPSTONE -
         <provider
-            android:name=".database.BookContentProvider"
+            android:name=".database.Room.BookContentProvider"
             android:authorities="com.ji.bookinhand.database.provider"
             android:exported="true"
-            android:permission="com.ji.bookinhand.database.provider.READ_WRITE" />
+            android:permission="com.ji.bookinhand.database.provider.READ_WRITE" />-->
 
 
         <activity

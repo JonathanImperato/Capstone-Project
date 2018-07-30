@@ -162,7 +162,7 @@
     <string name="hard_cover_non_fiction">Hard Cover Non-Fiction</string>
     <string name="e_book_fiction">E-Book Fiction</string>
     <string name="add_favs">No Favourites yet!</string>
-    <string name="subtitle">Found something interesting? Add to your favourites!</string>
+    <string name="subtitle">Found something interesting? Add to your favourites!  Swipe to refresh.</string>
     <string name="no_fav_to_display">No favourites to display</string>
     <string name="sett_beta_summary">Join beta testing and get a preview of new coming features.</string>
     <string name="sett_beta_title">Join beta testing</string>

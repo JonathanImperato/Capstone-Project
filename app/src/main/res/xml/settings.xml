@@ -32,7 +32,7 @@
     <PreferenceCategory android:title="APP">
         <!--     <Preference
                  android:key="feedback"
-                 android:summary="Provide a short feedback about BookInHand"
+                 android:summary="Provide FoodDBHelper short feedback about BookInHand"
                  android:title="Feedback" />
      -->
         <Preference

@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -25,7 +24,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
-import com.ji.bookinhand.BuildConfig;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.api.models.BooksList;
 import com.ji.bookinhand.api.models.ImageLinks;
@@ -36,24 +34,24 @@ import com.ji.bookinhand.ui.BookDetailActivity;
 import java.util.ArrayList;
 import java.util.List;
 
-import static com.ji.bookinhand.database.Book.COLUMN_AUTHORS;
-import static com.ji.bookinhand.database.Book.COLUMN_AVERAGE_RATING;
-import static com.ji.bookinhand.database.Book.COLUMN_CANONICAL_VOLUME_LINK;
-import static com.ji.bookinhand.database.Book.COLUMN_CATEGORIES;
-import static com.ji.bookinhand.database.Book.COLUMN_DESCRIPTION;
-import static com.ji.bookinhand.database.Book.COLUMN_IMAGE_LINKS;
-import static com.ji.bookinhand.database.Book.COLUMN_INFO_LINK;
-import static com.ji.bookinhand.database.Book.COLUMN_LANGUAGE;
-import static com.ji.bookinhand.database.Book.COLUMN_MATURITY_RATING;
-import static com.ji.bookinhand.database.Book.COLUMN_PAGE_COUNT;
-import static com.ji.bookinhand.database.Book.COLUMN_PREVIEW_LINK;
-import static com.ji.bookinhand.database.Book.COLUMN_PRINT_TYPE;
-import static com.ji.bookinhand.database.Book.COLUMN_PUBLISHER;
-import static com.ji.bookinhand.database.Book.COLUMN_PUBLISH_DATE;
-import static com.ji.bookinhand.database.Book.COLUMN_RATING_COUNT;
-import static com.ji.bookinhand.database.Book.COLUMN_SUBTITLE;
-import static com.ji.bookinhand.database.Book.COLUMN_TITLE;
-import static com.ji.bookinhand.database.BookContentProvider.URI_Book;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_AUTHORS;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_AVERAGE_RATING;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_CANONICAL_VOLUME_LINK;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_CATEGORIES;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_DESCRIPTION;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_IMAGE_LINKS;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_INFO_LINK;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_LANGUAGE;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_MATURITY_RATING;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PAGE_COUNT;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PREVIEW_LINK;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PRINT_TYPE;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PUBLISHER;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PUBLISH_DATE;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_RATING_COUNT;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_SUBTITLE;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_TITLE;
+import static com.ji.bookinhand.database.Room.BookContentProvider.URI_Book;
 
 
 public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.BooksListAdapterViewHolder> {
@@ -288,13 +286,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                             transitionName    // The String
                     );
 
-            if (mBooksList != null && mBooksList.getTotalItems() > 0) {
-                new isFavouriteAs().execute(mBooksList.getItems().get(position).getVolumeInfo().getTitle());
-            } else {
-                new isFavouriteAs().execute(mFavList.get(position).getVolumeInfo().getTitle());
-            }
             switch (view.getId()) {
-
 
                 case R.id.more:
                     inflater.inflate(R.menu.actions, popup.getMenu());
@@ -303,10 +295,8 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                         @Override
                         public boolean onMenuItemClick(MenuItem item) {
                             final String bookTitle = mBooksList.getItems().get(position).getVolumeInfo().getTitle();
-
                             //    Toast.makeText(mContext, "Position is " + position, Toast.LENGTH_SHORT).show();
-                            //if (!isFavourite(bookTitle)) {
-                            if (!isFav) {
+                            if (!isFavourite(bookTitle)) {
                                 addFavourite(position);
                                 Snackbar.make(view, bookTitle + " has been added to favourite", Snackbar.LENGTH_LONG).setAction("Cancel", new View.OnClickListener() {
                                     @Override
@@ -315,7 +305,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                                     }
                                 }).show();
                             } else
-                                Snackbar.make(view, bookTitle + " is already a favourite", Snackbar.LENGTH_LONG).setAction("Cancel", null).show();
+                                Snackbar.make(view, bookTitle + " is already FoodDBHelper favourite", Snackbar.LENGTH_LONG).setAction("Cancel", null).show();
                             return true;
                         }
                     });
@@ -388,33 +378,6 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
             }
         }
 
-        public class isFavouriteAs extends AsyncTask<String, Void, Boolean> {
-            @Override
-            protected Boolean doInBackground(String... strings) {
-                if (BuildConfig.FLAVOR.equals("paid")) {
-
-                    String newName = strings[0];
-                    String[] selections = {newName};
-                    Cursor c = mContext.getContentResolver().query(
-                            URI_Book,
-                            null,
-                            COLUMN_TITLE + " =? ",
-                            selections,
-                            null);
-
-                    return c.getCount() > 0;
-                }
-                return false; //always false for free flavour
-            }
-
-            @Override
-            protected void onPostExecute(Boolean aBoolean) {
-                super.onPostExecute(aBoolean);
-                isFav = aBoolean;
-            }
-
-        }
-
         void addFavourite(int position) {
             if (mBooksList != null && position > -1) {
                 Item libro = mBooksList.getItems().get(position);
@@ -429,9 +392,9 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                                 authorsList.append(author);
                             else {
                                 if (!authorsList.toString().contains(author))
-                                    authorsList.append(author).append(","); //i separate every author using a ,
+                                    authorsList.append(author).append(","); //i separate every author using FoodDBHelper ,
                                 else
-                                    authorsList = new StringBuilder(author + ","); //i separate every author using a ,
+                                    authorsList = new StringBuilder(author + ","); //i separate every author using FoodDBHelper ,
                             }
                     }
                 values.put(COLUMN_AUTHORS, authorsList.toString());
@@ -446,7 +409,7 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                 if (info.getCategories() != null)
                     for (String cat : info.getCategories()) {
                         if (!categories.toString().contains(cat))
-                            categories.append(cat).append(","); //i separate every author using a ,
+                            categories.append(cat).append(","); //i separate every author using FoodDBHelper ,
                     }
                 values.put(COLUMN_CATEGORIES, categories.toString());
                 values.put(COLUMN_AVERAGE_RATING, info.getAverageRating());
@@ -467,42 +430,26 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
                 values.put(COLUMN_DESCRIPTION, info.getDescription());
                 values.put(COLUMN_SUBTITLE, info.getSubtitle());
 
-                new addToFav().equals(values);
-                isFav = true;
+                mContext.getContentResolver().insert(URI_Book, values);
+
             } else
                 Log.d(mContext.getClass().getSimpleName(), "Position is -1!");
 
         }
 
-        public class addToFav extends AsyncTask<ContentValues, Void, Void> {
-
-            @Override
-            protected Void doInBackground(ContentValues... contentValues) {
-                mContext.getContentResolver().insert(URI_Book, contentValues[0]);
-                return null;
-            }
-        }
 
 
         void removeFromFav(String title) {
-            new removeFromFav().execute(title);
-            isFav = false;
+
+            mContext.getContentResolver().delete(
+                    URI_Book,
+                    COLUMN_TITLE + " =? ",
+                    new String[]{title.replace("_", " ")}
+            );
+
         }
 
-        public class removeFromFav extends AsyncTask<String, Void, Void> {
-
-            @Override
-            protected Void doInBackground(String... strings) {
-                mContext.getContentResolver().delete(
-                        URI_Book,
-                        COLUMN_TITLE + " =? ",
-                        new String[]{strings[0].replace("_", " ")}
-                );
-                return null;
-            }
-        }
-
-   /*     boolean isFavourite(String title) {
+        boolean isFavourite(String title) {
             String newName = title;
             String[] selections = {newName};
             Cursor c = mContext.getContentResolver().query(
@@ -514,7 +461,6 @@ public class BooksListAdapter extends RecyclerView.Adapter<BooksListAdapter.Book
 
             return c.getCount() > 0;
         }
- */
     }
 
 }

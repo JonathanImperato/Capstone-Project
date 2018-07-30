@@ -268,7 +268,7 @@ public class HomeFragment extends Fragment {
                 .build();
 
         BooksClient service = retrofit.create(BooksClient.class);
-        //do a setting screen to choose wich categories of book show based on this:
+        //do FoodDBHelper setting screen to choose wich categories of book show based on this:
         //https://www.nytimes.com/books/best-sellers/
         Call<NytBooksList> data = service.getPopularBooks("hardcover-fiction", getString(R.string.nyt_api_key));
         data.enqueue(new Callback<NytBooksList>() {
@@ -302,7 +302,7 @@ public class HomeFragment extends Fragment {
                 .build();
 
         BooksClient service = retrofit.create(BooksClient.class);
-        //do a setting screen to choose wich categories of book show based on this:
+        //do FoodDBHelper setting screen to choose wich categories of book show based on this:
         //https://www.nytimes.com/books/best-sellers/
         Call<NytBooksList> data = service.getPopularBooks("hardcover-nonfiction", getString(R.string.nyt_api_key));
         data.enqueue(new Callback<NytBooksList>() {
@@ -336,7 +336,7 @@ public class HomeFragment extends Fragment {
                 .build();
 
         BooksClient service = retrofit.create(BooksClient.class);
-        //do a setting screen to choose wich categories of book show based on this:
+        //do FoodDBHelper setting screen to choose wich categories of book show based on this:
         //https://www.nytimes.com/books/best-sellers/
         Call<NytBooksList> data = service.getPopularBooks("e-book-fiction", getString(R.string.nyt_api_key));
         data.enqueue(new Callback<NytBooksList>() {
@@ -369,7 +369,7 @@ public class HomeFragment extends Fragment {
                 .build();
 
         BooksClient service = retrofit.create(BooksClient.class);
-        //do a setting screen to choose wich categories of book show based on this:
+        //do FoodDBHelper setting screen to choose wich categories of book show based on this:
         //https://www.nytimes.com/books/best-sellers/
         Call<NytBooksList> data = service.getPopularBooks("paperback-nonfiction", getString(R.string.nyt_api_key));
         data.enqueue(new Callback<NytBooksList>() {
@@ -414,7 +414,7 @@ public class HomeFragment extends Fragment {
                         }
                         startActivity(new Intent(getContext(), ResultsActivity.class)
                                 .putExtra("result", text)
-                                .putExtra("isCat", false)); //is a category search (here is false since it is not)
+                                .putExtra("isCat", false)); //is FoodDBHelper category search (here is false since it is not)
                     }
                 })
                 .setNegativeButton(getString(R.string.try_again), new DialogInterface.OnClickListener() {

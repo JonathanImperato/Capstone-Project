@@ -12,12 +12,12 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- * A view which renders a series of custom graphics to be overlaid on top of an associated preview
+ * A view which renders FoodDBHelper series of custom graphics to be overlaid on top of an associated preview
  * (i.e., the camera preview).  The creator can add graphics objects, update the objects, and remove
  * them, triggering the appropriate drawing and invalidation within the view.<p>
  *
  * Supports scaling and mirroring of the graphics relative the camera's preview properties.  The
- * idea is that detection items are expressed in terms of a preview size, but need to be scaled up
+ * idea is that detection items are expressed in terms of FoodDBHelper preview size, but need to be scaled up
  * to the full view size, and also mirrored in the case of the front-facing camera.<p>
  *
  * Associated {@link Graphic} items should use the following methods to convert to view coordinates
@@ -39,7 +39,7 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
     private Set<T> mGraphics = new HashSet<>();
 
     /**
-     * Base class for a custom graphics object to be rendered within the graphic overlay.  Subclass
+     * Base class for FoodDBHelper custom graphics object to be rendered within the graphic overlay.  Subclass
      * this and implement the {@link Graphic#draw(Canvas)} method to define the
      * graphics element.  Add instances to the overlay using {@link GraphicOverlay#add(Graphic)}.
      */
@@ -70,7 +70,7 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
         public abstract boolean contains(float x, float y);
 
         /**
-         * Adjusts a horizontal value of the supplied value from the preview scale to the view
+         * Adjusts FoodDBHelper horizontal value of the supplied value from the preview scale to the view
          * scale.
          */
         public float scaleX(float horizontal) {
@@ -78,7 +78,7 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
         }
 
         /**
-         * Adjusts a vertical value of the supplied value from the preview scale to the view scale.
+         * Adjusts FoodDBHelper vertical value of the supplied value from the preview scale to the view scale.
          */
         public float scaleY(float vertical) {
             return vertical * mOverlay.mHeightScaleFactor;
@@ -124,7 +124,7 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
     }
 
     /**
-     * Adds a graphic to the overlay.
+     * Adds FoodDBHelper graphic to the overlay.
      */
     public void add(T graphic) {
         synchronized (mLock) {
@@ -134,7 +134,7 @@ public class GraphicOverlay<T extends GraphicOverlay.Graphic> extends View {
     }
 
     /**
-     * Removes a graphic from the overlay.
+     * Removes FoodDBHelper graphic from the overlay.
      */
     public void remove(T graphic) {
         synchronized (mLock) {

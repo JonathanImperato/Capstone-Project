@@ -5,7 +5,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
-import android.os.AsyncTask;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -25,7 +24,6 @@ import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions;
 import com.bumptech.glide.request.RequestOptions;
-import com.ji.bookinhand.BuildConfig;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.api.BooksClient;
 import com.ji.bookinhand.api.models.BooksList;
@@ -41,15 +39,16 @@ import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
-import static com.ji.bookinhand.database.Book.COLUMN_AUTHORS;
-import static com.ji.bookinhand.database.Book.COLUMN_AVERAGE_RATING;
-import static com.ji.bookinhand.database.Book.COLUMN_DESCRIPTION;
-import static com.ji.bookinhand.database.Book.COLUMN_IMAGE_LINKS;
-import static com.ji.bookinhand.database.Book.COLUMN_PAGE_COUNT;
-import static com.ji.bookinhand.database.Book.COLUMN_PUBLISHER;
-import static com.ji.bookinhand.database.Book.COLUMN_PUBLISH_DATE;
-import static com.ji.bookinhand.database.Book.COLUMN_TITLE;
-import static com.ji.bookinhand.database.BookContentProvider.URI_Book;
+import static com.ji.bookinhand.database.ItemsContract.BASE_CONTENT_URI;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_AUTHORS;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_AVERAGE_RATING;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_DESCRIPTION;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_IMAGE_LINKS;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PAGE_COUNT;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PUBLISHER;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PUBLISH_DATE;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_TITLE;
+import static com.ji.bookinhand.database.Room.BookContentProvider.URI_Book;
 
 /**
  * WORKS ONLY IF A VERTICAL LINEAR LAYOUT MANAGER IS USED
@@ -61,7 +60,6 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
     public Context mContext;
     public NytBooksList mBooksList;
     public SparseArray<ImageLinks> imgs;
-    boolean isFavourite;
 
     public PopularBooksAdapter(Context mContext, NytBooksList mBooksList) {
         this.mContext = mContext;
@@ -229,8 +227,6 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
                             transitionName    // The String
                     );
 
-            new isFavouriteAs().execute(mBooksList.getResults().get(position).getBookDetails().get(0).getTitle());
-
             switch (view.getId()) {
                 case R.id.more:
                     inflater.inflate(R.menu.actions, popup.getMenu());
@@ -241,17 +237,16 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
                         public boolean onMenuItemClick(MenuItem item) {
                             final String bookTitle = mBooksList.getResults().get(position).getBookDetails().get(0).getTitle();
                             //    Toast.makeText(mContext, "Position is " + position, Toast.LENGTH_SHORT).show();
-                            // if (!isFavourite(bookTitle)) {
-                            if (!isFavourite) {
+                            if (!isFavourite(bookTitle)) {
                                 addFavourite(position);
-                                Snackbar.make(view, bookTitle + " " + mContext.getString(R.string.book_added_fav), Snackbar.LENGTH_LONG).setAction("Cancel", new View.OnClickListener() {
+                                Snackbar.make(view, bookTitle + " " + mContext.getString(R.string.book_added_fav), Snackbar.LENGTH_LONG).setAction(mContext.getString(R.string.cancel), new View.OnClickListener() {
                                     @Override
                                     public void onClick(View view) {
                                         removeFromFav(bookTitle);
                                     }
                                 }).show();
                             } else
-                                Snackbar.make(view, bookTitle + " " + mContext.getString(R.string.already_fav), Snackbar.LENGTH_LONG).setAction("Cancel", null).show();
+                                Snackbar.make(view, bookTitle + " " + mContext.getString(R.string.already_fav), Snackbar.LENGTH_LONG).setAction(mContext.getString(R.string.cancel), null).show();
                             return true;
                         }
                     });
@@ -276,32 +271,6 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
             }
         }
 
-        public class isFavouriteAs extends AsyncTask<String, Void, Boolean> {
-            @Override
-            protected Boolean doInBackground(String... strings) {
-                if (BuildConfig.FLAVOR.equals("paid")) {
-
-                    String newName = strings[0];
-                    String[] selections = {newName};
-                    Cursor c = mContext.getContentResolver().query(
-                            URI_Book,
-                            null,
-                            COLUMN_TITLE + " =? ",
-                            selections,
-                            null);
-
-                    return c.getCount() > 0;
-                }
-                return false; //always false for free flavour
-            }
-
-            @Override
-            protected void onPostExecute(Boolean aBoolean) {
-                super.onPostExecute(aBoolean);
-                isFavourite = aBoolean;
-            }
-
-        }
 
         void addFavourite(int position) {
             if (mBooksList != null && position > -1) {
@@ -339,61 +308,35 @@ public class PopularBooksAdapter extends RecyclerView.Adapter<PopularBooksAdapte
                 values.put(COLUMN_DESCRIPTION, info.getDescription());
                 //    values.put(COLUMN_SUBTITLE, info.getSubtitle());
 
-                new addToFav().equals(values);
-                isFavourite = true;
+                mContext.getContentResolver().insert(BASE_CONTENT_URI, values);
+
             } else
                 Log.d(mContext.getClass().getSimpleName(), "Position is -1!");
 
         }
 
-        public class addToFav extends AsyncTask<ContentValues, Void, Void> {
-
-            @Override
-            protected Void doInBackground(ContentValues... contentValues) {
-                mContext.getContentResolver().insert(URI_Book, contentValues[0]);
-                return null;
-            }
-        }
-
-
         void removeFromFav(String title) {
-            new removeFromFav().execute(title);
-            isFavourite = false;
-        }
-
-        public class removeFromFav extends AsyncTask<String, Void, Void> {
-
-            @Override
-            protected Void doInBackground(String... strings) {
-                mContext.getContentResolver().delete(
-                        URI_Book,
-                        COLUMN_TITLE + " =? ",
-                        new String[]{strings[0].replace("_", " ")}
-                );
-                return null;
-            }
-        }
-  /*      void removeFromFav(String title) {
             mContext.getContentResolver().delete(
-                    URI_Book,
+                    BASE_CONTENT_URI,
                     COLUMN_TITLE + " =? ",
                     new String[]{title}
             );
         }
-*/
-        /*boolean isFavourite(String title) {
+
+        boolean isFavourite(String title) {
             String newName = title;
             String[] selections = {newName};
             Cursor c = mContext.getContentResolver().query(
-                    URI_Book,
+                    BASE_CONTENT_URI,
                     null,
                     COLUMN_TITLE + " =? ",
                     selections,
                     null);
-
-            return c.getCount() > 0;
-        }*/
-
+            if (c != null)
+                return c.getCount() > 0;
+            return false;
+        }
     }
+
 
 }

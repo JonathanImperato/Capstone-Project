@@ -14,13 +14,13 @@ import com.bumptech.glide.request.RequestOptions;
 import com.ji.bookinhand.R;
 import com.ji.bookinhand.api.models.ImageLinks;
 import com.ji.bookinhand.api.models.VolumeInfo;
-import com.ji.bookinhand.database.Book;
+import com.ji.bookinhand.database.Room.Book;
 
 
 import java.util.Arrays;
 import java.util.concurrent.ExecutionException;
 
-import static com.ji.bookinhand.database.BookContentProvider.URI_Book;
+import static com.ji.bookinhand.database.Room.BookContentProvider.URI_Book;
 
 
 public class BookGridService extends RemoteViewsService {

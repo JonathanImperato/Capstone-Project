@@ -28,10 +28,8 @@ public class FoodProvider extends ContentProvider {
         // It's common to use NO_MATCH as the code for this case.
         final UriMatcher matcher = new UriMatcher(UriMatcher.NO_MATCH);
         final String authority = ItemsContract.CONTENT_AUTHORITY;
-
         // add a code for each type of URI you want
         matcher.addURI(authority, ItemsContract.BookEntry.TABLE_NAME, FOOD);
-
         return matcher;
     }*/
 

@@ -6,9 +6,6 @@ import android.os.Handler;
 import android.support.annotation.Nullable;
 import android.support.constraint.ConstraintLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.LoaderManager;
-import android.support.v4.content.CursorLoader;
-import android.support.v4.content.Loader;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -25,29 +22,28 @@ import com.ji.bookinhand.adapters.BooksListAdapter;
 import com.ji.bookinhand.api.models.ImageLinks;
 import com.ji.bookinhand.api.models.Item;
 import com.ji.bookinhand.api.models.VolumeInfo;
-import com.ji.bookinhand.database.Book;
-import com.ji.bookinhand.database.BookContentProvider;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import static com.ji.bookinhand.database.Book.COLUMN_AUTHORS;
-import static com.ji.bookinhand.database.Book.COLUMN_AVERAGE_RATING;
-import static com.ji.bookinhand.database.Book.COLUMN_CANONICAL_VOLUME_LINK;
-import static com.ji.bookinhand.database.Book.COLUMN_CATEGORIES;
-import static com.ji.bookinhand.database.Book.COLUMN_DESCRIPTION;
-import static com.ji.bookinhand.database.Book.COLUMN_IMAGE_LINKS;
-import static com.ji.bookinhand.database.Book.COLUMN_INFO_LINK;
-import static com.ji.bookinhand.database.Book.COLUMN_LANGUAGE;
-import static com.ji.bookinhand.database.Book.COLUMN_MATURITY_RATING;
-import static com.ji.bookinhand.database.Book.COLUMN_PAGE_COUNT;
-import static com.ji.bookinhand.database.Book.COLUMN_PREVIEW_LINK;
-import static com.ji.bookinhand.database.Book.COLUMN_PRINT_TYPE;
-import static com.ji.bookinhand.database.Book.COLUMN_PUBLISHER;
-import static com.ji.bookinhand.database.Book.COLUMN_PUBLISH_DATE;
-import static com.ji.bookinhand.database.Book.COLUMN_RATING_COUNT;
-import static com.ji.bookinhand.database.Book.COLUMN_SUBTITLE;
-import static com.ji.bookinhand.database.Book.COLUMN_TITLE;
+import static com.ji.bookinhand.database.ItemsContract.BASE_CONTENT_URI;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_AUTHORS;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_AVERAGE_RATING;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_CANONICAL_VOLUME_LINK;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_CATEGORIES;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_DESCRIPTION;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_IMAGE_LINKS;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_INFO_LINK;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_LANGUAGE;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_MATURITY_RATING;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PAGE_COUNT;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PREVIEW_LINK;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PRINT_TYPE;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PUBLISHER;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_PUBLISH_DATE;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_RATING_COUNT;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_SUBTITLE;
+import static com.ji.bookinhand.database.Room.Book.COLUMN_TITLE;
 
 
 public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, View.OnLayoutChangeListener {
@@ -106,7 +102,7 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
             isDashboard = false;
         else isDashboard = true;
         */
-        if (mFavList.size() == 0) //has not been restored
+        if (mFavList.size() == 0 || mFavList == null) //has not been restored
             loadData();
         return v;
     }
@@ -147,10 +143,11 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
         //mFavList = getFav();
 
 
-        getLoaderManager().initLoader(LOADER_BOOKS, null, mLoaderCallbacks);
+        // getLoaderManager().initLoader(LOADER_BOOKS, null, mLoaderCallbacks);
 
         //    if (isDashboard) {
         recyclerView.setLayoutManager(new GridLayoutManager(getContext(), getNumberOfColumns()));
+        mFavList.addAll(getFav());
         adapter = new BooksListAdapter(getContext(), mFavList);
         recyclerView.addOnLayoutChangeListener(this);
         recyclerView.setAdapter(adapter);
@@ -165,74 +162,75 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
         }*/
     }
 
-    /*  public ArrayList<Item> getFav() {
-          if (getActivity() != null) {
-              Cursor ingredientCursor = getActivity().getApplicationContext().getContentResolver()
-                      .query(URI_Book,
-                              null,
-                              null,
-                              null,
-                              null);
+    public ArrayList<Item> getFav() {
+        if (getActivity() != null) {
+            Cursor ingredientCursor = getActivity().getApplicationContext().getContentResolver()
+                    .query(BASE_CONTENT_URI,
+                            null,
+                            null,
+                            null,
+                            null);
 
-              ArrayList<Item> books = new ArrayList<>();
-              if (ingredientCursor != null) {
-                  while (ingredientCursor.moveToNext()) {
-                      Item ingredient = getDataFromCursor(ingredientCursor);
-                      books.add(ingredient);
+            ArrayList<Item> books = new ArrayList<>();
+            if (ingredientCursor != null) {
+                while (ingredientCursor.moveToNext()) {
+                    Item ingredient = getDataFromCursor(ingredientCursor);
+                    books.add(ingredient);
+                }
+                ingredientCursor.close();
+            }
+
+            return books;
+
+        }
+        return null;
+    }
+
+    /*
+      private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks =
+              new LoaderManager.LoaderCallbacks<Cursor>() {
+
+                  @Override
+                  public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+                      switch (id) {
+                          case LOADER_BOOKS:
+                              return new CursorLoader(getContext().getApplicationContext(),
+                                      BookContentProvider.URI_Book,
+                                      new String[]{Book.COLUMN_TITLE},
+                                      null, null, null);
+                          default:
+                              throw new IllegalArgumentException();
+                      }
                   }
-                  ingredientCursor.close();
-              }
 
-              return books;
+                  @Override
+                  public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+                      switch (loader.getId()) {
+                          case LOADER_BOOKS:
+                              ArrayList<Item> books = new ArrayList<>();
+                              if (data != null) {
+                                  while (data.moveToNext()) {
+                                      Item ingredient = getDataFromCursor(data);
+                                      books.add(ingredient);
+                                  }
+                                  data.close();
+                              }
+                              adapter.setmFavList(books);
+                              break;
+                      }
+                  }
 
-          }
-          return null;
-      }
+                  @Override
+                  public void onLoaderReset(Loader<Cursor> loader) {
+                      switch (loader.getId()) {
+                          case LOADER_BOOKS:
+                              adapter.setmFavList(null);
+                              break;
+                      }
+                  }
+
+              };
   */
-    private LoaderManager.LoaderCallbacks<Cursor> mLoaderCallbacks =
-            new LoaderManager.LoaderCallbacks<Cursor>() {
-
-                @Override
-                public Loader<Cursor> onCreateLoader(int id, Bundle args) {
-                    switch (id) {
-                        case LOADER_BOOKS:
-                            return new CursorLoader(getContext().getApplicationContext(),
-                                    BookContentProvider.URI_Book,
-                                    new String[]{Book.COLUMN_TITLE},
-                                    null, null, null);
-                        default:
-                            throw new IllegalArgumentException();
-                    }
-                }
-
-                @Override
-                public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-                    switch (loader.getId()) {
-                        case LOADER_BOOKS:
-                            ArrayList<Item> books = new ArrayList<>();
-                            if (data != null) {
-                                while (data.moveToNext()) {
-                                    Item ingredient = getDataFromCursor(data);
-                                    books.add(ingredient);
-                                }
-                                data.close();
-                            }
-                            adapter.setmFavList(books);
-                            break;
-                    }
-                }
-
-                @Override
-                public void onLoaderReset(Loader<Cursor> loader) {
-                    switch (loader.getId()) {
-                        case LOADER_BOOKS:
-                            adapter.setmFavList(null);
-                            break;
-                    }
-                }
-
-            };
-
     private Item getDataFromCursor(Cursor itemCurso) {
         Item item = new Item();
         VolumeInfo volumeInfo = new VolumeInfo();
@@ -294,39 +292,6 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
         return item;
     }
 
-    /*  void loadSections() {
-          mSectionsList.clear();
-          for (Item i : mFavList) {
-              List<String> sections = Arrays.asList(i.getVolumeInfo().getCategories().get(0).split(","));
-              for (String section : sections) {
-                  String sezione = section.replace(",", "");
-                  if (mSectionsList == null || !mSectionsList.contains(sezione)) {
-                      if (sezione != null)
-                          mSectionsList.add(sezione);
-                  }
-              }
-          }
-      }
-      void loadLists() {
-          mSectionsDataList.clear();
-          for (String section : mSectionsList) {
-              List<Item> childList = new ArrayList<>();
-              for (int i = 0; i < mFavList.size(); i++) {
-                  if (isItemInSectionAt(i, section)) {
-                      childList.add(mFavList.get(i));
-                  }
-              }
-              SectionHeader sectionHeader = new SectionHeader(childList, section);
-              mSectionsDataList.add(sectionHeader);
-          }
-      }
-  */
-    boolean isItemInSectionAt(int itemPosition, String sectionName) {
-        if (mFavList.get(itemPosition).getVolumeInfo().getCategories().get(0).contains(sectionName))
-            return true;
-        return false;
-    }
-
     @Override
     public void onRefresh() {
         if (!refreshLayout.isRefreshing())
@@ -339,7 +304,7 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
                             if (mFavList == null)
                                 mFavList = new ArrayList<>();
                             mFavList.clear();
-                            getLoaderManager().restartLoader(LOADER_BOOKS, null, mLoaderCallbacks);
+                            mFavList.addAll(getFav());
                             adapter.notifyDataSetChanged();
                             recyclerView.setAdapter(adapter);
                         }
@@ -349,22 +314,6 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
         );
     }
 
-    /*public class SectionHeader implements Section<Item> {
-        List<Item> childList;
-        String sectionText;
-        public SectionHeader(List<Item> childList, String sectionText) {
-            this.childList = childList;
-            this.sectionText = sectionText;
-        }
-        @Override
-        public List<Item> getChildItems() {
-            return childList;
-        }
-        public String getSectionText() {
-            return sectionText;
-        }
-    }
-   */
     public int getNumberOfColumns() {
         DisplayMetrics displayMetrics = getContext().getResources().getDisplayMetrics();
         float dpWidth = displayMetrics.widthPixels / displayMetrics.density;
@@ -384,39 +333,4 @@ public class FavouritesFragment extends Fragment implements SwipeRefreshLayout.O
         } else noFavLayout.setVisibility(View.GONE);
     }
 
-
-
-    /*  @Override
-    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
-        inflater.inflate(R.menu.fav_menu, menu);
-        super.onCreateOptionsMenu(menu, inflater);
-    }
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (item.getItemId() == R.id.change_sorting) {
-            if (isDashboard) {
-                isDashboard = !isDashboard;
-                item.setIcon(getContext().getResources().getDrawable(R.drawable.ic_sort_black_24dp));
-                loadData();
-                prefs.edit().putString("layoutSetting", "list").commit();
-            } else {
-                isDashboard = !isDashboard;
-                item.setIcon(getContext().getResources().getDrawable(R.drawable.ic_dashboard_black_24dp));
-                loadData();
-                prefs.edit().putString("layoutSetting", "dashboard").commit();
-            }
-            return true;
-        }
-        return false;
-    }
-    @Override
-    public void onPrepareOptionsMenu(Menu menu) {
-        super.onPrepareOptionsMenu(menu);
-        MenuItem cl = menu.getItem(2);
-        if (isDashboard) {
-            cl.setIcon(getContext().getResources().getDrawable(R.drawable.ic_dashboard_black_24dp));
-        } else {
-            cl.setIcon(getContext().getResources().getDrawable(R.drawable.ic_sort_black_24dp));
-        }
-    }*/
 }

@@ -145,7 +145,7 @@ public class CameraSourcePreview extends ViewGroup {
         // To fill the view with the camera preview, while also preserving the correct aspect ratio,
         // it is usually necessary to slightly oversize the child and to crop off portions along one
         // of the dimensions.  We scale up based on the dimension requiring the most correction, and
-        // compute a crop offset for the other dimension.
+        // compute FoodDBHelper crop offset for the other dimension.
         if (widthRatio > heightRatio) {
             childWidth = viewWidth;
             childHeight = (int) ((float) previewHeight * widthRatio);

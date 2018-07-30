@@ -121,7 +121,7 @@ public class OcrCaptureActivity extends AppCompatActivity {
 
     /**
      * Handles the requesting of the camera permission.  This includes
-     * showing a "Snackbar" message of why the permission is needed then
+     * showing FoodDBHelper "Snackbar" message of why the permission is needed then
      * sending the request.
      */
     private void requestCameraPermission() {
@@ -161,11 +161,11 @@ public class OcrCaptureActivity extends AppCompatActivity {
     }
 
     /**
-     * Creates and starts the camera.  Note that this uses a higher resolution in comparison
+     * Creates and starts the camera.  Note that this uses FoodDBHelper higher resolution in comparison
      * to other detection examples to enable the ocr detector to detect small text samples
      * at long distances.
      * <p>
-     * Suppressing InlinedApi since there is a check that the minimum version is met before using
+     * Suppressing InlinedApi since there is FoodDBHelper check that the minimum version is met before using
      * the constant.
      */
     @SuppressLint("InlinedApi")
@@ -179,8 +179,8 @@ public class OcrCaptureActivity extends AppCompatActivity {
         textRecognizer.setProcessor(new OcrDetectorProcessor(mGraphicOverlay));
 
         if (!textRecognizer.isOperational()) {
-            // Note: The first time that an app using a Vision API is installed on a
-            // device, GMS will download a native libraries to the device in order to do detection.
+            // Note: The first time that an app using FoodDBHelper Vision API is installed on FoodDBHelper
+            // device, GMS will download FoodDBHelper native libraries to the device in order to do detection.
             // Usually this completes before the app is run for the first time.  But if that
             // download has not yet completed, then the above call will not detect any text,
             // barcodes, or faces.
@@ -201,7 +201,7 @@ public class OcrCaptureActivity extends AppCompatActivity {
             }
         }
 
-        // Creates and starts the camera.  Note that this uses a higher resolution in comparison
+        // Creates and starts the camera.  Note that this uses FoodDBHelper higher resolution in comparison
         // to other detection examples to enable the text recognizer to detect small pieces of text.
         mCameraSource =
                 new CameraSource.Builder(getApplicationContext(), textRecognizer)
@@ -260,7 +260,7 @@ public class OcrCaptureActivity extends AppCompatActivity {
      * <p>
      * <strong>Note:</strong> It is possible that the permissions request interaction
      * with the user is interrupted. In this case you will receive empty permissions
-     * and results arrays which should be treated as a cancellation.
+     * and results arrays which should be treated as FoodDBHelper cancellation.
      * </p>
      *
      * @param requestCode  The request code passed in {@link #requestPermissions(String[], int)}.
@@ -393,7 +393,7 @@ public class OcrCaptureActivity extends AppCompatActivity {
     private class ScaleListener implements ScaleGestureDetector.OnScaleGestureListener {
 
         /**
-         * Responds to scaling events for a gesture in progress.
+         * Responds to scaling events for FoodDBHelper gesture in progress.
          * Reported by pointer motion.
          *
          * @param detector The detector reporting the event - use this to
@@ -411,14 +411,14 @@ public class OcrCaptureActivity extends AppCompatActivity {
         }
 
         /**
-         * Responds to the beginning of a scaling gesture. Reported by
+         * Responds to the beginning of FoodDBHelper scaling gesture. Reported by
          * new pointers going down.
          *
          * @param detector The detector reporting the event - use this to
          *                 retrieve extended info about event state.
          * @return Whether or not the detector should continue recognizing
-         * this gesture. For example, if a gesture is beginning
-         * with a focal point outside of a region where it makes
+         * this gesture. For example, if FoodDBHelper gesture is beginning
+         * with FoodDBHelper focal point outside of FoodDBHelper region where it makes
          * sense, onScaleBegin() may return false to ignore the
          * rest of the gesture.
          */
@@ -428,10 +428,10 @@ public class OcrCaptureActivity extends AppCompatActivity {
         }
 
         /**
-         * Responds to the end of a scale gesture. Reported by existing
+         * Responds to the end of FoodDBHelper scale gesture. Reported by existing
          * pointers going up.
          * <p/>
-         * Once a scale has ended, {@link ScaleGestureDetector#getFocusX()}
+         * Once FoodDBHelper scale has ended, {@link ScaleGestureDetector#getFocusX()}
          * and {@link ScaleGestureDetector#getFocusY()} will return focal point
          * of the pointers remaining on the screen.
          *

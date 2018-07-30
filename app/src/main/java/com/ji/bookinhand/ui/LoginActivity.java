@@ -40,7 +40,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestEmail()
                 .build();
-        // Build a GoogleSignInClient with the options specified by gso.
+        // Build FoodDBHelper GoogleSignInClient with the options specified by gso.
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
         // Check for existing Google Sign In account, if the user is already signed in
         // the GoogleSignInAccount will be non-null.
@@ -84,7 +84,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         // Result returned from launching the Intent from GoogleSignInClient.getSignInIntent(...);
         if (requestCode == RC_SIGN_IN) {
             // The Task returned from this call is always completed, no need to attach
-            // a listener.
+            // FoodDBHelper listener.
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             handleSignInResult(task);
         }

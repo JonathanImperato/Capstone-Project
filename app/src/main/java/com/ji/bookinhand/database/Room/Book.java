@@ -1,4 +1,4 @@
-package com.ji.bookinhand.database;
+package com.ji.bookinhand.database.Room;
 
 import android.arch.persistence.room.ColumnInfo;
 import android.arch.persistence.room.Entity;

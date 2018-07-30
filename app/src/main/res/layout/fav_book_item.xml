@@ -7,7 +7,7 @@
     android:layout_height="wrap_content"
     android:fitsSystemWindows="true"
     android:gravity="center"
-    android:padding="4dp">
+    >
 
     <android.support.constraint.ConstraintLayout
         android:layout_width="@dimen/poster_width"
